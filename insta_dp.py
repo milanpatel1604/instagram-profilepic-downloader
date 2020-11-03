@@ -28,10 +28,8 @@ def download():
     img_link=image.get_attribute('src')
 
     if location.get() == 0:
-        path="C:\\Users\\milan\\Desktop\\insta_dp\\"+user_h+".jpg"
+        path="C:\\Users\\milan\\Desktop\\"+user_h+".jpg"
     elif location.get() == 1:
-        path="D:\\python VS code\\"+user_h+".jpg"
-    elif location.get() == 2:
         path="D:\\"+user_h+".jpg"
     
     import urllib.request
@@ -61,7 +59,7 @@ Entry(f1,textvariable=userName,borderwidth=4,relief=RIDGE).pack(pady=10)
 
 Label(f1,text="Select Location :").pack()
 location=IntVar()
-locations=["Desktop", "python vs code","D disk"]
+locations=["Desktop","D disk"]
 for i,item in enumerate(locations):
     Radiobutton(f1,text=item,variable=location,value=i,fg="chocolate2").pack(pady=2)
 
