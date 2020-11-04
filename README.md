@@ -1,2 +1,2 @@
 # instagram-profilepic-downloader
-#This is a Instagram profile picture downloader desktop application with GUI (using Tkinter) and coded in python
+#This is an Instagram profile picture downloader desktop application with GUI (using Tkinter) and coded in python
