@@ -1,12 +1,13 @@
 {
   "name": "breathing",
   "version": "1.0.0",
-  "description": "",
+  "description": "API's: authentication:(method: POST)   1. signup: /api/users/signup --onSuccess(201), onExistingUser(409) --body({name, email, password, passwordConfirm})   2. login: /api/users/login --onSuccess(200), onInvalidCredentials(401) --body({email, password})   3. forgotpassword: /api/users/forgotPassword  --pending",
   "main": "app.js",
   "scripts": {
     "start:dev": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "start": "node server.js"
   },
   "author": "Vedant Shah",
   "license": "ISC",
@@ -23,5 +24,13 @@
     "nodemon": "^2.0.7",
     "slugify": "^1.5.3",
     "validator": "^13.6.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/milanpatel1604/breathing-app-final-master.git"
+  },
+  "bugs": {
+    "url": "https://github.com/milanpatel1604/breathing-app-final-master/issues"
+  },
+  "homepage": "https://github.com/milanpatel1604/breathing-app-final-master#readme"
 }

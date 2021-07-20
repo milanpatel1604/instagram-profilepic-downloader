@@ -43,11 +43,11 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 // for-Signup
-exports.signup =  (req, res, next) => {
+exports.signup = (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
-  const existingUser=User.findOne({email: email},(err, data)=>{
-    if(!existingUser){
-      const newUser = User.create({
+  User.findOne({email:email},async (err, docs)=>{
+    if(!docs){
+      const newUser =await User.create({
         name: name,
         email: email,
         password: password,
@@ -55,8 +55,13 @@ exports.signup =  (req, res, next) => {
       });
       createSendToken(newUser, 201, res);
     }
+    else if(err){
+      throw err;
+    }
+    else{
+      return res.status(409).json({error:"duplicateUser", message:"user already exists"});
+    }
   });
-  return next({message:"user already exist with this email"});
 };
 
 // for- Login
