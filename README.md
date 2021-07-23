@@ -4,6 +4,8 @@ authentication:(method: POST)
   1. signup: /api/users/signup --onSuccess(201), onExistingUser(409) --body({name, email, password, passwordConfirm})
   2. login: /api/users/login --onSuccess(200), onInvalidCredentials(401) --body({email, password})
   3. forgotpassword: /api/users/forgotPassword  --pending
+  signup & login response format:
+  ![alt text]()
   
   
 meditation:(method: GET)
