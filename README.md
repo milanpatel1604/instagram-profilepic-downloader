@@ -25,5 +25,7 @@ relax:(method: GET)
   2. upload relax track: /api/relax/upload/trackName --replace trackName with audio file name in static file. --onSuccess(201), onError(400)
   3. download relax track: /api/relax/download/trackName  --fetching perticular audio file from db - replace trackName in url with filename in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
 
-allTracks details Format:
-![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/allTracksFormat.PNG)
+* allTracks details Format:
+  ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/allTracksFormat.PNG)
+* audio details upload format:
+  ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/uploadAudioDetailsFormat.PNG)
