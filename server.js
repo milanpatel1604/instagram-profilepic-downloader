@@ -1,4 +1,7 @@
 const dotenv = require("dotenv");
+const mongoose=require('mongoose');
+const url = process.env.MONGODB_URI || 'mongodb://localhost:27017/breathing-app';
+
 
 process.on("uncaughtException", (err) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
@@ -8,6 +11,18 @@ process.on("uncaughtException", (err) => {
 
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
+
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+  console.log("Database connected");
+});
 
 
 const port = process.env.PORT || 3000;

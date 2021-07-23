@@ -1,6 +1,7 @@
 const mongoose=require('mongoose');
+const Schema = mongoose.Schema;
 
-const MeditationTracksSchema=mongoose.Schema({
+const MeditationTracksSchema=new Schema({
     title: {
         type: String,
         unique: true
@@ -17,4 +18,6 @@ const MeditationTracksSchema=mongoose.Schema({
     
 });
 
-module.exports=mongoose.model('MeditationTracksSchema', MeditationTracksSchema);
+
+const MeditationTrack = mongoose.model("MeditationTrack", MeditationTracksSchema);
+module.exports = MeditationTrack;

@@ -37,6 +37,10 @@ const userSchema = new Schema({
       message: "Passwords did not match",
     },
   },
+  confirmed: {
+    type: Boolean,
+    defaultValue: false,
+  },
   passwordChangedAt: {
     type: Date,
   },

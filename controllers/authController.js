@@ -5,22 +5,10 @@ const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
+const nodemailer = require('nodemailer');
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 
-
-
-mongoose.connect("mongodb://localhost:27017/breathing-app", {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("User Database connected");
-});
 
 
 // functions
@@ -37,8 +25,12 @@ const createSendToken = (user, statusCode, res) => {
     status: "success",
     token,
     data: {
-      user
-    }
+      _id: user._id,
+      role: user.role,
+      active:user.active,
+      name: user.name,
+      email: user.email
+    } 
   });
 };
 
@@ -56,7 +48,7 @@ exports.signup = (req, res, next) => {
       createSendToken(newUser, 201, res);
     }
     else if(err){
-      throw err;
+      return err;
     }
     else{
       return res.status(409).json({error:"duplicateUser", message:"user already exists"});
@@ -73,6 +65,10 @@ exports.login = async (req, res, next) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
+
+  // if(!user.confirmed){
+  //   return res.status(401).json({message:"please confirm your email to login(check email)"});
+  // }
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
