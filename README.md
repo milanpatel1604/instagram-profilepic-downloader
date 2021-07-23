@@ -4,7 +4,7 @@ authentication:(method: POST)
   1. signup: /api/users/signup --onSuccess(201), onExistingUser(409) --body({name, email, password, passwordConfirm})
   2. login: /api/users/login --onSuccess(200), onInvalidCredentials(401) --body({email, password})
   3. forgotpassword: /api/users/forgotPassword  --pending
-    signup & login response format:
+  4. signup & login response format:
     ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/signup%20login%20response%20format.PNG)
   
   
@@ -24,3 +24,6 @@ relax:(method: GET)
   1. all tracks of relax: /api/relax/allRelaxTracks -- onSuccess(200), onError(400)
   2. upload relax track: /api/relax/upload/trackName --replace trackName with audio file name in static file. --onSuccess(201), onError(400)
   3. download relax track: /api/relax/download/trackName  --fetching perticular audio file from db - replace trackName in url with filename in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
+
+allTracks details Format:
+![alt text]()
