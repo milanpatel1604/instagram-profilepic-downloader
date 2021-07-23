@@ -5,7 +5,7 @@ authentication:(method: POST)
   2. login: /api/users/login --onSuccess(200), onInvalidCredentials(401) --body({email, password})
   3. forgotpassword: /api/users/forgotPassword  --pending
   signup & login response format:
-  ![alt text]()
+  ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/signup%20login%20response%20format.PNG)
   
   
 meditation:(method: GET)
