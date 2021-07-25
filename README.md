@@ -10,17 +10,17 @@ authentication:(method: POST)
   
 meditation:(method: GET)
   1. all tracks of meditation: /api/meditation/allMeditationTracks -- onSuccess(200), onError(400)
-  2. upload meditation track: /api/meditation/upload/trackName --replace trackName with audio file name in static file. --onSuccess(201), onError(400)
-  3. download meditation track: /api/meditation/download/trackName  --fetching perticular audio file from db - replace trackName in url with filename in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
+  2. upload meditation track: /api/meditation/upload/trackID --replace trackID with audio _id. --onSuccess(201), onError(400)
+  3. download meditation track: /api/meditation/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
   
   
 sleep:(method: GET)
   1. all tracks of sleep: /api/sleep/allSleepTracks -- onSuccess(200), onError(400)
-  2. upload sleep track: /api/sleep/upload/trackName --replace trackName with audio file name in static file. --onSuccess(201), onError(400)
-  3. download sleep track: /api/sleep/download/trackName  --fetching perticular audio file from db - replace trackName in url with filename in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
+  2. upload sleep track: /api/sleep/upload/trackID --trackID --replace trackID with audio _id. --onSuccess(201), onError(400)
+  3. download sleep track: /api/sleep/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
   
   
 relax:(method: GET)
   1. all tracks of relax: /api/relax/allRelaxTracks -- onSuccess(200), onError(400)
-  2. upload relax track: /api/relax/upload/trackName --replace trackName with audio file name in static file. --onSuccess(201), onError(400)
-  3. download relax track: /api/relax/download/trackName  --fetching perticular audio file from db - replace trackName in url with filename in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
+  2. upload relax track: /api/relax/upload/trackID --trackID --replace trackID with audio _id. --onSuccess(201), onError(400)
+  3. download relax track: /api/relax/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)

@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 const MeditationTracksSchema=new Schema({
     title: {
-        type: String,
-        unique: true
+        type: String
     },
     artist: {
         type: String

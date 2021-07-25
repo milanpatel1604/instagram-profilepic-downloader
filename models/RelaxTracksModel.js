@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const RelaxTracksSchema=new Schema({
     title: {
         type: String,
-        unique: true
     },
     artist: {
         type: String
