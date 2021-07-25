@@ -27,5 +27,5 @@ relax:
 
 * allTracks details Format:
   ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/allTracksFormat.PNG)
-* audio details upload format:
+* audio details upload format: (method: POST) body-as shown in image below 
   ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/uploadAudioDetailsFormat.PNG)
