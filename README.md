@@ -14,13 +14,13 @@ meditation:
   3.(method: GET) download meditation track: /api/meditation/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
   
   
-sleep:(method: GET)
+sleep:
   1.(method: GET) all tracks of sleep: /api/sleep/allSleepTracks -- onSuccess(200), onError(400)
   2.(method: POST) upload sleep track: /api/sleep/upload/trackID --trackID --replace trackID with audio _id. --onSuccess(201), onError(400)
   3.(method: GET) download sleep track: /api/sleep/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
   
   
-relax:(method: GET)
+relax:
   1.(method: GET) all tracks of relax: /api/relax/allRelaxTracks -- onSuccess(200), onError(400)
   2.(method: POST) upload relax track: /api/relax/upload/trackID --trackID --replace trackID with audio _id. --onSuccess(201), onError(400)
   3.(method: GET) download relax track: /api/relax/download/trackID  --fetching perticular audio file from db - replace trackID in url with _id in database -- onSuccess(200), noHeadersFound(400), noAudioFound(404), onError(401)
