@@ -206,7 +206,7 @@ exports.getNotifications = catchAsync(async (req, res, next) => {
     });
 });
 
-//GET /admin/uploadMeditationTrack --admin tracks page (web)
+//PUT /admin/uploadMeditationTrack --admin tracks page (web)
 exports.uploadMeditationTrack = catchAsync(async (req, res, next) => {
   const { title, artist, category, description, ispremium} = req.body;
   const MeditationTrack = await MeditationTrack.create({

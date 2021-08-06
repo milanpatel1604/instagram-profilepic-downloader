@@ -14,7 +14,7 @@ async function displayRelaxTracks(){
         let relaxTracksTable = document.getElementById("relaxTracksTable");
         let html = "";
         await relaxTracksArr.forEach(function(element, index){
-            html += `<tr>
+            html += `<tr class="tableRows">
                         <th scope="row">${element._id}</th>
                         <td>${element.title}</td>
                         <td>${element.category}</td>
@@ -35,6 +35,25 @@ async function displayRelaxTracks(){
         }
         const tracksCount=document.getElementById('tracksCount');
         tracksCount.innerText=`No.of results: ${relaxTracksData.results}`
+        let search = document.getElementById("relaxTracksSearch");
+        search.addEventListener("input", function () {
+            let searchValue = search.value;
+            let results = document.getElementsByClassName("tableRows");
+            Array.from(results).forEach(function (element) {
+                let cardTxt = element.getElementsByTagName("th")[0].innerText;
+                cardTxt += element.getElementsByTagName("td")[0].innerText;
+                cardTxt += element.getElementsByTagName("td")[1].innerText;
+                cardTxt += element.getElementsByTagName("td")[2].innerText;
+                cardTxt += element.getElementsByTagName("td")[3].innerText;
+                cardTxt += element.getElementsByTagName("td")[4].innerText;
+                if (cardTxt.toLowerCase().includes(searchValue.toLowerCase())) {
+                    element.style.display = "";
+                }
+                else {
+                    element.style.display = "none";
+                }
+            });
+        });
     }
 }
 displayRelaxTracks();

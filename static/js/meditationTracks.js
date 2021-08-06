@@ -14,8 +14,8 @@ async function displayMeditationTracks() {
         let meditationTracksTable = document.getElementById("meditationTracksTable");
         let html = "";
         await meditationTracksArr.forEach(function (element, index) {
-            html += `<tr>
-                        <th scope="row">${element._id}</th>
+            html += `<tr class="tableRows">
+                        <th>${element._id}</th>
                         <td>${element.title}</td>
                         <td>${element.category}</td>
                         <td>${element.artist}</td>
@@ -23,8 +23,7 @@ async function displayMeditationTracks() {
                         <td>${element.isPremium ? "premium" : "normal"}</td>
                         <td><button class="btn btn-danger">Delete</button></td>
                         <td><button class="btn btn-light">Update</button></td>
-                    </tr>`;
-
+                     </tr>`;
         });
         if (meditationTracksArr.length != 0) {
             meditationTracksTable.innerHTML = html;
@@ -36,6 +35,25 @@ async function displayMeditationTracks() {
         const tracksCount = document.getElementById('tracksCount');
         tracksCount.innerText = `No.of results: ${meditationTracksData.results}`
     }
+    let search = document.getElementById("meditationTracksSearch");
+    search.addEventListener("input", function () {
+        let searchValue = search.value;
+        let results = document.getElementsByClassName("tableRows");
+        Array.from(results).forEach(function (element) {
+            let cardTxt = element.getElementsByTagName("th")[0].innerText;
+            cardTxt += element.getElementsByTagName("td")[0].innerText;
+            cardTxt += element.getElementsByTagName("td")[1].innerText;
+            cardTxt += element.getElementsByTagName("td")[2].innerText;
+            cardTxt += element.getElementsByTagName("td")[3].innerText;
+            cardTxt += element.getElementsByTagName("td")[4].innerText;
+            if (cardTxt.toLowerCase().includes(searchValue.toLowerCase())) {
+                element.style.display = "";
+            }
+            else {
+                element.style.display = "none";
+            }
+        });
+    });
 }
 displayMeditationTracks();
 
@@ -67,21 +85,3 @@ logoutBtn.addEventListener('click', async () => {
 
 
 
-// let search = document.getElementById("usersSearch");
-//         search.addEventListener("input", function () {
-//             let searchValue = search.value;
-//             console.log(searchValue);
-//             let results = document.getElementsByClassName("usersCol");
-//             Array.from(results).forEach(function (element) {
-//                 let cardTxt = element.getElementsByTagName("th")[0].innerText;
-//                 cardTxt += element.getElementsByTagName("td")[0].innerText;
-//                 cardTxt += element.getElementsByTagName("td")[1].innerText;
-//                 cardTxt += element.getElementsByTagName("td")[2].innerText;
-//                 if (cardTxt.toLowerCase().includes(searchValue.toLowerCase())) {
-//                     element.style.display = "block";
-//                 }
-//                 else {
-//                     element.style.display = "none";
-//                 }
-//             });
-//         });
