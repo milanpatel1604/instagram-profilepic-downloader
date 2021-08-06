@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
+
 // function
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -11,18 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-// For Admin-Specific
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
 
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
 
 // If User-wants to change his/her Email & username but not password
 exports.updateMe = catchAsync(async (req, res, next) => {
@@ -59,32 +49,3 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
-
-// Not Working- For Admin Specific
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This Route is not setup",
-  });
-};
-
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This Route is not setup",
-  });
-};
-
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This Route is not setup",
-  });
-};
-
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This Route is not setup",
-  });
-};

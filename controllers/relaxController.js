@@ -1,4 +1,5 @@
 const RelaxTrack=require('../models/RelaxTracksModel');
+
 const fs = require('fs');
 const path = require('path');
 var staticFilesPath = path.join(__dirname, '../static');
@@ -15,11 +16,13 @@ exports.allRelaxTracks=(req, res)=>{
 
 
 exports.upload=async (req, res) => {
-    const { title, artist, description, isPremium}=req.body;
+    const { title, artist, category, description, isPremium}=req.body;
 
     const newRelaxTrack = await RelaxTrack.create({
         title: title,
-        artist: artist, 
+        artist: artist,
+        // categories: ["Beginners", "Self-Calm"],
+        category: category,
         description: description,
         isPremium: isPremium
     })
@@ -46,7 +49,7 @@ exports.download = (req, res) => {
             return res.status(400).json({ status: "400", message: "Require range header" });
         }
     
-        const audioPath=staticFilesPath + `/relaxTracks/${docs.title}.mp3`;
+        const audioPath=staticFilesPath + `/tracks/relaxTracks/${docs.title}.mp3`;
         const audioSize=fs.statSync(audioPath).size;
     
         const CHUNK_SIZE = (10**6)/2; //512kb

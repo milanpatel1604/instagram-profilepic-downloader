@@ -1,8 +1,14 @@
 const express = require("express");
 const morgan = require("morgan");
 const AppError = require("./utils/appError");
+const path=require('path');
 const globalErrorHandler = require("./controllers/errorController");
+const cors=require('cors');
+const cookieParser=require('cookie-parser');
+require('dotenv').config();
 
+
+const adminRouter=require('./routes/adminRoutes');
 const userRouter = require("./routes/userRoutes");
 const meditationTrackRouter=require("./routes/meditationTrackRoutes");
 const sleepTrackRouter=require("./routes/sleepTrackRoutes");
@@ -15,8 +21,14 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(express.json());
-app.use(express.static(`${__dirname}/public`));
+app.use(cors());
+app.use(cookieParser());
+app.enable('strict routing')
 
+app.use('/static', express.static('static'));
+app.use(express.static(path.join(__dirname, 'views')));
+
+app.use("/", adminRouter)
 app.use("/api/users", userRouter);
 app.use("/api/meditation", meditationTrackRouter);
 app.use("/api/sleep", sleepTrackRouter);

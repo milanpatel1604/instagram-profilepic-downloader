@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="shortcut icon" href="../static/images/logo.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>Breathings App | USERS</title>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><img src="../static/images/logo.png" alt="Breathings"></a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/users">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/meditationTracks">Meditation Tracks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/sleepTracks">Sleep Tracks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/relaxTracks">Relax Tracks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/liveTracks">Live Tracks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-3" href="/notification">Notification</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login </a></button>
+                </form>
+                <form class="d-flex">
+                    <button class="btn btn-danger logBtn" id="logoutBtn"><a href="/">Logout Admin </a></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</header>
+  <section>
+    <div class="usersSection">
+      <h2>Breathing-App user details</h2>
+      <!-- <button class="btn btn-success" id="addUserBtn">Add User</button> -->
+      <span class="count" id="usersCount"></span>
+      <div class="container">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <!-- <th scope="col">Delete User</th>
+              <th scope="col">Update User</th> -->
+            </tr>
+          </thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+        <div id="unauthorizedWarning">
+          <p>Unauthorized Access, Plz Login</p><button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login </a></button>
+        </div>
+        <div id="empty">
+          <p>No Users to show (Empty)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="../static/js/users.js"></script>
+</html>

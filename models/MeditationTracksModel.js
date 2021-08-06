@@ -8,6 +8,11 @@ const MeditationTracksSchema=new Schema({
     artist: {
         type: String
     },
+    category: {
+        type: Array,
+        // categories: ["Beginners", "Stress"],
+        default: "Beginners"
+    },
     description: {
         type: String
     },

@@ -67,14 +67,14 @@ exports.login = async (req, res, next) => {
   const user = await User.findOne({ email }).select("+password");
 
   // if(!user.confirmed){
-  //   return res.status(401).json({message:"please confirm your email to login(check email)"});
-  // }
-
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError("Incorrect email or password", 401));
-  }
-
-  createSendToken(user, 200, res);
+    //   return res.status(401).json({message:"please confirm your email to login(check email)"});
+    // }
+    
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError("Incorrect email or password", 401));
+    }
+    
+    createSendToken(user, 200, res);
 };
 
 // Specific Middleware- Check If User Login or not
