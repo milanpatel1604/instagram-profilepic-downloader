@@ -1,15 +1,16 @@
 const express = require('express');
-const meditationTrackRoute = express.Router()
+const meditationTrackRoute = express.Router();
 
 
 const meditationController=require('../controllers/meditationController')
 const { title } = require('process');
 
-
+var path=require('path');
 
 // testing purpose web page
+var viewsFilePath= path.join(__dirname, '../views');
 meditationTrackRoute.get('/', (req, res) => {
-    res.sendFile(__dirname + "/index.html")
+    res.sendFile(viewsFilePath + "/audio.html");
 })
 
 

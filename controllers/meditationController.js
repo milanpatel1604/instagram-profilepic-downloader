@@ -1,4 +1,5 @@
 const MeditationTrack=require('../models/MeditationTracksModel');
+
 const fs = require('fs');
 const path = require('path');
 var staticFilesPath = path.join(__dirname, '../static');
@@ -16,11 +17,13 @@ exports.allMeditationTracks=(req, res)=>{
 
 
 exports.upload=async (req, res) => {
-    const { title, artist, description, isPremium}=req.body;
+    const { title, artist, category, description, isPremium}=req.body;
 
     const newMeditationTrack = await MeditationTrack.create({
         title: title,
         artist: artist, 
+        // categories: ["Beginners", "Stress"],
+        category: category,
         description: description,
         isPremium: isPremium
     })
@@ -46,7 +49,7 @@ exports.download = (req, res) => {
             return res.status(400).json({ status: "400", message: "Require range header" });
         }
     
-        const audioPath=staticFilesPath + `/meditationTracks/${docs.title}.mp3`;
+        const audioPath=staticFilesPath + `/tracks/meditationTracks/${docs.title}.mp3`;
         const audioSize=fs.statSync(audioPath).size;
     
         const CHUNK_SIZE = (10**6)/2; //512kb

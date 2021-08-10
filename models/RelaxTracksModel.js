@@ -8,6 +8,11 @@ const RelaxTracksSchema=new Schema({
     artist: {
         type: String
     },
+    category: {
+        type: Array,
+        // categories: ["Beginners", "Self-Calm"],
+        default: "Beginners"
+    },
     description: {
         type: String
     },

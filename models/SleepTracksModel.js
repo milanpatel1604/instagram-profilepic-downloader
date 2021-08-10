@@ -8,6 +8,11 @@ const SleepTracksSchema=new Schema({
     artist: {
         type: String
     },
+    category: {
+        type: Array,
+        // categories: ["Stories", "Music", "Mysterious"],
+        default: "Music"
+    },
     description: {
         type: String
     },

@@ -1,0 +1,169 @@
+/* common */
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+}
+
+.navbar-brand img{
+    width: 3rem;
+}
+
+.logBtn{
+    margin-right: 1rem;
+}
+.logBtn a{
+    text-decoration: none;
+    color: white;
+    padding: 1rem;
+}
+.search{
+    width: 15rem !important;
+    margin: .5rem;
+}
+#logoutBtn{
+   display: none;
+}
+.count{
+    margin: 1rem;
+}
+
+
+/* Home page */
+.home{
+    background: linear-gradient(45deg, blue, skyblue 60%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.home img{
+    width: 5rem;
+    margin: 1rem;
+}
+.home h1{
+    color: white;
+    padding: 1rem;
+    border-left: .2rem solid gray;
+}
+
+
+/* Users page */
+.usersSection{
+    margin-top: 4.5rem;
+    background: linear-gradient(45deg, blue, skyblue 60%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.usersSection h2{
+    color: rgb(191, 232, 248);
+    padding: 1rem;
+    margin: 1rem;
+}
+
+/* Tracks page */
+.tracksSection{
+    margin-top: 4.5rem;
+    background: linear-gradient(45deg, blue, skyblue 60%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.tracksSection h2{
+    color: rgb(191, 232, 248);
+    padding: 1rem;
+}
+.addTrackBtn{
+    margin-bottom: 1rem;
+}
+
+
+/* Tracks, notifications and users page*/
+#unauthorizedWarning{
+    height: 60vh;
+    width: 100%;
+}
+#unauthorizedWarning p{
+    font-size: 3rem;
+    color: rgb(191, 232, 248);
+}
+#empty{
+    display: none;
+    height: 55.5vh;
+    width: 100%;
+}
+#empty{
+    font-size: 3rem;
+    color: rgb(191, 232, 248);
+}
+
+/* notification */
+.addNotificationBtn{
+    margin-bottom: 1rem;
+}
+
+/* adminLogin page */
+.warning{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.loginSection{
+    background: linear-gradient(45deg, blue, skyblue 60%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.box{
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: 25rem;
+    background-color: white;
+    opacity: 90%;
+    border-radius: 2rem;
+}
+.box h2{
+    font-size: 2rem;
+    width: max-content;
+    margin-bottom: 1rem;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+}
+input{
+    font-size: 1.8rem;
+    padding: .5rem;
+    width: 80%;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    border-bottom: .1rem solid gray;
+}
+label{
+    margin: 1.6rem 0rem;
+}
+label i{
+    font-size: 1.2rem;
+    filter: opacity(80%);
+}
+#invalidCredentials{
+    display: none;
+    font-style: italic;
+    color: red;
+    font-size: .8rem;
+    margin: 0rem;
+    padding: 0rem;
+}
