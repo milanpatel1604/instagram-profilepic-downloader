@@ -41,12 +41,12 @@
                             <a class="nav-link p-3" href="/notification">Notification</a>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    <!-- <form class="d-flex">
                         <button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login </a></button>
                     </form>
                     <form class="d-flex">
                         <button class="btn btn-danger logBtn" id="logoutBtn"><a href="/">Logout Admin </a></button>
-                    </form>
+                    </form> -->
                 </div>
             </div>
         </nav>
@@ -54,7 +54,7 @@
     <section>
         <div class="tracksSection"> 
             <h2>Breathing-App Relax-Tracks details</h2>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#exampleModal"
                 data-bs-whatever="@mdo" id="addRelaxTrackBtn">Add Track</button>
             <input class="form-control me-2 search" id="relaxTracksSearch" type="search" placeholder="Filter by searching" aria-label="Search">
             <span id="tracksCount"></span>
@@ -90,42 +90,41 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="row g-3" id="uploadRelaxForm">
+                        <form class="row g-3" id="uploadRelaxForm"  action="/uploadRelaxTrack" method="POST" enctype="multipart/form-data">
                             <div class="col-md-7">
                                 <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="title" required>
+                                <input type="text" name="title" class="form-control" id="title" required>
                             </div>
                             <div class="col-md-7">
                                 <label for="artist" class="form-label">Artist</label>
-                                <input type="text" class="form-control" id="artist" required>
+                                <input type="text" name="artist" class="form-control" id="artist" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="category" class="form-label">Category</label>
-                                <select id="category" class="form-select">
+                                <select id="category" name="category" class="form-select">
                                     <option selected>Beginners</option>
                                     <option>Self-Calm</option>
                                 </select>
                             </div>
                             <div class="col-12">
                                 <label for="description" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="description" required>
+                                <input type="text" name="description" class="form-control" id="description" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="premium" class="form-label">Premium</label>
+                                <select id="premium" name="premium" class="form-select">
+                                    <option selected>true</option>
+                                    <option>false</option>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <label for="track" class="form-label">choose a track(audio file: .mp3)</label>
-                                <input type="file" class="form-control" id="track" required>
+                                <input type="file" name="audioFile" class="form-control" id="track" required>
                             </div>
                             <div class="col-12">
                                 <label for="track" class="form-label">choose an image for track</label>
-                                <input type="file" class="form-control" id="image" required>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <label class="form-check-label" for="premium">
-                                        <input class="form-check-input" type="checkbox" id="premium">
-                                        check if premium
-                                    </label>
-                                </div>
-                            </div>
+                                <input type="file" name="imageFile" class="form-control" id="image" required>
+                            </div>`
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Upload Tracks</button>
                             </div>

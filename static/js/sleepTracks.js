@@ -15,14 +15,14 @@ async function displaySleepTracks(){
         let html = "";
         await sleepTracksArr.forEach(function(element, index){
             html += `<tr class="tableRows">
-                        <th scope="row">${element._id}</th>
+                        <th id="itemID" scope="row">${element._id}</th>
                         <td>${element.title}</td>
                         <td>${element.category}</td>
                         <td>${element.artist}</td>
                         <td>${element.description}</td>
                         <td>${element.isPremium? "premium" : "normal"}</td>
-                        <td><button class="btn btn-danger">Delete</button></td>
-                        <td><button class="btn btn-light">Update</button></td>
+                        <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
+                        <td><button class="btn btn-light" onclick="updateTrack(${element._id})">Update</button></td>
                     </tr>`;
            
         });
@@ -59,27 +59,17 @@ async function displaySleepTracks(){
 displaySleepTracks();
 
 
-async function doesHttpOnlyCookieExist(){
-    const check= await fetch('/check').then((res) => res.json())
-    const loginBtn=document.getElementById('loginBtn');
-    const logoutBtn=document.getElementById('logoutBtn');
-    if(check.status===200){
-        loginBtn.style.display='none';
-        logoutBtn.style.display='block';
+// CRUD functions
+async function deleteTrack(id){
+    console.log(id);
+    const result=await fetch(`/sleepTrackDelete/${id}`, {
+        method:"DELETE"
+    })
+    if(result.status === 200){
+        console.log('deleted');
+        document.location.href='/sleepTracks';
     }
-    else{
-        logoutBtn.style.display='none';
-        loginBtn.style.display='block';
+    else if (result.status === 400){
+        alert("Something went wrong! please try again");
     }
 }
-// setInterval(() => {
-//     doesHttpOnlyCookieExist();
-// }, 1000);
-
-const logoutBtn=document.getElementById('logoutBtn');
-logoutBtn.addEventListener('click',async ()=>{
-    let logout= await fetch('/logout').then((res) => res.json())
-    if(logout.status===200){
-        doesHttpOnlyCookieExist();
-    }
-})

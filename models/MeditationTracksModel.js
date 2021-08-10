@@ -17,7 +17,8 @@ const MeditationTracksSchema=new Schema({
         type: String
     },
     isPremium: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
     
 });

@@ -49,9 +49,17 @@ adminRoute.get("/getLiveTracks", adminController.protect, adminController.getLiv
 adminRoute.get("/getNotifications", adminController.protect, adminController.getNotifications);
 
 // tracks functionalities
-adminRoute.put('/uploadMeditationTrack', adminController.protect, adminController.uploadMeditationTrack)
+adminRoute.post('/uploadMeditationTrack', adminController.protect, adminController.uploadMeditationTrack)
+adminRoute.post('/uploadSleepTrack', adminController.protect, adminController.uploadSleepTrack)
+adminRoute.post('/uploadRelaxTrack', adminController.protect, adminController.uploadRelaxTrack)
+adminRoute.post('/uploadLiveTrack', adminController.protect, adminController.uploadLiveTrack)
+adminRoute.post('/uploadNotification', adminController.protect, adminController.uploadNotification)
 
-
+adminRoute.delete('/meditationTrackDelete/:id', adminController.protect, adminController.meditationTrackDelete)
+adminRoute.delete('/sleepTrackDelete/:id', adminController.protect, adminController.sleepTrackDelete)
+adminRoute.delete('/relaxTrackDelete/:id', adminController.protect, adminController.relaxTrackDelete)
+adminRoute.delete('/liveTrackDelete/:id', adminController.protect, adminController.liveTrackDelete)
+adminRoute.delete('/notificationDelete/:id', adminController.protect, adminController.notificationDelete)
 // adminRoute
 //   .route("/users/:id")
 //   .get(adminController.getUser)

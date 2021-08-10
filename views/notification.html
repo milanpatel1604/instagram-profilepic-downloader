@@ -41,12 +41,12 @@
                             <a class="nav-link p-3" href="/notification">Notification</a>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    <!-- <form class="d-flex">
                         <button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login </a></button>
                     </form>
                     <form class="d-flex">
                         <button class="btn btn-danger logBtn" id="logoutBtn"><a href="/">Logout Admin </a></button>
-                    </form>
+                    </form> -->
                 </div>
             </div>
         </nav>
@@ -88,22 +88,21 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="row g-3" id="uploadLiveForm">
-                            <div class="col-md-7">
-                                <label for="title" class="form-label">Message</label>
-                                <textarea name="title" class="form-control" id="message" cols="30" rows="10"></textarea>
+                        <form class="row g-3" id="uploadNotification" action="/uploadNotification" method="POST" enctype="multipart/form-data">
+                            <div class="col-md-10">
+                                <label for="message" class="form-label">Message</label>
+                                <input type="text" name="message" class="form-control" id="message" required>
                             </div>
                             <div class="col-md-7">
                                 <label for="date" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="date" required>
+                                <input type="date" name="date" class="form-control" id="date" required>
                             </div>
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <label class="form-check-label" for="premium">
-                                        <input class="form-check-input" type="checkbox" id="premium">
-                                        only for premium users
-                                    </label>
-                                </div>
+                            <div class="col-md-4">
+                                <label for="premium" class="form-label">Premium</label>
+                                <select id="premium" name="premium" class="form-select">
+                                    <option selected>true</option>
+                                    <option>false</option>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Send</button>

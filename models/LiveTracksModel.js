@@ -12,13 +12,13 @@ const LiveTracksSchema=new Schema({
         type: String
     },
     date: {
-        type: Date
+        type: String
     },
     startTime: {
-        type: Date
+        type: String
     },
     endTime: {
-        type: Date
+        type: String
     }
 });
 

@@ -15,12 +15,12 @@ async function displayNotifications(){
         let html = "";
         await notificationsArr.forEach(function(element, index){
             html += `<tr class="tableRows">
-                        <th scope="row">${element._id}</th>
+                        <th id="itemID" scope="row">${element._id}</th>
                         <td>${element.message}</td>
                         <td>${element.date}</td>
                         <td>${element.isPremium? "to premium" : "to normal"}</td>
-                        <td><button class="btn btn-danger">Delete</button></td>
-                        <td><button class="btn btn-light">Update</button></td>
+                        <td><button class="btn btn-danger" onclick="deleteNotification('${element._id}');">Delete</button></td>
+                        <td><button class="btn btn-light" onclick="updateNotification(${element._id})">Update</button></td>
                     </tr>`;
            
         });
@@ -55,27 +55,17 @@ async function displayNotifications(){
 displayNotifications();
 
 
-async function doesHttpOnlyCookieExist(){
-    const check= await fetch('/check').then((res) => res.json())
-    const loginBtn=document.getElementById('loginBtn');
-    const logoutBtn=document.getElementById('logoutBtn');
-    if(check.status===200){
-        loginBtn.style.display='none';
-        logoutBtn.style.display='block';
+// CRUD functions
+async function deleteNotification(id){
+    console.log(id);
+    const result=await fetch(`/notificationDelete/${id}`, {
+        method:"DELETE"
+    })
+    if(result.status === 200){
+        console.log('deleted');
+        document.location.href='/notification';
     }
-    else{
-        logoutBtn.style.display='none';
-        loginBtn.style.display='block';
+    else if (result.status === 400){
+        alert("Something went wrong! please try again");
     }
 }
-// setInterval(() => {
-//     doesHttpOnlyCookieExist();
-// }, 1000);
-
-const logoutBtn=document.getElementById('logoutBtn');
-logoutBtn.addEventListener('click',async ()=>{
-    let logout= await fetch('/logout').then((res) => res.json())
-    if(logout.status===200){
-        doesHttpOnlyCookieExist();
-    }
-})

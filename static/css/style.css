@@ -33,7 +33,7 @@ header{
 /* Home page */
 .home{
     background: linear-gradient(45deg, blue, skyblue 60%);
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,7 +53,7 @@ header{
 .usersSection{
     margin-top: 4.5rem;
     background: linear-gradient(45deg, blue, skyblue 60%);
-    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -62,17 +62,14 @@ header{
 .usersSection h2{
     color: rgb(191, 232, 248);
     padding: 1rem;
+    margin: 1rem;
 }
-#addUserBtn{
-    margin-bottom: 1rem;
-}
-
 
 /* Tracks page */
 .tracksSection{
     margin-top: 4.5rem;
     background: linear-gradient(45deg, blue, skyblue 60%);
-    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -82,7 +79,7 @@ header{
     color: rgb(191, 232, 248);
     padding: 1rem;
 }
-#addTrackBtn{
+.addTrackBtn{
     margin-bottom: 1rem;
 }
 
@@ -121,7 +118,7 @@ header{
 
 .loginSection{
     background: linear-gradient(45deg, blue, skyblue 60%);
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;

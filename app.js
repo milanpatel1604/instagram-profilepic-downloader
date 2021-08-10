@@ -5,6 +5,7 @@ const path=require('path');
 const globalErrorHandler = require("./controllers/errorController");
 const cors=require('cors');
 const cookieParser=require('cookie-parser');
+const upload=require('express-fileupload');
 require('dotenv').config();
 
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 app.enable('strict routing')
+app.use(upload());
 
 app.use('/static', express.static('static'));
 app.use(express.static(path.join(__dirname, 'views')));
