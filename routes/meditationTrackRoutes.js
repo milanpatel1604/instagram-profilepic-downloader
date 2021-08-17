@@ -11,8 +11,12 @@ meditationTrackRoute.get('/allMeditationTracks', meditationController.allMeditat
 //GET  /api/meditation/getMeditationTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getMeditationTrack/:track_id', meditationController.getMeditationTrack)
 
-// GET  /api/meditation/download/trackID  --fetching perticular audio file by replacing trackName in url with audio filename
-meditationTrackRoute.get('/download/:trackID',meditationController.download);
+//daily live meditation--
+//GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
+meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
+
+//GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
+meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
 
 
 module.exports = meditationTrackRoute;

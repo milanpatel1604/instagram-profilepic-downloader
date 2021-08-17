@@ -61,14 +61,9 @@ adminRoute.delete('/relaxMelodySoundDelete/:id', adminController.protect, adminC
 adminRoute.delete('/liveTrackDelete/:id', adminController.protect, adminController.liveTrackDelete)
 adminRoute.delete('/notificationDelete/:id', adminController.protect, adminController.notificationDelete)
 
+//through postman
 adminRoute.post('/addAppSection', adminController.addAppSection)
 adminRoute.post('/addMusicCategory', adminController.addMusicCategory)
-
-// adminRoute
-//   .route("/users/:id")
-//   .get(adminController.getUser)
-//   .patch(adminController.updateUser)
-//   .delete(adminController.deleteUser);
 
   
 module.exports=adminRoute;
