@@ -1,7 +1,11 @@
-// tracks functions:
+const url='http://127.0.0.1:3000';
+const meditationBeginnersId='6117dbafe2468d2e402abbb2';
+const meditationStressId='6117dbe5e2468d2e402abbb3';
 
+// tracks functions:
 async function displayMeditationTracks() {
     const meditationTracksData = await fetch('/getMeditationTracks').then((res) => res.json())
+    console.log(meditationTracksData)
     if (meditationTracksData.status === 200) {
         const unauthorizedWarning = document.getElementById('unauthorizedWarning');
         unauthorizedWarning.style.display = 'none';
@@ -14,16 +18,27 @@ async function displayMeditationTracks() {
         let meditationTracksTable = document.getElementById("meditationTracksTable");
         let html = "";
         await meditationTracksArr.forEach(function (element, index) {
+            var category=[];
+            if(element.category_id.includes(meditationBeginnersId)){
+                category.push("Beginners")
+            }
+            if(element.category_id.includes(meditationStressId)){
+                category.push("Stress")
+            }
             html += `<tr class="tableRows">
                         <th scope="row">${element._id}</th>
                         <td>${element.title}</td>
-                        <td>${element.category}</td>
+                        <td>${category}</td>
                         <td>${element.artist}</td>
                         <td>${element.description}</td>
                         <td>${element.isPremium ? "premium" : "normal"}</td>
                         <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
-                        <td><button class="btn btn-light" onclick="updateTrack(${element._id})">Update</button></td>
-                     </tr>`;
+                        <td>
+                            <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
+                                Play
+                            </button>
+                        </td>
+                    </tr>`;
         });
         if (meditationTracksArr.length != 0) {
             meditationTracksTable.innerHTML = html;
@@ -73,4 +88,12 @@ async function deleteTrack(id){
     }
 }
 
-// const updateItem=document.getElementById('updateItem');
+//playTrack
+const trackTitle=document.getElementById('trackTitle');
+const trackImage=document.getElementById('trackImage');
+const audioPlayer=document.getElementById('audioPlayer');
+async function playTrack(id, title, imgExt, trackExt){
+    trackTitle.innerText=title;
+    trackImage.setAttribute('src', `/static/tracks/meditationImages/${id}.${imgExt}`);
+    audioPlayer.setAttribute('src', `/static/tracks/meditationTracks/${id}.${trackExt}`);
+}

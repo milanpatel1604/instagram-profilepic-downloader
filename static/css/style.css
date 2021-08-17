@@ -28,7 +28,16 @@ header{
 .count{
     margin: 1rem;
 }
-
+.trackImage{
+    width: 12rem;
+    border-radius: 1rem;
+    margin: 1rem;
+}
+#trackCard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 /* Home page */
 .home{
