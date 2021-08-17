@@ -104,11 +104,11 @@
                                 <input type="text" name="description" class="form-control" id="description" required>
                             </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose a track(audio file: .mp3)</label>
+                                <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>
                                 <input type="file" name="audioFile" class="form-control" id="track" required>
                             </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose an image for track</label>
+                                <label for="track" class="form-label">choose an image for track (image: png, jpg or jpeg)</label>
                                 <input type="file" name="imageFile" class="form-control" id="image" required>
                             </div>
                             <div class="col-md-7">
@@ -130,6 +130,23 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="modal fade" id="playModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="trackTitle"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="trackCard">
+                    <img alt="Track image" id="trackImage" class="trackImage">
+                    <audio controls id="audioPlayer" type="audio/mpeg"></audio>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
             </div>
         </div>
     </section>

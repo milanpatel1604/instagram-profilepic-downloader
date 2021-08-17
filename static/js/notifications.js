@@ -20,7 +20,6 @@ async function displayNotifications(){
                         <td>${element.date}</td>
                         <td>${element.isPremium? "to premium" : "to normal"}</td>
                         <td><button class="btn btn-danger" onclick="deleteNotification('${element._id}');">Delete</button></td>
-                        <td><button class="btn btn-light" onclick="updateNotification(${element._id})">Update</button></td>
                     </tr>`;
            
         });

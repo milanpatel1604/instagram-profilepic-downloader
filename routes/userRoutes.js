@@ -8,6 +8,12 @@ const router = express.Router();
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 
+//add email verification api here-- pending and their functions in authController.js file
+
+
+//add google and facebook login api's here and their functions in authController.js file
+
+
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
 

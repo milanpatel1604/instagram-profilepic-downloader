@@ -1,7 +1,11 @@
-// tracks functions:
+const url='http://127.0.0.1:3000';
+const relaxBeginnersId='6117dda2e2468d2e402abbb8';
+const relaxSelfCalmId='6117ddb0e2468d2e402abbb9';
 
+// tracks functions:
 async function displayRelaxTracks(){
     const relaxTracksData= await fetch('/getRelaxTracks').then((res) => res.json())
+    const relaxMelodySoundsData= await fetch('/getRelaxMelodySounds').then((resp) => resp.json())
     if(relaxTracksData.status === 200){
         const unauthorizedWarning=document.getElementById('unauthorizedWarning');
         unauthorizedWarning.style.display='none';
@@ -9,21 +13,54 @@ async function displayRelaxTracks(){
             relaxTracksArr = [];
         }
         else {
-            relaxTracksArr = relaxTracksData.data.tracks;
+            relaxTracksArr =await relaxTracksData.data.tracks;
+            relaxMelodySoundsData.data.tracks.forEach(element => {
+                relaxTracksArr.push(element);
+            });
         }
+        console.log(relaxTracksArr);
+        console.log(relaxMelodySoundsData.data.tracks);
         let relaxTracksTable = document.getElementById("relaxTracksTable");
         let html = "";
         await relaxTracksArr.forEach(function(element, index){
-            html += `<tr class="tableRows">
-                        <th id="itemID" scope="row">${element._id}</th>
-                        <td>${element.title}</td>
-                        <td>${element.category}</td>
-                        <td>${element.artist}</td>
-                        <td>${element.description}</td>
-                        <td>${element.isPremium? "premium" : "normal"}</td>
-                        <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
-                        <td><button class="btn btn-light" onclick="updateTrack(${element._id})">Update</button></td>
-                    </tr>`;
+            const soundCategory=['Nature', 'Musical', 'Other'];
+            if(soundCategory.includes(element.sound_category)){
+                html += `<tr class="tableRows">
+                            <th id="itemID" scope="row">${element._id}</th>
+                            <td>${element.sound_title}</td>
+                            <td>${element.sound_category}</td>
+                            <td> - </td>
+                            <td> - </td>
+                            <td>normal</td>
+                            <td><button class="btn btn-danger" onclick="deleteSound('${element._id}');">Delete</button></td>
+                            <td>
+                            <audio controls id="audioPlayer" src="http://127.0.0.1:3000/static/tracks/relaxTracks/${element._id}.${element.track_extention}" type="audio/mpeg"></audio>
+                            </td>
+                        </tr>`;
+            }
+            if(!element.sound_category){
+                var category=[];
+                if(element.category_id.includes(relaxBeginnersId)){
+                    category.push("Beginners")
+                }
+                if(element.category_id.includes(relaxSelfCalmId)){
+                    category.push("Self-Calm")
+                }
+                html += `<tr class="tableRows">
+                            <th id="itemID" scope="row">${element._id}</th>
+                            <td>${element.title}</td>
+                            <td>${category}</td>
+                            <td>${element.artist}</td>
+                            <td>${element.description}</td>
+                            <td>${element.isPremium? "premium" : "normal"}</td>
+                            <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
+                            <td>
+                                <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
+                                    Play
+                                </button>
+                            </td>
+                        </tr>`;
+            }
            
         });
         if (relaxTracksArr.length != 0) {
@@ -72,4 +109,25 @@ async function deleteTrack(id){
         console.log("Something went wrong! please try again");
     }
 }
-displayRelaxTracks();
+async function deleteSound(id){
+    console.log(id);
+    const result=await fetch(`/relaxMelodySoundDelete/${id}`, {
+        method:"DELETE"
+    })
+    if(result.status === 200){
+        document.location.href='/relaxTracks';
+    }
+    else if (result.status === 400){
+        console.log("Something went wrong! please try again");
+    }
+}
+
+//playTrack
+const trackTitle=document.getElementById('trackTitle');
+const trackImage=document.getElementById('trackImage');
+const audioPlayer=document.getElementById('audioPlayer');
+async function playTrack(id, title, imgExt, trackExt){
+    trackTitle.innerText=title;
+    trackImage.setAttribute('src', `/static/tracks/relaxImages/${id}.${imgExt}`);
+    audioPlayer.setAttribute('src', `/static/tracks/relaxTracks/${id}.${trackExt}`);
+}

@@ -1,7 +1,11 @@
 const mongoose=require('mongoose');
 const Schema = mongoose.Schema;
+const ObjectId=Schema.ObjectId;
 
 const LiveTracksSchema=new Schema({
+    section_id: {
+        type: ObjectId
+    },
     title: {
         type: String
     },
@@ -18,6 +22,15 @@ const LiveTracksSchema=new Schema({
         type: String
     },
     endTime: {
+        type: String
+    },
+    track_duration: {
+        type: String
+    },
+    image_extention: {
+        type: String
+    },
+    track_extention: {
         type: String
     }
 });

@@ -14,6 +14,7 @@ const userRouter = require("./routes/userRoutes");
 const meditationTrackRouter=require("./routes/meditationTrackRoutes");
 const sleepTrackRouter=require("./routes/sleepTrackRoutes");
 const relaxTrackRouter=require("./routes/relaxTrackRoutes");
+const notificationRouter=require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/users", userRouter);
 app.use("/api/meditation", meditationTrackRouter);
 app.use("/api/sleep", sleepTrackRouter);
 app.use("/api/relax", relaxTrackRouter);
+app.use("/api/notification", notificationRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't found ${req.originalUrl} on this server`, 404));

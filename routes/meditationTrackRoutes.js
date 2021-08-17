@@ -1,29 +1,22 @@
 const express = require('express');
 const meditationTrackRoute = express.Router();
 
-
 const meditationController=require('../controllers/meditationController')
 const { title } = require('process');
-
-var path=require('path');
-
-// testing purpose web page
-var viewsFilePath= path.join(__dirname, '../views');
-meditationTrackRoute.get('/', (req, res) => {
-    res.sendFile(viewsFilePath + "/audio.html");
-})
 
 
 //GET  /api/meditation/allMeditationTracks --fetching all tracks of meditation
 meditationTrackRoute.get('/allMeditationTracks', meditationController.allMeditationTracks)
 
+//GET  /api/meditation/getMeditationTrack/:track_id --fetching all tracks of meditation
+meditationTrackRoute.get('/getMeditationTrack/:track_id', meditationController.getMeditationTrack)
 
-// POST  /api/meditation/upload --uploading to db (Testing)-replace trackName with audio file name in local system.
-meditationTrackRoute.post('/upload', meditationController.upload);
+//daily live meditation--
+//GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
+meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
 
-
-// GET  /api/meditation/download/trackID  --fetching perticular audio file by replacing trackName in url with audio filename
-meditationTrackRoute.get('/download/:trackID',meditationController.download);
+//GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
+meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
 
 
 module.exports = meditationTrackRoute;
