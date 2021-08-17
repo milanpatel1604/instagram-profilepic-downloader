@@ -71,7 +71,7 @@
                             <th scope="col">Description</th>
                             <th scope="col">Premium</th>
                             <th scope="col">Delete Track</th>
-                            <th scope="col">Update Track</th>
+                            <th scope="col">Play Track</th>
                         </tr>
                     </thead>
                     <tbody id="meditationTracksTable"></tbody>
@@ -104,9 +104,9 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="category" class="form-label">Category</label>
-                                <select id="category" name="category" class="form-select">
-                                    <option selected>Beginners</option>
-                                    <option>Stress</option>
+                                <select id="category" name="category" class="form-select" multiple required>
+                                    <option selected value="6117dbafe2468d2e402abbb2">Beginners</option>
+                                    <option value="6117dbe5e2468d2e402abbb3">Stress</option>
                                 </select>
                             </div>
                             <div class="col-12">
@@ -121,11 +121,11 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose a track(audio file: .mp3)</label>
+                                <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>
                                 <input type="file" name="audioFile" class="form-control" id="audioFile" required>
                             </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose an image for track</label>
+                                <label for="track" class="form-label">choose an image for trackchoose an image for track (image: png, jpg or jpeg)</label>
                                 <input type="file" name="imageFile" class="form-control" id="imageFile" required>
                             </div>
                             <div class="col-12">
@@ -134,6 +134,23 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="modal fade" id="playModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="trackTitle"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="trackCard">
+                    <img alt="Track image" id="trackImage" class="trackImage">
+                    <audio controls id="audioPlayer" type="audio/mpeg"></audio>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
             </div>
         </div>
     </section>

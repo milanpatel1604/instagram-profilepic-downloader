@@ -22,7 +22,11 @@ async function displayLiveTracks(){
                         <td>${element.date}</td>
                         <td>${element.startTime} - ${element.endTime}</td>
                         <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
-                        <td><button class="btn btn-light" onclick="updateTrack(${element._id})">Update</button></td>
+                        <td>
+                            <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
+                                Play
+                            </button>
+                        </td>
                     </tr>`;
            
         });
@@ -72,4 +76,14 @@ async function deleteTrack(id){
     else if (result.status === 400){
         alert("Something went wrong! please try again");
     }
+}
+
+//playTrack
+const trackTitle=document.getElementById('trackTitle');
+const trackImage=document.getElementById('trackImage');
+const audioPlayer=document.getElementById('audioPlayer');
+async function playTrack(id, title, imgExt, trackExt){
+    trackTitle.innerText=title;
+    trackImage.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveImages/${id}.${imgExt}`);
+    audioPlayer.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveTracks/${id}.${trackExt}`);
 }

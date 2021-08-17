@@ -11,9 +11,8 @@ async function doesHttpOnlyCookieExist(){
         loginBtn.style.display='block';
     }
 }
-setInterval(() => {
-    doesHttpOnlyCookieExist();
-}, 100);
+doesHttpOnlyCookieExist();
+
 
 const logoutBtn=document.getElementById('logoutBtn');
 logoutBtn.addEventListener('click',async ()=>{
