@@ -12,11 +12,15 @@ header{
 
 .logBtn{
     margin-right: 1rem;
+    padding: .6rem 1rem !important;
 }
 .logBtn a{
     text-decoration: none;
     color: white;
-    padding: 1rem;
+    padding: .6rem 1rem;
+}
+.logBtn a:hover{
+    color: white;
 }
 .search{
     width: 15rem !important;

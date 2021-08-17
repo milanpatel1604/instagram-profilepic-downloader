@@ -53,27 +53,27 @@ exports.usersPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/users.html');
 }
 
-//GET /meditationTracksPage --admin tracks page (web)
+//GET /meditationTracks --admin tracks page (web)
 exports.meditationTracksPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/meditationTracks.html');
 }
 
-//GET /tracks --admin tracks page (web)
+//GET /sleepTracks --admin tracks page (web)
 exports.sleepTracksPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/sleepTracks.html');
 }
 
-//GET /tracks --admin tracks page (web)
+//GET /relaxTracks --admin tracks page (web)
 exports.relaxTracksPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/relaxTracks.html');
 }
 
-//GET /tracks --admin tracks page (web)
+//GET /LiveTracks --admin tracks page (web)
 exports.liveTracksPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/liveTracks.html');
 }
 
-//GET /tracks --admin tracks page (web)
+//GET /notification --admin tracks page (web)
 exports.notificationPage=(req, res)=>{
   res.sendFile(viewsFilePath+'/notification.html');
 }
@@ -117,7 +117,7 @@ exports.loginVerification=async (req, res)=>{
 }
 
 
-// Specific Middleware- Check If User Login or not
+// Specific Middleware- Check If admin Login or not
 exports.protect = catchAsync(async (req, res, next) => {
 
   const token=req.cookies.token || '';
@@ -152,6 +152,7 @@ exports.check=async (req, res)=>{
   res.status(200).json({status:200});
 }
 
+//logout
 exports.logout=async (req, res)=>{
   return res.cookie('token', token,{
     expires: new Date(Date.now()),
@@ -173,7 +174,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     });
 });
 
-//GET /admin/getMeditationTracks --admin tracks page (web)
+//GET /getMeditationTracks --admin tracks page (web)
 exports.getMeditationTracks = catchAsync(async (req, res, next) => {
   const tracks = await MeditationTrack.find()
     res.status(200).json({
@@ -185,7 +186,7 @@ exports.getMeditationTracks = catchAsync(async (req, res, next) => {
     });
 });
 
-//GET /admin/getSleepTracks --admin tracks page (web)
+//GET /getSleepTracks --admin tracks page (web)
 exports.getSleepTracks = catchAsync(async (req, res, next) => {
     const tracks = await SleepTrack.find()
     res.status(200).json({
@@ -232,7 +233,7 @@ exports.getLiveTracks = catchAsync(async (req, res, next) => {
     });
 });
 
-//GET /admin/getNotifications --admin tracks page (web)
+//GET /getNotifications --admin tracks page (web)
 exports.getNotifications = catchAsync(async (req, res, next) => {
     const notifications = await Notification.find()
     res.status(200).json({
@@ -313,6 +314,7 @@ exports.uploadSleepTrack = catchAsync(async (req, res, next) => {
     const imageExtention=imageArr[imageArr.length-1];
     let imageExtentionsArr=['png', 'jpg', 'jpeg'];
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
+      //sleep story -- pending-----------------
       if(category.includes(process.env.SleepStoriesId)){
         const newStoryDesc = await SleepStory.create({
           title: title,
