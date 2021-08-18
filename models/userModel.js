@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const ObjectId=Schema.ObjectId;
 
 const userSchema = new Schema({
   name: {
@@ -15,7 +16,6 @@ const userSchema = new Schema({
     unique: true,
     validate: [validator.isEmail, "Please provide a valid Email"],
   },
-  photo: String,
   role: {
     type: String,
     enum: ["user", "prime-user", "admin"],
@@ -36,6 +36,15 @@ const userSchema = new Schema({
       },
       message: "Passwords did not match",
     },
+  },
+  meditationFavorite_id:{
+    type: [ObjectId],
+  },
+  sleepFavorite_id: {
+    type: [ObjectId]
+  },
+  relaxFavorite_id: {
+    type: [ObjectId]
   },
   confirmed: {
     type: Boolean,
