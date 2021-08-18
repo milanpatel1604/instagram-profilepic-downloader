@@ -2,6 +2,7 @@ const express = require('express');
 const meditationTrackRoute = express.Router();
 
 const meditationController=require('../controllers/meditationController')
+const authController = require("../controllers/authController");
 const { title } = require('process');
 
 
@@ -17,6 +18,9 @@ meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
 
 //GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
+
+// userspecific--
+meditationTrackRoute.post('/addMeditationFavorite', authController.protect, meditationController.addMeditationFavorite)
 
 
 module.exports = meditationTrackRoute;

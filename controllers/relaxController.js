@@ -1,5 +1,6 @@
 const RelaxTrack=require('../models/RelaxTracksModel');
 const RelaxMelody=require('../models/relaxMelodiesModel');
+const User=require('../models/userModel');
 
 exports.allRelaxTracks=(req, res)=>{
     
@@ -93,4 +94,16 @@ exports.allRelaxMelodySounds=async (req, res)=>{
         })
         return res.status(200).json(result);
     })
+}
+
+//userspecific
+exports.addRelaxFavorite= async (req, res)=>{
+    const user_id=req.body.user_id;
+    const track_id=req.body.track_id;
+    const newFav= await User.updateOne({_id: user_id}, {
+        $push: {
+            relaxFavorite_id:track_id
+        }
+    })
+    res.json(newFav);
 }

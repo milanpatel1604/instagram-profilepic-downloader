@@ -1,4 +1,5 @@
 const SleepTrack=require('../models/SleepTracksModel');
+const User=require('../models/userModel');
 
 
 exports.allSleepTracks=(req, res)=>{
@@ -61,4 +62,16 @@ exports.getSleepTrack= async (req, res)=>{
             description: docs.description
         });
     })
+}
+
+//userspecific
+exports.addSleepFavorite= async (req, res)=>{
+    const user_id=req.body.user_id;
+    const track_id=req.body.track_id;
+    const newFav= await User.updateOne({_id: user_id}, {
+        $push: {
+            sleepFavorite_id:track_id
+        }
+    })
+    res.json(newFav);
 }
