@@ -1,4 +1,5 @@
 const MeditationTrack=require('../models/MeditationTracksModel');
+const User=require('../models/userModel');
 const LiveTrack=require('../models/LiveTracksModel');
 
 const dotenv = require("dotenv").config();
@@ -91,4 +92,16 @@ exports.getLiveTrack= async (req, res)=>{
             description: docs.description
         });
     })
+}
+
+//userspecific
+exports.addMeditationFavorite= async (req, res)=>{
+    const user_id=req.body.user_id;
+    const track_id=req.body.track_id;
+    const newFav= await User.updateOne({_id: user_id}, {
+        $push: {
+            meditationFavorite_id:track_id
+        }
+    })
+    res.json(newFav);
 }
