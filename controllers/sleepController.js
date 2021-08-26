@@ -47,7 +47,7 @@ exports.allSleepTracks=(req, res)=>{
             Stories: stories,
             Mysterious: mysterious
         })
-        return res.status(200).json(result);
+        return res.status(200).json({status:200, results: result});
     })
 }
 

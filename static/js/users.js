@@ -22,7 +22,7 @@ async function displayUsers() {
                         <td>${element.role}</td>
                     </tr>`;
             
-            if(element.role === "premium"){
+            if(element.role === "premium" || element.role === "admin"){
                 pCount += 1;
             }
         });
