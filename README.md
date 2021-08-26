@@ -25,14 +25,6 @@ relax:
   4. fetching all sounds of relax -- /api/relax/allRelaxMelodySounds --(method: GET), response(title, track_url)
 
 
-
-* allTracks details Format:
-  ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/allTracksFormat.PNG)
-* audio details upload format: (method: POST) body-as shown in image below 
-  ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/uploadAudioDetailsFormat.PNG)
-
-
-
 -----------ignore------------------
 ref ID's:
 section-
