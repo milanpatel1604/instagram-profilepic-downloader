@@ -4,8 +4,6 @@ authentication:(method: POST)
   1. signup: /api/users/signup --onSuccess(201), onExistingUser(409) --body({name, email, password, passwordConfirm})
   2. login: /api/users/login --onSuccess(200), onInvalidCredentials(401) --body({email, password})
   3. forgotpassword: /api/users/forgotPassword  --pending
-  4. signup & login response format:
-    ![alt text](https://github.com/milanpatel1604/breathing-app-final-master/blob/master/ss/signup%20login%20response%20format.PNG)
   
 userspecific:
   1. /api/users/addUserMood --onSuccess(200), method(post), requirements (user_id: user_id, mood: Amazing or Happy or Okay or Confused or Sad)
