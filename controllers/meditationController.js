@@ -38,6 +38,7 @@ exports.allMeditationTracks=async (req, res)=>{
             Beginners: beginners,
             Stress:stress,
         })
+        console.log(result);
         return res.status(200).json({status:200, results: result});
     })
 }
@@ -77,7 +78,7 @@ exports.allLiveTracks=(req, res)=>{
                 track_id: element._id,
             })
         })
-        return res.status(200).json(result);
+        return res.status(200).json({status:200, results: result});
     })
 }
 
@@ -103,5 +104,5 @@ exports.addMeditationFavorite= async (req, res)=>{
             meditationFavorite_id:track_id
         }
     })
-    res.json(newFav);
+    res.status(200).json({status:200});
 }

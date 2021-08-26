@@ -1,4 +1,6 @@
 const User = require("../models/userModel");
+const MoodChart = require("../models/MoodChartModal");
+
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
@@ -48,4 +50,14 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     status: "success",
     data: null,
   });
+});
+
+//adding user mood
+exports.addUserMood= catchAsync(async (req, res, next) => {
+  await MoodChart.create({
+    user_id: req.body.user_id,
+    date: new Date(),
+    mood: req.body.mood.toLowerCase()
+  })
+  res.status(200).json({status: 200})
 });

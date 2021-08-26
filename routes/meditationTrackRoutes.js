@@ -12,10 +12,9 @@ meditationTrackRoute.get('/allMeditationTracks', meditationController.allMeditat
 //GET  /api/meditation/getMeditationTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getMeditationTrack/:track_id', meditationController.getMeditationTrack)
 
-//daily live meditation--
+//daily live meditation-- pending...
 //GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
 meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
-
 //GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
 

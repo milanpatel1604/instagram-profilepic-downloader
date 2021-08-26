@@ -36,7 +36,7 @@ exports.allRelaxTracks=(req, res)=>{
             Beginners: beginners,
             'Self-Calm': self_calm,
         })
-        return res.status(200).json(result);
+        return res.status(200).json({status:200, results: result});
     })
 }
 
@@ -92,7 +92,7 @@ exports.allRelaxMelodySounds=async (req, res)=>{
             Musical: Musical,
             Other: Other
         })
-        return res.status(200).json(result);
+        return res.status(200).json({status:200, results: result});
     })
 }
 
