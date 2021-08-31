@@ -19,7 +19,9 @@ meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
 meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
 
 // userspecific--
-meditationTrackRoute.post('/addMeditationFavorite', authController.protect, meditationController.addMeditationFavorite)
+meditationTrackRoute.post('/addMeditationFavorite', meditationController.addMeditationFavorite)
+meditationTrackRoute.get('/getMeditationFavorite/:user_id', meditationController.getMeditationFavorite)
+meditationTrackRoute.post('/removeMeditationFavorite', meditationController.removeMeditationFavorite)
 
 
 module.exports = meditationTrackRoute;
