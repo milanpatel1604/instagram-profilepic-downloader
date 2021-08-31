@@ -104,6 +104,57 @@ exports.addRelaxFavorite= async (req, res)=>{
         $push: {
             relaxFavorite_id:track_id
         }
+    }, (err, docs)=>{
+        if(err){
+            res.json(400).json({status:400, message:err});
+        }
+        else{
+            res.status(201).json({status:201, message: "Added Successfully"});
+        }
     })
-    res.json(newFav);
+}
+
+exports.getRelaxFavorite=async (req, res)=>{
+    const user_id=req.params.user_id;
+    User.findOne({_id:user_id}, async (err, docs)=>{
+
+        if(err){
+            return res.status(400).json({status: 400, error: err});
+        }
+        
+        var favTracks=[];
+        for(let i=0; i<docs.relaxFavorite_id.length; i++){
+            await RelaxTrack.findOne({_id: docs.relaxFavorite_id[i]}, async (err, element)=>{
+                if(err){
+                    return res.status(400).json({status: 400, error: err});
+                }
+                await favTracks.push({
+                    title: element.title,
+                    artist: element.artist,
+                    image_url: process.env.DOMAIN + `/static/tracks/relaxImages/${element._id}.${element.image_extention}`,
+                    track_id: element._id,
+                    isPremium: element.isPremium
+                })
+            })
+        }
+        await console.log(favTracks);
+        return res.status(200).json({status:200, results: favTracks});
+    })
+}
+
+exports.removeRelaxFavorite= async (req, res)=>{
+    const user_id=req.body.user_id;
+    const track_id=req.body.track_id;
+    const rmvFav=await User.updateOne({_id: user_id}, {
+        $pull: {
+            relaxFavorite_id:track_id
+        }
+    }, (err, docs)=>{
+        if(err){
+            res.json(400).json({status:400, message:err});
+        }
+        else{
+            res.status(202).json({status:202, message: "Removed Successfully"});
+        }
+    })
 }
