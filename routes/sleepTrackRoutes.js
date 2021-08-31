@@ -17,6 +17,8 @@ sleepTrackRoute.get('/getSleepTrack/:track_id', sleepController.getSleepTrack)
 
 
 // userspecific--
-sleepTrackRoute.post('/addSleepFavorite', authController.protect, sleepController.addSleepFavorite);
+sleepTrackRoute.post('/addSleepFavorite', sleepController.addSleepFavorite);
+sleepTrackRoute.get('/getSleepFavorite/:user_id', sleepController.getSleepFavorite)
+sleepTrackRoute.post('/removeSleepFavorite', sleepController.removeSleepFavorite)
 
 module.exports = sleepTrackRoute;
