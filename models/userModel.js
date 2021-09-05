@@ -13,8 +13,12 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: [true, "Please provide your email"],
-    unique: true,
+    unique: [true, "Email already exist"],
     validate: [validator.isEmail, "Please provide a valid Email"],
+  },
+  email_verified: {
+    type: Boolean,
+    default: false
   },
   role: {
     type: String,
@@ -27,16 +31,6 @@ const userSchema = new Schema({
     minlength: 8,
     select: false,
   },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: "Passwords did not match",
-    },
-  },
   meditationFavorite_id:{
     type: [ObjectId],
   },
@@ -46,15 +40,11 @@ const userSchema = new Schema({
   relaxFavorite_id: {
     type: [ObjectId]
   },
-  confirmed: {
-    type: Boolean,
-    defaultValue: false,
-  },
   passwordChangedAt: {
     type: Date,
   },
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+  verificationToken: String,
+  verificationTokenExpiresAt: Date,
   active: {
     type: Boolean,
     default: true,
@@ -67,11 +57,10 @@ userSchema.pre("save", async function (next) {
 
   this.password = await bcrypt.hash(this.password, 12);
 
-  this.passwordConfirm = undefined;
   next();
 });
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
@@ -103,19 +92,16 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString("hex");
+userSchema.methods.createVerificationToken = function () {
+  const token = Math.floor(100000+Math.random()*900000);
 
-  this.passwordResetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  this.verificationToken = token
 
-  console.log({ resetToken }, this.passwordResetToken);
+  console.log({ token }, this.verificationToken);
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.verificationTokenExpiresAt = Date.now() + 2 * 60 * 1000;
 
-  return resetToken;
+  return token;
 };
 
 const User = mongoose.model("User", userSchema);
