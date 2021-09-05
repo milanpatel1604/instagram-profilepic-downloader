@@ -26,35 +26,81 @@ const createSendToken = (user, statusCode, res) => {
     token,
     data: {
       _id: user._id,
-      role: user.role,
-      active:user.active,
       name: user.name,
-      email: user.email
+      role: user.role,
+      active: user.active,
+      email: user.email,
+      email_verified: user.email_verified
     } 
   });
 };
 
 // for-Signup
-exports.signup = (req, res, next) => {
-  const { name, email, password, passwordConfirm } = req.body;
-  User.findOne({email:email},async (err, docs)=>{
-    if(!docs){
-      const newUser =await User.create({
-        name: name,
-        email: email,
-        password: password,
-        passwordConfirm: passwordConfirm,
+exports.signup =async (req, res, next) => {
+  const { name, email, password} = req.body;
+  try {
+    const user =await User.create({
+      name: name,
+      email: email,
+      password: password,
+    });
+    const token = user.createVerificationToken();
+    await user.save({ validateBeforeSave: false });
+
+    const message = `To verify your email Enter this OTP in the app : ${token}
+    Expires in 5 minutes`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: "your Email verification OTP (valid for 5 min)",
+        message: message,
+      }, (err, data)=>{
+        if(err){
+          res.status(400).json({status: 400, message: "there was an error sending mail"+err})
+        }
+        else{
+          res.status(200).json({status: 200, message: "Mail sent successfully"})
+        }
       });
-      createSendToken(newUser, 201, res);
+    } catch (err) {
+      console.log(err);
+      (user.verificationToken = undefined),
+        (user.verificationTokenExpiresAt = undefined),
+        await user.save({ validateBeforeSave: false });
+
+      return next(
+        new AppError("There was an error sending email. TRY AGAIN LATER"),
+        500
+      );
     }
-    else if(err){
-      return err;
+  } catch (error) {
+    if(error.code == 11000){
+      return res.status(409).json({status: 409, message: "Email already exists"})
     }
-    else{
-      return res.status(409).json({error:"duplicateUser", message:"user already exists"});
-    }
-  });
+    return res.status(402).json({status: 402, message: error});
+  }
 };
+
+//verify mail using otp(token) 
+exports.varifyEmail = async(req, res, next)=>{
+  const user =await User.findOne({
+    email: req.body.email,
+    verificationToken: req.body.token,
+    verificationTokenExpiresAt: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({status:400, message:"invalid otp or otp is experied"})
+  }
+
+  (user.email_verified = true),
+  (user.verificationToken = undefined),
+  (user.verificationTokenExpiresAt = undefined),
+  await user.save();
+
+  createSendToken( user, 201, res);
+}
 
 // for- Login
 exports.login = async (req, res, next) => {
@@ -65,14 +111,14 @@ exports.login = async (req, res, next) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
-
-  // if(!user.confirmed){
-    //   return res.status(401).json({message:"please confirm your email to login(check email)"});
-    // }
-    
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Incorrect email or password", 401));
-    }
+  
+  if(!user.email_verified){
+    return res.status(401).json({status:401, message:"please verify your email to login(check email)"});
+  }
+  
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError("Incorrect email or password", 401));
+  }
     
     createSendToken(user, 200, res);
 };
@@ -134,29 +180,28 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("There is no user with the given email", 404));
   }
 
-  const resetToken = user.createPasswordResetToken();
+  const resetToken = user.createVerificationToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? Submit a new Password to ${resetURL}`;
+  const message = `Forgot your password? reset using OTP: ${resetToken}`;
 
   try {
     await sendEmail({
       email: user.email,
-      subject: "your password reset token (valid for 10 min)",
-      message,
-    });
-
-    res.status(200).json({
-      status: "success",
-      message: "Token send to email",
+      subject: "your password reset OTP (valid for 5 min)",
+      message: message,
+    }, (err, data)=>{
+      if(err){
+        res.status(400).json({status: 400, message: "there was an error sending mail"+err})
+      }
+      else{
+        res.status(200).json({status: 200, message: "Mail sent successfully"})
+      }
     });
   } catch (err) {
-    (user.passwordResetToken = undefined),
-      (user.passwordResetExpires = undefined),
+    console.log(err);
+    (user.verificationToken = undefined),
+      (user.verificationTokenExpiresAt = undefined),
       await user.save({ validateBeforeSave: false });
 
     return next(
@@ -167,14 +212,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
 
   const user = await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+    verificationToken: req.body.token,
+    verificationTokenExpiresAt: { $gt: Date.now() },
   });
 
   if (!user) {
@@ -182,10 +223,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   }
 
   (user.password = req.body.password),
-    (user.passwordConfirm = req.body.passwordConfirm),
-    (user.passwordResetToken = undefined),
-    (user.passwordResetExpires = undefined),
-    await user.save();
+  (user.verificationToken = undefined),
+  (user.verificationTokenExpiresAt = undefined),
+  await user.save();
 
   createSendToken(user, 200, res);
 });
@@ -199,7 +239,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   }
 
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
   createSendToken(user, 200, res);
