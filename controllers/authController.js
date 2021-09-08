@@ -48,12 +48,12 @@ exports.signup =async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     const message = `To verify your email Enter this OTP in the app : ${token}
-    Expires in 5 minutes`;
+    Expires in 2 minutes`;
 
     try {
       await sendEmail({
         email: user.email,
-        subject: "your Email verification OTP (valid for 5 min)",
+        subject: "your Email verification OTP (valid for 2 min)",
         message: message,
       }, (err, data)=>{
         if(err){
@@ -82,6 +82,42 @@ exports.signup =async (req, res, next) => {
   }
 };
 
+exports.resendVerifyEmailToken = async (req, res, next) => {
+  const user =await User.findOne({
+    email: req.body.email,
+  });
+  const token = user.createVerificationToken();
+  await user.save({ validateBeforeSave: false });
+
+  const message = `To verify your email Enter this OTP in the app : ${token}
+  Expires in 2 minutes`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "your Email verification OTP (valid for 2 min)",
+      message: message,
+    }, (err, data)=>{
+      if(err){
+        res.status(400).json({status: 400, message: "there was an error sending mail"+err})
+      }
+      else{
+        res.status(200).json({status: 200, message: "Mail sent successfully"})
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    (user.verificationToken = undefined),
+      (user.verificationTokenExpiresAt = undefined),
+      await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError("There was an error sending email. TRY AGAIN LATER"),
+      500
+    );
+  }
+};
+
 //verify mail using otp(token) 
 exports.varifyEmail = async(req, res, next)=>{
   const user =await User.findOne({
@@ -107,18 +143,22 @@ exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new AppError("please provide email or password", 400));
+    return next(new AppError("please provide email and password", 400));
   }
 
   const user = await User.findOne({ email }).select("+password");
-  
+  console.log(user);
+
+  if (!user) {
+    return next(new AppError("No user with this email, please signup", 404));
+  }
+  if (!(await user.correctPassword(password, user.password))){
+    return next(new AppError("Incorrect password", 401));
+  }
   if(!user.email_verified){
-    return res.status(401).json({status:401, message:"please verify your email to login(check email)"});
+    return next(new AppError("please verify your email to login(check email)", 402));
   }
   
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError("Incorrect email or password", 401));
-  }
     
     createSendToken(user, 200, res);
 };
@@ -159,6 +199,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.checkLogin= async (req,res)=>{
+  res.json(200).json({status:200, message: "valid user"})
+}
 
 // Specific Middleware- For Admin, Prime-User
 exports.restrictTo = (...roles) => {
@@ -235,7 +279,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password");
 
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError("Your current password is wrong.", 401));
+    return next(new AppError("Your current password is wrong.", 402));
   }
 
   user.password = req.body.password;
