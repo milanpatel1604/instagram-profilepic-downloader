@@ -9,7 +9,9 @@ const nodemailer = require('nodemailer');
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 
-
+//google auth
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // functions
 const signToken = (id) => {
@@ -22,7 +24,7 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
   return res.status(statusCode).json({
-    status: "success",
+    status: statusCode,
     token,
     data: {
       _id: user._id,
@@ -162,6 +164,41 @@ exports.login = async (req, res, next) => {
     
     createSendToken(user, 200, res);
 };
+
+//login with google
+exports.loginWithGoogle= async (req, res, next)=>{
+  const token=req.body.token;
+  try {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+        //if multiple clients access the backend:
+        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    });
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+    const user = await User.findOne({email: payload.email},async (err, doc)=>{
+      if(err){
+        return next(new AppError(`error:${err}`, 400));
+      }
+      if(!doc){
+        const user =await User.create({
+          name: payload.name,
+          email: payload.email,
+          email_verified: payload.email_verified,
+        })
+        console.log('new user'+user)
+        await createSendToken( user, 200, res);
+      }
+      if(doc){
+        console.log('already a user'+doc)
+        await createSendToken( doc, 200, res);
+      }
+    })
+  } catch(err) {
+    return next(new AppError(`something went wrong(error: ${err})--please use another account or method to login or signup`, 401));
+  } 
+}
 
 // Specific Middleware- Check If User Login or not
 exports.protect = catchAsync(async (req, res, next) => {
