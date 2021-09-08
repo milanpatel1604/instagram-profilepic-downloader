@@ -14,8 +14,9 @@ router.post('/resendVerifyEmailToken', authController.resendVerifyEmailToken)
 router.post("/verifyEmail", authController.varifyEmail);
 
 //add google and facebook login api's here and their functions in authController.js file
+router.post('/loginWithGoogle', authController.loginWithGoogle)
 
-
+//other routes
 router.post("/forgotPassword", authController.forgotPassword);
 router.post("/resetPassword", authController.resetPassword);
 
