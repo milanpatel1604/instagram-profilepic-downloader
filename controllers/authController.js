@@ -187,11 +187,11 @@ exports.loginWithGoogle= async (req, res, next)=>{
           email: payload.email,
           email_verified: payload.email_verified,
         })
-        console.log('new user'+user)
+        console.log('new user')
         await createSendToken( user, 200, res);
       }
       if(doc){
-        console.log('already a user'+doc)
+        console.log('already a user')
         await createSendToken( doc, 200, res);
       }
     })
