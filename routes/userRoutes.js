@@ -8,7 +8,9 @@ const router = express.Router();
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 
-//add email verification api here-- pending and their functions in authController.js file
+router.post('/resendVerifyEmailToken', authController.resendVerifyEmailToken)
+
+//email verification api
 router.post("/verifyEmail", authController.varifyEmail);
 
 //add google and facebook login api's here and their functions in authController.js file
@@ -17,9 +19,12 @@ router.post("/verifyEmail", authController.varifyEmail);
 router.post("/forgotPassword", authController.forgotPassword);
 router.post("/resetPassword", authController.resetPassword);
 
+//autologin or check
+router.post("/checkLogin", authController.protect, authController.checkLogin);
+
 router.post("/updateMyPassword", authController.protect, authController.updatePassword);
 
-router.patch("/updateMe", authController.protect, userController.updateMe);
+router.post("/updateMe", authController.protect, userController.updateMe);
 router.delete("/deleteMe", authController.protect, userController.deleteMe);
 
 router.post('/addUserMood', authController.protect, userController.addUserMood);
