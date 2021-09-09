@@ -2,12 +2,12 @@
 API's:
 
 authentication:(method: POST)
-  1. signup: /api/users/signup --onSuccess(200), --onErrorSendingMail(400 or 500), onExistingUser(409) --body({name, email, password}) --after signup-onSuccess email with an otp is sent to user which is valid for 2 min
-  2. resend verify email otp: /api/users/resendverifyEmailToken --body({email}) --onSuccess(200), --onErrorSendingMail(400 or 500), onExistingUser(409) --after signup-onSuccess one more email with an otp is sent to user which is valid for 2 min
+  1. signup: /api/users/signup --onSuccess(200), --onErrorSendingMail(500), onExistingUser(409) --body({name, email, password}) --after signup-onSuccess email with an otp is sent to user which is valid for 2 min
+  2. resend verify email otp: /api/users/resendverifyEmailToken --body({email}) --onSuccess(200), --onErrorSendingMail(500), --after signup-onSuccess one more email with an otp is sent to user which is valid for 2 min
   3. verify email: /api/users/verifyEmail --body({email, token}) --onSuccess(201)+userdata, --onInvalid_or_onTokenExpired(400)
   4. login: /api/users/login  --body({email, password}), --onSuccess(200), onNoUserFoundWithEmail(404), onIncorrectPassword(401), unVerifiedEmail(402)-fetch api/users/resendverifyEmailToken with email in body to send otp and send otp to api/users/verifyEmail
   5. checkLogin: /api/users/checkLogin --headers(authorization:Bearer /*JWTtoken*/), --onSuccess(200), --onTokenExpire(500) redirect to login
-  6. forgotpassword: /api/users/forgotPassword  --body(email) --onNoUserFound(404), --onErrorSendingMail(400 or 500) --after onSuccess email with an otp is sent to user which is valid for 2 min
+  6. forgotpassword: /api/users/forgotPassword  --body(email) --onNoUserFound(404), --onErrorSendingMail(500) --after onSuccess email with an otp is sent to user which is valid for 2 min
   7. resetpassword: /api/users/resetPassword --body({token, password}) --onSuccess(200)+userdata --onInvalid_or_onTokenExpired(400)
   8. login with google: /api/users/loginWithGoogle  --body({token}), --onSuccess(200)+userdata, --onGoogleApiError(401), onDatabaseError(400)
 

@@ -30,7 +30,6 @@ const createSendToken = (user, statusCode, res) => {
       _id: user._id,
       name: user.name,
       role: user.role,
-      active: user.active,
       email: user.email,
       email_verified: user.email_verified
     } 
@@ -57,24 +56,15 @@ exports.signup =async (req, res, next) => {
         email: user.email,
         subject: "your Email verification OTP (valid for 2 min)",
         message: message,
-      }, (err, data)=>{
-        if(err){
-          res.status(400).json({status: 400, message: "there was an error sending mail"+err})
-        }
-        else{
-          res.status(200).json({status: 200, message: "Mail sent successfully"})
-        }
-      });
+      })
+      res.status(200).json({status: 200, message: "Mail sent successfully"})
     } catch (err) {
       console.log(err);
       (user.verificationToken = undefined),
         (user.verificationTokenExpiresAt = undefined),
         await user.save({ validateBeforeSave: false });
 
-      return next(
-        new AppError("There was an error sending email. TRY AGAIN LATER"),
-        500
-      );
+      return res.status(500).json({message:"There was an error sending email. TRY AGAIN LATER OR USE ANOTHER EMAIL"});
     }
   } catch (error) {
     if(error.code == 11000){
@@ -99,14 +89,8 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
       email: user.email,
       subject: "your Email verification OTP (valid for 2 min)",
       message: message,
-    }, (err, data)=>{
-      if(err){
-        res.status(400).json({status: 400, message: "there was an error sending mail"+err})
-      }
-      else{
-        res.status(200).json({status: 200, message: "Mail sent successfully"})
-      }
-    });
+    })
+    res.status(200).json({status: 200, message: "Mail sent successfully"})
   } catch (err) {
     console.log(err);
     (user.verificationToken = undefined),
@@ -114,7 +98,7 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
       await user.save({ validateBeforeSave: false });
 
     return next(
-      new AppError("There was an error sending email. TRY AGAIN LATER"),
+      new AppError("There was an error sending email. TRY AGAIN LATER OR USE ANOTHER EMAIL"),
       500
     );
   }
@@ -161,8 +145,7 @@ exports.login = async (req, res, next) => {
     return next(new AppError("please verify your email to login(check email)", 402));
   }
   
-    
-    createSendToken(user, 200, res);
+  createSendToken(user, 200, res);
 };
 
 //login with google
@@ -238,7 +221,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.checkLogin= async (req,res)=>{
-  res.json(200).json({status:200, message: "valid user"})
+  console.log(req.user)
+  createSendToken(req.user, 200, res)
 }
 
 // Specific Middleware- For Admin, Prime-User
@@ -271,14 +255,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       email: user.email,
       subject: "your password reset OTP (valid for 5 min)",
       message: message,
-    }, (err, data)=>{
-      if(err){
-        res.status(400).json({status: 400, message: "there was an error sending mail"+err})
-      }
-      else{
-        res.status(200).json({status: 200, message: "Mail sent successfully"})
-      }
-    });
+    })
+    res.status(200).json({status: 200, message: "Mail sent successfully"})
   } catch (err) {
     console.log(err);
     (user.verificationToken = undefined),
