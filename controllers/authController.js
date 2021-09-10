@@ -31,7 +31,8 @@ const createSendToken = (user, statusCode, res) => {
       name: user.name,
       role: user.role,
       email: user.email,
-      email_verified: user.email_verified
+      email_verified: user.email_verified,
+      login_using: user.login_using
     } 
   });
 };
@@ -44,6 +45,7 @@ exports.signup =async (req, res, next) => {
       name: name,
       email: email,
       password: password,
+      login_using: "email"
     });
     const token = user.createVerificationToken();
     await user.save({ validateBeforeSave: false });
@@ -138,6 +140,9 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return next(new AppError("No user with this email, please signup", 404));
   }
+  if(!user.password){
+    return next(new AppError(`Please login using ${user.login_using} OR use another email`, 405));
+  }
   if (!(await user.correctPassword(password, user.password))){
     return next(new AppError("Incorrect password", 401));
   }
@@ -169,6 +174,7 @@ exports.loginWithGoogle= async (req, res, next)=>{
           name: payload.name,
           email: payload.email,
           email_verified: payload.email_verified,
+          login_using: "google"
         })
         console.log('new user')
         await createSendToken( user, 200, res);
@@ -181,6 +187,42 @@ exports.loginWithGoogle= async (req, res, next)=>{
   } catch(err) {
     return next(new AppError(`something went wrong(error: ${err})--please use another account or method to login or signup`, 401));
   } 
+}
+
+//login with facebook
+exports.loginWithFacebook= async (req, res, next)=>{
+  const token=req.body.token;
+  // try {
+  //   const ticket = await client.verifyIdToken({
+  //       idToken: token,
+  //       audience: process.env.GOOGLE_CLIENT_ID,
+  //       //if multiple clients access the backend:
+  //       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+  //   });
+  //   const payload = ticket.getPayload();
+  //   const userid = payload['sub'];
+  //   const user = await User.findOne({email: payload.email},async (err, doc)=>{
+  //     if(err){
+  //       return next(new AppError(`error:${err}`, 400));
+  //     }
+  //     if(!doc){
+  //       const user =await User.create({
+  //         name: payload.name,
+  //         email: payload.email,
+  //         email_verified: payload.email_verified,
+  //         login_using: "facebook"
+  //       })
+  //       console.log('new user')
+  //       await createSendToken( user, 200, res);
+  //     }
+  //     if(doc){
+  //       console.log('already a user')
+  //       await createSendToken( doc, 200, res);
+  //     }
+  //   })
+  // } catch(err) {
+  //   return next(new AppError(`something went wrong(error: ${err})--please use another account or method to login or signup`, 401));
+  // } 
 }
 
 // Specific Middleware- Check If User Login or not
