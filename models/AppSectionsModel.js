@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const AppSectionsSchema=new Schema({
     section_name: {
-        type: String
+        type: String,
+        unique: [true, "Section already exist"],
     },
     section_description: {
         type: String

@@ -3,7 +3,7 @@ const dotenv=require("dotenv").config();
 const mg=require('nodemailer-mailgun-transport');
 
 
-const sendEmail = async (options, cb) => {
+const sendEmail = async (options) => {
   const auth={
     auth: {
       api_key: process.env.MAILGUN_API,
@@ -18,13 +18,7 @@ const sendEmail = async (options, cb) => {
     text: options.message,
   };
 
-  await transporter.sendMail(mailOptions, function(err, data){
-    if (err) {
-      cb(err, null);
-    } else {
-      cb( null, data);
-    }
-  });
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendEmail;

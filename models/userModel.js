@@ -16,6 +16,10 @@ const userSchema = new Schema({
     unique: [true, "Email already exist"],
     validate: [validator.isEmail, "Please provide a valid Email"],
   },
+  login_using: {
+    type: String,
+    enum: ["email", "google", "facebook"],
+  },
   email_verified: {
     type: Boolean,
     default: false
@@ -27,7 +31,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, "Please provide a password"],
     minlength: 8,
     select: false,
   },
