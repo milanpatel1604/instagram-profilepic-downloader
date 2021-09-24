@@ -68,3 +68,8 @@ async function deleteNotification(id){
         alert("Something went wrong! please try again");
     }
 }
+
+window.addEventListener("load", function () {
+    const loader = document.querySelector(".loader");
+    loader.className += " hidden"; // class "loader hidden"
+});

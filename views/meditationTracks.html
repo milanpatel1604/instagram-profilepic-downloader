@@ -13,6 +13,10 @@
 </head>
 
 <body>
+    <div class="loader">
+        <img src="../static/images/logo.png" alt="Loading..." />
+        <span>Loading...</span>
+    </div>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -56,9 +60,9 @@
         <div class="tracksSection">
             <h2>Breathing-App Meditation-Tracks details</h2>
             <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                data-bs-whatever="@mdo" id="addMeditationTrackBtn">Add Track</button>
+            data-bs-whatever="@mdo" id="addMeditationTrackBtn">Add Track</button>
             <input class="form-control me-2 search" id="meditationTracksSearch" type="search"
-                placeholder="Filter by searching" aria-label="Search">
+            placeholder="Filter by searching" aria-label="Search">
             <span id="tracksCount"></span>
             <div class="container">
                 <table class="table table-dark table-striped">

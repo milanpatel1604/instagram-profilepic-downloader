@@ -131,3 +131,8 @@ async function playTrack(id, title, imgExt, trackExt){
     trackImage.setAttribute('src', `/static/tracks/relaxImages/${id}.${imgExt}`);
     audioPlayer.setAttribute('src', `/static/tracks/relaxTracks/${id}.${trackExt}`);
 }
+
+window.addEventListener("load", function () {
+    const loader = document.querySelector(".loader");
+    loader.className += " hidden"; // class "loader hidden"
+});
