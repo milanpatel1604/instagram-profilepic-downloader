@@ -87,3 +87,8 @@ async function playTrack(id, title, imgExt, trackExt){
     trackImage.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveImages/${id}.${imgExt}`);
     audioPlayer.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveTracks/${id}.${trackExt}`);
 }
+
+window.addEventListener("load", function () {
+    const loader = document.querySelector(".loader");
+    loader.className += " hidden"; // class "loader hidden"
+});

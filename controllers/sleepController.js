@@ -1,5 +1,49 @@
 const SleepTrack=require('../models/SleepTracksModel');
 const User=require('../models/userModel');
+const MusicCategory= require('../models/MusicCategoriesModal');
+const AppSection= require('../models/AppSectionsModel');
+
+const dotenv = require("dotenv").config();
+
+//functions
+// For Admin-Specific:
+async function getCategoryNameOrId(section_id, category_id, category_name) {
+    if (!category_name) {
+        const result = await MusicCategory.findById(category_id, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result.category_name;
+    }
+    else {
+        const result = await MusicCategory.findOne({ section_id: section_id, category_name: category_name }, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result._id;
+    }
+}
+
+async function getSectionNameOrId(section_id, section_name) {
+    if (!section_name) {
+        const result = await AppSection.findById(section_id, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result.section_name;
+    }
+    else {
+        const result = await AppSection.findOne({ section_name: section_name }, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result._id;
+    }
+}
 
 
 exports.allSleepTracks=(req, res)=>{
@@ -13,8 +57,16 @@ exports.allSleepTracks=(req, res)=>{
         var music=[];
         var stories=[];
         var mysterious=[];
-        docs.forEach(async (element)=>{
-            if(element.category_id.includes(process.env.SleepMusicId)){
+
+        const section_id=await getSectionNameOrId(null, 'sleep');
+        const music_id=await getCategoryNameOrId( section_id, null, 'music');
+        const stories_id=await getCategoryNameOrId( section_id, null, 'stories');
+        const mysterious_id=await getCategoryNameOrId( section_id, null, 'mysterious');
+
+        console.log("section_id: "+ section_id + " has "+music_id, stories_id, mysterious_id+" categories.");
+
+        await Promise.all(docs.map(async (element)=>{
+            if(element.category_id.includes(music_id)){
                 await music.push({
                     title: element.title,
                     artist: element.artist,
@@ -23,7 +75,7 @@ exports.allSleepTracks=(req, res)=>{
                     isPremium: element.isPremium
                 })
             }
-            if(element.category_id.includes(process.env.SleepStoriesId)){
+            if(element.category_id.includes(stories_id)){
                 await stories.push({
                     title: element.title,
                     artist: element.artist,
@@ -32,7 +84,7 @@ exports.allSleepTracks=(req, res)=>{
                     isPremium: element.isPremium
                 })
             }
-            if(element.category_id.includes(process.env.SleepMysteriousId)){
+            if(element.category_id.includes(mysterious_id)){
                 await mysterious.push({
                     title: element.title,
                     artist: element.artist,
@@ -41,7 +93,7 @@ exports.allSleepTracks=(req, res)=>{
                     isPremium: element.isPremium
                 })
             }
-        })
+        }))
         await result.push({
             Music: music,
             Stories: stories,
