@@ -10,6 +10,7 @@ authentication:(method: POST)
   6. forgotpassword: /api/users/forgotPassword  --body(email) --onNoUserFound(404), --onErrorSendingMail(500) --after onSuccess email with an otp is sent to user which is valid for 2 min
   7. resetpassword: /api/users/resetPassword --body({token, password}) --onSuccess(200)+userdata --onInvalid_or_onTokenExpired(400)
   8. login with google: /api/users/loginWithGoogle  --body({token}), --onSuccess(200)+userdata, --onGoogleApiError(401), onDatabaseError(400)
+  9. login with facebook: /api/users/loginWithFacebook --body({access_token, user_id, email, name}), --onSuccess(200)+userdata, onDatabaseError(400)
 
 userspecific:
   1. update or change password: /api/users/updateMyPassword --body({passwordCurrent, password}), --headers(authorization:Bearer /*JWTtoken*/), --onSuccess(200), --onWrongPasswordCurrent(402), method(post)
