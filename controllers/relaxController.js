@@ -1,6 +1,51 @@
 const RelaxTrack=require('../models/RelaxTracksModel');
 const RelaxMelody=require('../models/relaxMelodiesModel');
 const User=require('../models/userModel');
+const MusicCategory= require('../models/MusicCategoriesModal');
+const AppSection= require('../models/AppSectionsModel');
+
+const dotenv = require("dotenv").config();
+
+//functions
+// For Admin-Specific:
+async function getCategoryNameOrId(section_id, category_id, category_name) {
+    if (!category_name) {
+        const result = await MusicCategory.findById(category_id, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result.category_name;
+    }
+    else {
+        const result = await MusicCategory.findOne({ section_id: section_id, category_name: category_name }, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result._id;
+    }
+}
+
+async function getSectionNameOrId(section_id, section_name) {
+    if (!section_name) {
+        const result = await AppSection.findById(section_id, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result.section_name;
+    }
+    else {
+        const result = await AppSection.findOne({ section_name: section_name }, (err) => {
+            if (err) {
+                res.json("Something went wrong: " + err);
+            }
+        });
+        return result._id;
+    }
+}
+
 
 exports.allRelaxTracks=(req, res)=>{
     
@@ -8,12 +53,18 @@ exports.allRelaxTracks=(req, res)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
+        
+        const section_id=await getSectionNameOrId(null, 'relax');
+        const beginners_id=await getCategoryNameOrId( section_id, null, 'beginners');
+        const self_calm_id=await getCategoryNameOrId( section_id, null, 'self-calm');
+
+        console.log("section_id: "+ section_id + " has "+beginners_id, self_calm_id+" categories.");
         console.log(docs);
         var result=[];
         var beginners=[];
         var self_calm=[];
         docs.forEach(async (element)=>{
-            if(element.category_id.includes(process.env.RelaxBeginnersId)){
+            if(element.category_id.includes(beginners_id)){
                 await beginners.push({
                     title: element.title,
                     artist: element.artist,
@@ -22,7 +73,7 @@ exports.allRelaxTracks=(req, res)=>{
                     isPremium: element.isPremium
                 })
             }
-            if(element.category_id.includes(process.env.RelaxSelfCalmId)){
+            if(element.category_id.includes(self_calm_id)){
                 await self_calm.push({
                     title: element.title,
                     artist: element.artist,

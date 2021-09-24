@@ -308,10 +308,15 @@ exports.uploadMeditationTrack = async (req, res, next) => {
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
       var category_id_arr=[];
       const sectionId=await getSectionNameOrId(null, 'meditation');
-      await Promise.all(Array(category).map(async (element) => {
-        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+      if(Array.isArray(category)){
+        await Promise.all(category.map(async (element) => {
+          const categoryId=await getCategoryNameOrId(sectionId, null, element);
+          category_id_arr.push(categoryId);
+        }));
+      }else{
+        const categoryId=await getCategoryNameOrId(sectionId, null, category);
         category_id_arr.push(categoryId);
-      }));
+      }
       console.log("array_db is this "+category_id_arr);
       const newMeditationTrack = await MeditationTrack.create({
         section_id: sectionId,
@@ -367,10 +372,15 @@ exports.uploadSleepTrack = async (req, res, next) => {
       //sleep story -- pending-----------------
       var category_id_arr=[];
       const sectionId=await getSectionNameOrId(null, 'sleep');
-      await Promise.all(Array(category).map(async (element) => {
-        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+      if(Array.isArray(category)){
+        await Promise.all(category.map(async (element) => {
+          const categoryId=await getCategoryNameOrId(sectionId, null, element);
+          category_id_arr.push(categoryId);
+        }));
+      }else{
+        const categoryId=await getCategoryNameOrId(sectionId, null, category);
         category_id_arr.push(categoryId);
-      }));
+      }
       console.log("sleep array_db is this "+category_id_arr);
       const newSleepTrack = await SleepTrack.create({
         section_id: sectionId,
@@ -427,10 +437,16 @@ exports.uploadRelaxTrack = async (req, res, next) => {
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
       var category_id_arr=[];
       const sectionId=await getSectionNameOrId(null, 'relax');
-      await Promise.all(Array(category).map(async (element) => {
-        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+      if(Array.isArray(category)){
+        await Promise.all(category.map(async (element) => {
+          const categoryId=await getCategoryNameOrId(sectionId, null, element);
+          category_id_arr.push(categoryId);
+        }));
+      }else{
+        const categoryId=await getCategoryNameOrId(sectionId, null, category);
+        console.log(categoryId);
         category_id_arr.push(categoryId);
-      }));
+      }
       console.log("relax array_db is this "+category_id_arr);
       const newRelaxTrack = await RelaxTrack.create({
         section_id: sectionId,

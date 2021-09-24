@@ -38,29 +38,3 @@ relax:
   4. (user specific) get all user favorite tracks: /api/relax/getRelaxFavorite/:user_id -- onSuccess(200) -- (method: GET)
   5. (user specific) remove a track from favorite: /api/relax/removeRelaxFavorite/ -- onSuccess(202) -- (method: POST), body(user_id= user_id, track_id= track_id)
   6. fetching all sounds of relax -- /api/relax/allRelaxMelodySounds --(method: GET), response(title, track_url)
-
-
-
------------ignore------------------
-ref ID's:
-section-
-
-  1. Meditation: 6117d4f8b2531566f87ebf94
-  2. Sleep: 6117d64fb2531566f87ebf95
-  3. Relax: 6117d6eeb2531566f87ebf96
-
-
-category:
-
-  1. Meditation-
-    1. Beginners: 6117dbafe2468d2e402abbb2
-    2. Stress: 6117dbe5e2468d2e402abbb3
-
-  2. Sleep-
-    1. Music: 6117dd47e2468d2e402abbb6
-    2. Stories: 6117dcf8e2468d2e402abbb5
-    3. Mysterious: 6117dd61e2468d2e402abbb7
-
-  3. Relax-
-    1. Beginners: 6117dda2e2468d2e402abbb8
-    2. Self-Calm: 6117ddb0e2468d2e402abbb9
