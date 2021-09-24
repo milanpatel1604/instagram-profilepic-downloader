@@ -80,6 +80,43 @@ exports.notificationPage=(req, res)=>{
 
 
 // For Admin-Specific:
+async function getCategoryNameOrId(section_id, category_id, category_name) {
+  if(!category_name){
+    const result=await MusicCategory.findById(category_id, (err)=>{
+      if(err){
+        res.json("Something went wrong: "+err);
+      }
+    });
+    return result.category_name;
+  }
+  else{
+    const result=await MusicCategory.findOne({section_id: section_id, category_name:category_name}, (err)=>{
+      if(err){
+        res.json("Something went wrong: "+err);
+      }
+    });
+    return result._id;
+  }
+}
+
+async function getSectionNameOrId(section_id, section_name) {
+  if(!section_name){
+    const result=await AppSection.findById(section_id, (err)=>{
+      if(err){
+        res.json("Something went wrong: "+err);
+      }
+    });
+    return result.section_name;
+  }
+  else{
+    const result=await AppSection.findOne({section_name:section_name}, (err)=>{
+      if(err){
+        res.json("Something went wrong: "+err);
+      }
+    });
+    return result._id;
+  }
+}
 
 exports.addAppSection=async (req, res)=>{
   const sectionName=req.body.section_name;
@@ -87,18 +124,23 @@ exports.addAppSection=async (req, res)=>{
   const newSection=await AppSection.create({
     section_name: sectionName,
     section_description: sectionDescription
+  }, (err)=>{
+    return res.status(400).json(err);
   })
-  res.status(201).json(newSection._id);
+  res.status(201).json({section_id: newSection._id, section_name: sectionName});
 }
 
 exports.addMusicCategory=async (req, res)=>{
-  const sectionId=req.body.section_id;
+  const sectionName=req.body.section_name;
   const categoryName=req.body.category_name;
+  const section_id=await getSectionNameOrId(null, sectionName);
   const newCategory=await MusicCategory.create({
-    section_id: sectionId,
+    section_id: section_id,
     category_name: categoryName
+  }, (err)=>{
+    return res.status(400).json(err);
   })
-  res.status(201).json(newCategory._id);
+  res.status(201).json({category_id: newCategory._id, category_name: categoryName});
 }
 
 
@@ -177,6 +219,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 //GET /getMeditationTracks --admin tracks page (web)
 exports.getMeditationTracks = catchAsync(async (req, res, next) => {
   const tracks = await MeditationTrack.find()
+  console.log(tracks.category_id);
     res.status(200).json({
       status: 200,
       results: tracks.length,
@@ -247,7 +290,7 @@ exports.getNotifications = catchAsync(async (req, res, next) => {
 
 
 //POST /uploadMeditationTrack --admin tracks page (web)
-exports.uploadMeditationTrack = catchAsync(async (req, res, next) => {
+exports.uploadMeditationTrack = async (req, res, next) => {
   const { title, artist, category, description, premium} =await req.body;
   if(req.files){
     //audio
@@ -263,9 +306,16 @@ exports.uploadMeditationTrack = catchAsync(async (req, res, next) => {
     const imageExtention=imageArr[imageArr.length-1];
     let imageExtentionsArr=['png', 'jpg', 'jpeg'];
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
+      var category_id_arr=[];
+      const sectionId=await getSectionNameOrId(null, 'meditation');
+      await Promise.all(Array(category).map(async (element) => {
+        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+        category_id_arr.push(categoryId);
+      }));
+      console.log("array_db is this "+category_id_arr);
       const newMeditationTrack = await MeditationTrack.create({
-        section_id: process.env.MeditationId,
-        category_id: category,
+        section_id: sectionId,
+        category_id: category_id_arr,
         title: title,
         artist: artist,
         description: description,
@@ -295,10 +345,10 @@ exports.uploadMeditationTrack = catchAsync(async (req, res, next) => {
       return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
     }
   }
-});
+};
 
 //POST /uploadSleepTrack --admin tracks page (web)
-exports.uploadSleepTrack = catchAsync(async (req, res, next) => {
+exports.uploadSleepTrack = async (req, res, next) => {
   const { title, artist, category, description, premium, language, lessons} =await req.body;
   if(req.files){
     //audio
@@ -315,82 +365,51 @@ exports.uploadSleepTrack = catchAsync(async (req, res, next) => {
     let imageExtentionsArr=['png', 'jpg', 'jpeg'];
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
       //sleep story -- pending-----------------
-      if(category.includes(process.env.SleepStoriesId)){
-        const newStoryDesc = await SleepStory.create({
-          title: title,
-          language: language,
-        }, async (err, storyDocs)=>{
-          const newSleepTrack = await SleepTrack.create({
-            section_id: process.env.SleepId,
-            category_id: category,
-            title: title,
-            artist: artist,
-            description: description,
-            isPremium: premium,
-            available_languages: storyDocs._id,
-            image_extention: imageExtention,
-            track_extention: audioExtention
-          },async (err, docs)=>{
-            if(err){
-              res.status(400).json({status:400, message: "details not saved"});
-            }
-            console.log(docs._id);
-            await img.mv(staticFilePath+"/tracks/sleepImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-              if(err){
-                res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
-              }
-            })
-            await audio.mv(staticFilePath+"/tracks/sleepTracks/"+`${docs._id}.${audioExtention}`, (err)=>{
-              if(err){
-                return res.send({status: "Error", error: "failed to upload track, plese try again"});
-              }
-              else{
-                res.redirect('/sleepTracks');
-              }
-            })
-          })
-        })
-      }
-      else{
-        const newSleepTrack = await SleepTrack.create({
-          section_id: process.env.SleepId,
-          category_id: category,
-          title: title,
-          artist: artist,
-          description: description,
-          isPremium: premium,
-          image_extention: imageExtention,
-          track_extention: audioExtention
-        },async (err, docs)=>{
+      var category_id_arr=[];
+      const sectionId=await getSectionNameOrId(null, 'sleep');
+      await Promise.all(Array(category).map(async (element) => {
+        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+        category_id_arr.push(categoryId);
+      }));
+      console.log("sleep array_db is this "+category_id_arr);
+      const newSleepTrack = await SleepTrack.create({
+        section_id: sectionId,
+        category_id: category_id_arr,
+        title: title,
+        artist: artist,
+        description: description,
+        isPremium: premium,
+        image_extention: imageExtention,
+        track_extention: audioExtention
+      },async (err, docs)=>{
+        if(err){
+          res.status(400).json({status:400, message: "details not saved"});
+        }
+        console.log(docs._id);
+        await img.mv(staticFilePath+"/tracks/sleepImages/"+`${docs._id}.${imageExtention}`, (err)=>{
           if(err){
-            res.status(400).json({status:400, message: "details not saved"});
+            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
           }
-          console.log(docs._id);
-          await img.mv(staticFilePath+"/tracks/sleepImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-            if(err){
-              res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
-            }
-          })
-          await audio.mv(staticFilePath+"/tracks/sleepTracks/"+`${docs._id}.${audioExtention}`, (err)=>{
-            if(err){
-              return res.send({status: "Error", error: "failed to upload track, plese try again"});
-            }
-            else{
-              res.redirect('/sleepTracks');
-            }
-          })
         })
-      }
+        await audio.mv(staticFilePath+"/tracks/sleepTracks/"+`${docs._id}.${audioExtention}`, (err)=>{
+          if(err){
+            return res.send({status: "Error", error: "failed to upload track, plese try again"});
+          }
+          else{
+            res.redirect('/sleepTracks');
+          }
+        })
+      })
     }
     else{
       return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
     }
   }
-});
+};
 
 
 //POST /uploadRelaxTrack --admin tracks page (web)
-exports.uploadRelaxTrack = catchAsync(async (req, res, next) => {
+exports.uploadRelaxTrack = async (req, res, next) => {
   const { title, artist, category, description, premium} =await req.body;
   if(req.files){
     //audio
@@ -406,9 +425,16 @@ exports.uploadRelaxTrack = catchAsync(async (req, res, next) => {
     const imageExtention=imageArr[imageArr.length-1];
     let imageExtentionsArr=['png', 'jpg', 'jpeg'];
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
+      var category_id_arr=[];
+      const sectionId=await getSectionNameOrId(null, 'relax');
+      await Promise.all(Array(category).map(async (element) => {
+        const categoryId=await getCategoryNameOrId(sectionId, null, element);
+        category_id_arr.push(categoryId);
+      }));
+      console.log("relax array_db is this "+category_id_arr);
       const newRelaxTrack = await RelaxTrack.create({
-        section_id: process.env.RelaxId,
-        category_id: category,
+        section_id: sectionId,
+        category_id: category_id_arr,
         title: title,
         artist: artist,
         description: description,
@@ -438,9 +464,9 @@ exports.uploadRelaxTrack = catchAsync(async (req, res, next) => {
       return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
     }
   }
-});
+};
 //POST /uploadRelaxMelodySound --admin tracks page (web)
-exports.uploadRelaxMelodySound = catchAsync(async (req, res, next) => {
+exports.uploadRelaxMelodySound = async (req, res, next) => {
   const {title, category} =await req.body;
   if(req.files){
     //audio
@@ -450,8 +476,9 @@ exports.uploadRelaxMelodySound = catchAsync(async (req, res, next) => {
     const audioExtention=audioArr[audioArr.length-1];
     let audioExtentionsArr=['mp3', 'wav'];
     if(audioExtentionsArr.includes(audioExtention)){
+      const sectionId=await getSectionNameOrId(null, 'relax');
       const newRelaxMelodySound = await RelaxMelody.create({
-        section_id: process.env.RelaxId,
+        section_id: sectionId,
         sound_title: title,
         sound_category: category,
         track_extention: audioExtention
@@ -473,7 +500,7 @@ exports.uploadRelaxMelodySound = catchAsync(async (req, res, next) => {
       return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]"});
     }
   }
-});
+};
 
 
 //POST /uploadLiveTrack --admin tracks page (web)

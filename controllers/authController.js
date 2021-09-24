@@ -10,8 +10,12 @@ const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 
 //google auth
-const {OAuth2Client} = require('google-auth-library');
+const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+//facebook auth
+const passport = require("passport");
+const facebookStrategy = require("passport-facebook").Strategy;
 
 // functions
 const signToken = (id) => {
@@ -33,15 +37,15 @@ const createSendToken = (user, statusCode, res) => {
       email: user.email,
       email_verified: user.email_verified,
       login_using: user.login_using
-    } 
+    }
   });
 };
 
 // for-Signup
-exports.signup =async (req, res, next) => {
-  const { name, email, password} = req.body;
+exports.signup = async (req, res, next) => {
+  const { name, email, password } = req.body;
   try {
-    const user =await User.create({
+    const user = await User.create({
       name: name,
       email: email,
       password: password,
@@ -59,25 +63,25 @@ exports.signup =async (req, res, next) => {
         subject: "your Email verification OTP (valid for 2 min)",
         message: message,
       })
-      res.status(200).json({status: 200, message: "Mail sent successfully"})
+      res.status(200).json({ status: 200, message: "Mail sent successfully" })
     } catch (err) {
       console.log(err);
       (user.verificationToken = undefined),
         (user.verificationTokenExpiresAt = undefined),
         await user.save({ validateBeforeSave: false });
 
-      return res.status(500).json({message:"There was an error sending email. TRY AGAIN LATER OR USE ANOTHER EMAIL"});
+      return res.status(500).json({ message: "There was an error sending email. TRY AGAIN LATER OR USE ANOTHER EMAIL" });
     }
   } catch (error) {
-    if(error.code == 11000){
-      return res.status(409).json({status: 409, message: "Email already exists"})
+    if (error.code == 11000) {
+      return res.status(409).json({ status: 409, message: "Email already exists" })
     }
-    return res.status(402).json({status: 402, message: error});
+    return res.status(402).json({ status: 402, message: error });
   }
 };
 
 exports.resendVerifyEmailToken = async (req, res, next) => {
-  const user =await User.findOne({
+  const user = await User.findOne({
     email: req.body.email,
   });
   const token = user.createVerificationToken();
@@ -92,7 +96,7 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
       subject: "your Email verification OTP (valid for 2 min)",
       message: message,
     })
-    res.status(200).json({status: 200, message: "Mail sent successfully"})
+    res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
     console.log(err);
     (user.verificationToken = undefined),
@@ -107,23 +111,23 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
 };
 
 //verify mail using otp(token) 
-exports.varifyEmail = async(req, res, next)=>{
-  const user =await User.findOne({
+exports.varifyEmail = async (req, res, next) => {
+  const user = await User.findOne({
     email: req.body.email,
     verificationToken: req.body.token,
     verificationTokenExpiresAt: { $gt: Date.now() },
   });
 
   if (!user) {
-    return res.status(400).json({status:400, message:"invalid otp or otp is experied"})
+    return res.status(400).json({ status: 400, message: "invalid otp or otp is experied" })
   }
 
   (user.email_verified = true),
-  (user.verificationToken = undefined),
-  (user.verificationTokenExpiresAt = undefined),
-  await user.save();
+    (user.verificationToken = undefined),
+    (user.verificationTokenExpiresAt = undefined),
+    await user.save();
 
-  createSendToken( user, 201, res);
+  createSendToken(user, 201, res);
 }
 
 // for- Login
@@ -140,86 +144,120 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return next(new AppError("No user with this email, please signup", 404));
   }
-  if(!user.password){
+  if (!user.password) {
     return next(new AppError(`Please login using ${user.login_using} OR use another email`, 405));
   }
-  if (!(await user.correctPassword(password, user.password))){
+  if (!(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect password", 401));
   }
-  if(!user.email_verified){
+  if (!user.email_verified) {
     return next(new AppError("please verify your email to login(check email)", 402));
   }
-  
+
   createSendToken(user, 200, res);
 };
 
 //login with google
-exports.loginWithGoogle= async (req, res, next)=>{
-  const token=req.body.token;
+exports.loginWithGoogle = async (req, res, next) => {
+  const token = req.body.token;
   try {
     const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-        //if multiple clients access the backend:
-        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+      //if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
     const payload = ticket.getPayload();
     const userid = payload['sub'];
-    const user = await User.findOne({email: payload.email},async (err, doc)=>{
-      if(err){
+    const user = await User.findOne({ email: payload.email }, async (err, doc) => {
+      if (err) {
         return next(new AppError(`error:${err}`, 400));
       }
-      if(!doc){
-        const user =await User.create({
+      if (!doc) {
+        const user = await User.create({
           name: payload.name,
           email: payload.email,
           email_verified: payload.email_verified,
           login_using: "google"
         })
         console.log('new user')
-        await createSendToken( user, 200, res);
+        await createSendToken(user, 200, res);
       }
-      if(doc){
+      if (doc) {
         console.log('already a user')
-        await createSendToken( doc, 200, res);
+        await createSendToken(doc, 200, res);
       }
     })
-  } catch(err) {
+  } catch (err) {
     return next(new AppError(`something went wrong(error: ${err})--please use another account or method to login or signup`, 401));
-  } 
+  }
 }
 
 //login with facebook
-exports.loginWithFacebook= async (req, res, next)=>{
-  const token=req.body.token;
-  // try {
-  //   const ticket = await client.verifyIdToken({
-  //       idToken: token,
-  //       audience: process.env.GOOGLE_CLIENT_ID,
-  //       //if multiple clients access the backend:
-  //       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-  //   });
-  //   const payload = ticket.getPayload();
-  //   const userid = payload['sub'];
-  //   const user = await User.findOne({email: payload.email},async (err, doc)=>{
-  //     if(err){
-  //       return next(new AppError(`error:${err}`, 400));
+exports.loginWithFacebook = async (req, res, next) => {
+  const { access_token, user_id, email, name} = req.body;
+  const user = await User.findOne({user_id: user_id}, async (err, doc)=>{
+    if(err){
+      return next(new AppError(`error:${err}`, 400));
+    }
+    if(!doc){
+      const user =await User.create({
+        facebook_uid: user_id,
+        name: name,
+        email: email,
+        email_verified: true,
+        login_using: "facebook"
+      })
+      console.log('new user')
+      await createSendToken( user, 200, res);
+    }
+    if(doc){
+      console.log('already a user')
+      await createSendToken( doc, 200, res);
+    }
+  })
+  // // try {
+  // passport.serializeUser(function (user, done) {
+  //   done(null, user);
+  // });
+
+  // passport.deserializeUser(function (obj, done) {
+  //   done(null, obj);
+  // });
+
+  // passport.use(
+  //   new FacebookStrategy(
+  //     {
+  //       clientID: process.env.FACEBOOK_APP_ID,
+  //       clientSecret: process.env.FACEBOOK_APP_SECRET,
+  //       profileFields: ["id", "email", "name"]
+  //     },
+  //     function (accessToken, refreshToken, profile, done) {
+  //       // const { email, first_name, last_name } = profile._json;
+  //       console.log(profile)
+  //       //   const user = await User.findOne({email: email},async (err, doc)=>{
+  //       //     if(err){
+  //       //       return next(new AppError(`error:${err}`, 400));
+  //       //     }
+  //       //     if(!doc){
+  //       //       const user =await User.create({
+  //       //         name: payload.name,
+  //       //         email: payload.email,
+  //       //         email_verified: payload.email_verified,
+  //       //         login_using: "google"
+  //       //       })
+  //       //       console.log('new user')
+  //       //       await createSendToken( user, 200, res);
+  //       //     }
+  //       //     if(doc){
+  //       //       console.log('already a user')
+  //       //       await createSendToken( doc, 200, res);
+  //       //     }
+  //       //   })
+  //       //   done(null, profile);
   //     }
-  //     if(!doc){
-  //       const user =await User.create({
-  //         name: payload.name,
-  //         email: payload.email,
-  //         email_verified: payload.email_verified,
-  //         login_using: "facebook"
-  //       })
-  //       console.log('new user')
-  //       await createSendToken( user, 200, res);
-  //     }
-  //     if(doc){
-  //       console.log('already a user')
-  //       await createSendToken( doc, 200, res);
-  //     }
-  //   })
+  //   )
+  // );
   // } catch(err) {
   //   return next(new AppError(`something went wrong(error: ${err})--please use another account or method to login or signup`, 401));
   // } 
@@ -262,7 +300,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.checkLogin= async (req,res)=>{
+exports.checkLogin = async (req, res) => {
   console.log(req.user)
   createSendToken(req.user, 200, res)
 }
@@ -298,7 +336,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       subject: "your password reset OTP (valid for 5 min)",
       message: message,
     })
-    res.status(200).json({status: 200, message: "Mail sent successfully"})
+    res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
     console.log(err);
     (user.verificationToken = undefined),
@@ -324,9 +362,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   }
 
   (user.password = req.body.password),
-  (user.verificationToken = undefined),
-  (user.verificationTokenExpiresAt = undefined),
-  await user.save();
+    (user.verificationToken = undefined),
+    (user.verificationTokenExpiresAt = undefined),
+    await user.save();
 
   createSendToken(user, 200, res);
 });

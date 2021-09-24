@@ -15,6 +15,7 @@ router.post("/verifyEmail", authController.varifyEmail);
 
 //add google and facebook login api's here and their functions in authController.js file
 router.post('/loginWithGoogle', authController.loginWithGoogle)
+// app.get('/loginWithFacebook', passport.authenticate('facebook',{scope:'email'}));
 router.post('/loginWithFacebook', authController.loginWithFacebook)
 
 
