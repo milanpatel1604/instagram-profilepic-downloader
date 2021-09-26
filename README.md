@@ -17,9 +17,11 @@ authentication:(method: POST)
 userspecific:
   1. update or change password: /api/users/updateMyPassword --body({passwordCurrent, password}), --headers(authorization:Bearer /*JWTtoken*/), --onSuccess(200), --onWrongPasswordCurrent(402), method(post)
   2. update or change name: /api/users/updateMe --body({name}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token, --onSuccess(200), method(post)
-  3. get user_preferences: /api/users/getUserPreferences --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
+  3. get user_preferences: /api/users/getUserPreferences --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(get)
   4. update user_preferences: /api/users/updateUserPreferences --body({ default_app_language, dark_mode, notifications_active, DND_active}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
-  5. moodchart: /api/users/addUserMood --onSuccess(200), method(post), requirements (mood: Amazing or Happy or Okay or Confused or Sad), --headers(authorization : Bearer /*JWTtoken*/)
+  5. get user_sessions: /api/users/getUserSessions --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(get)
+  6. update user_preferences: /api/users/updateUserSessions --body({ default_app_language, dark_mode, notifications_active, DND_active}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
+  7. moodchart: /api/users/addUserMood --onSuccess(200), method(post), requirements (mood: Amazing or Happy or Okay or Confused or Sad), --headers(authorization : Bearer /*JWTtoken*/)
 
 meditation:
   1. all tracks of meditation: /api/meditation/allMeditationTracks -- onSuccess(200), onError(400) --(method: GET) 

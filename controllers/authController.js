@@ -3,12 +3,17 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const UserPreference = require('../models/UserPreferencesModel');
+const UserSession= require('../models/UserSessionsModel');
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
+
+//global variables
+let date_ob=new Date();
+const presentDate=("0"+date_ob.getDate()).slice(-2)+"/"+("0"+(date_ob.getMonth()+1)).slice(-2)+"/"+date_ob.getFullYear();
 
 //google auth
 const { OAuth2Client } = require('google-auth-library');
@@ -138,6 +143,14 @@ exports.varifyEmail = async (req, res, next) => {
       console.log("user preference created:"+ docs)
     }
   );
+  //default user session
+  const userSession = await UserSession.create(
+    {
+      user_id: user._id,
+      date_joined: presentDate,
+      last_login: presentDate,
+    }
+  )
   createSendToken(user, 201, res);
 }
 
@@ -164,6 +177,10 @@ exports.login = async (req, res, next) => {
   if (!user.email_verified) {
     return next(new AppError("please verify your email to login(check email)", 402));
   }
+  // updating last login in UserSessions
+  const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+    last_login: presentDate
+  });
 
   createSendToken(user, 200, res);
 };
@@ -204,10 +221,22 @@ exports.loginWithGoogle = async (req, res, next) => {
             console.log("user preference created:"+ docs)
           }
         );
+        //default userSession
+        const userSession = await UserSession.create(
+          {
+            user_id: user._id,
+            date_joined: presentDate,
+            last_login: presentDate,
+          }
+        )
         await createSendToken(user, 200, res);
       }
       if (doc) {
         console.log('already a user')
+        // updating last login in UserSessions
+        const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+          last_login: presentDate
+        });
         await createSendToken(doc, 200, res);
       }
     })
@@ -243,10 +272,21 @@ exports.loginWithFacebook = async (req, res, next) => {
           console.log("user preference created:"+ docs)
         }
       );
+      const userSession = await UserSession.create(
+        {
+          user_id: user._id,
+          date_joined: presentDate,
+          last_login: presentDate,
+        }
+      )
       await createSendToken(user, 200, res);
     }
     if (doc) {
-      console.log('already a user')
+      console.log('already a user');
+      // updating last login in UserSessions
+      const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+        last_login: presentDate
+      });
       await createSendToken(doc, 200, res);
     }
   })
