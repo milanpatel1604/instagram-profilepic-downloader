@@ -7,21 +7,21 @@ const { title } = require('process');
 
 
 //GET  /api/meditation/allMeditationTracks --fetching all tracks of meditation
-meditationTrackRoute.get('/allMeditationTracks', meditationController.allMeditationTracks)
+meditationTrackRoute.get('/allMeditationTracks', authController.protect, meditationController.allMeditationTracks)
 
 //GET  /api/meditation/getMeditationTrack/:track_id --fetching all tracks of meditation
-meditationTrackRoute.get('/getMeditationTrack/:track_id', meditationController.getMeditationTrack)
+meditationTrackRoute.get('/getMeditationTrack/:track_id', authController.protect, meditationController.getMeditationTrack)
 
 //daily live meditation-- pending...
 //GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
-meditationTrackRoute.get('/allLiveTracks', meditationController.allLiveTracks)
+meditationTrackRoute.get('/allLiveTracks', authController.protect, meditationController.allLiveTracks)
 //GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
-meditationTrackRoute.get('/getLiveTrack/:track_id', meditationController.getLiveTrack)
+meditationTrackRoute.get('/getLiveTrack/:track_id', authController.protect, meditationController.getLiveTrack)
 
 // userspecific--
-meditationTrackRoute.post('/addMeditationFavorite', meditationController.addMeditationFavorite)
-meditationTrackRoute.get('/getMeditationFavorite/:user_id', meditationController.getMeditationFavorite)
-meditationTrackRoute.post('/removeMeditationFavorite', meditationController.removeMeditationFavorite)
+meditationTrackRoute.post('/addMeditationFavorite', authController.protect, meditationController.addMeditationFavorite)
+meditationTrackRoute.get('/getMeditationFavorite/:user_id', authController.protect, meditationController.getMeditationFavorite)
+meditationTrackRoute.post('/removeMeditationFavorite', authController.protect, meditationController.removeMeditationFavorite)
 
 
 module.exports = meditationTrackRoute;

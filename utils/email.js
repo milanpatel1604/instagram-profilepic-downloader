@@ -4,13 +4,13 @@ const mg=require('nodemailer-mailgun-transport');
 
 
 const sendEmail = async (options) => {
-  const auth={
+  const auth=await {
     auth: {
       api_key: process.env.MAILGUN_API,
       domain: process.env.MAILGUN_DOMAIN
     }
   }
-  let transporter=nodemailer.createTransport(mg(auth));
+  let transporter=await nodemailer.createTransport(mg(auth));
   const mailOptions = {
     from: 'Breathings App <Breathingsapp@gmail.com>',
     to: options.email,

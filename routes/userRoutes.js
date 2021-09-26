@@ -26,10 +26,18 @@ router.post("/resetPassword", authController.resetPassword);
 //autologin or check
 router.post("/checkLogin", authController.protect, authController.checkLogin);
 
+//user CRUD operations:
 router.post("/updateMyPassword", authController.protect, authController.updatePassword);
-
 router.post("/updateMe", authController.protect, userController.updateMe);
 router.delete("/deleteMe", authController.protect, userController.deleteMe);
+
+//user preferences
+router.get('/getUserPreferences', authController.protect, userController.getUserPreference)
+router.post("/updateUserPreferences", authController.protect, userController.updateUserPreference);
+
+//user sessions
+router.get('/getUserSessions', authController.protect, userController.getUserSessions)
+router.post("/updateUserSessions", authController.protect, userController.updateUserSessions);
 
 router.post('/addUserMood', authController.protect, userController.addUserMood);
 
