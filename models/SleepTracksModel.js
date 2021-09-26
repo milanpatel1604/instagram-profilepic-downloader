@@ -18,9 +18,6 @@ const SleepTracksSchema=new Schema({
     description: {
         type: String
     },
-    available_languages: {
-        type:[ObjectId]
-    },
     isPremium: {
         type: Boolean
     },

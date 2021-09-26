@@ -1,20 +1,26 @@
 const url='http://127.0.0.1:3000';
-const sleepMusicId='6117dd47e2468d2e402abbb6';
-const sleepMysteriousId='6117dd61e2468d2e402abbb7';
-const sleepStoryId='6117dcf8e2468d2e402abbb5';
+const sleepMusicId='614499d4dfc3482e180580db';
+const sleepMysteriousId='614499f6dfc3482e180580dc';
+const sleepStoryId='614499b6dfc3482e180580da';
 
 // tracks functions:
 async function displaySleepTracks(){
     const sleepTracksData= await fetch('/getSleepTracks').then((res) => res.json())
+    const sleepStoriesData= await fetch('/getSleepStories').then((res) => res.json()) 
     if(sleepTracksData.status === 200){
         const unauthorizedWarning=document.getElementById('unauthorizedWarning');
         unauthorizedWarning.style.display='none';
-        if (sleepTracksData.results == null) {
+        if (sleepTracksData.results == null || sleepStoriesData.results == null) {
             sleepTracksArr = [];
         }
         else {
-            sleepTracksArr = sleepTracksData.data.tracks;
+            sleepTracksArr =await sleepTracksData.data.tracks;
+            sleepStoriesData.data.tracks.forEach(element => {
+                sleepTracksArr.push(element);
+            });
         }
+        console.log(sleepTracksArr);
+        console.log(sleepStoriesData.data.tracks);
         let sleepTracksTable = document.getElementById("sleepTracksTable");
         let html = "";
         await sleepTracksArr.forEach(function(element, index){
@@ -28,21 +34,39 @@ async function displaySleepTracks(){
             if(element.category_id.includes(sleepMysteriousId)){
                 category.push("Mysterious")
             }
-            html += `<tr class="tableRows">
-                        <th id="itemID" scope="row">${element._id}</th>
-                        <td>${element.title}</td>
-                        <td>${category}</td>
-                        <td>${element.artist}</td>
-                        <td>${element.description}</td>
-                        <td>${element.isPremium? "premium" : "normal"}</td>
-                        <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
-                        <td>
-                            <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
-                                Play
-                            </button>
-                        </td>
-                    </tr>`;
-           
+            console.log(category);
+            if(category.includes('Stories')){
+                html +=`<tr class="tableRows">
+                            <th id="itemID" scope="row">${element._id}</th>
+                            <td>${element.title}</td>
+                            <td>${category}</td>
+                            <td>${element.artist}</td>
+                            <td>${element.description}</td>
+                            <td>${element.isPremium? "premium" : "normal"}</td>
+                            <td><button class="btn btn-danger" onclick="deleteStory('${element._id}');">Delete</button></td>
+                            <td>
+                                <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
+                                    Play
+                                </button>
+                            </td>
+                        </tr>`;
+            }
+            if(category.includes('Music') || category.includes('Mysterious')){
+                html += `<tr class="tableRows">
+                            <th id="itemID" scope="row">${element._id}</th>
+                            <td>${element.title}</td>
+                            <td>${category}</td>
+                            <td>${element.artist}</td>
+                            <td>${element.description}</td>
+                            <td>${element.isPremium? "premium" : "normal"}</td>
+                            <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
+                            <td>
+                                <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
+                                    Play
+                                </button>
+                            </td>
+                        </tr>`;
+            }      
         });
         if (sleepTracksArr.length != 0) {
             sleepTracksTable.innerHTML = html;
@@ -52,7 +76,7 @@ async function displaySleepTracks(){
             empty.style.display='block';
         }
         const tracksCount=document.getElementById('tracksCount');
-        tracksCount.innerText=`No.of results: ${sleepTracksData.results}`
+        tracksCount.innerText=`No.of results: ${sleepTracksData.results + sleepStoriesData.results}`
         let search = document.getElementById("sleepTracksSearch");
         search.addEventListener("input", function () {
             let searchValue = search.value;
@@ -93,6 +117,21 @@ displaySleepTracks();
 async function deleteTrack(id){
     console.log(id);
     const result=await fetch(`/sleepTrackDelete/${id}`, {
+        method:"DELETE"
+    })
+    if(result.status === 200){
+        console.log('deleted');
+        document.location.href='/sleepTracks';
+    }
+    else if (result.status === 400){
+        alert("Something went wrong! please try again");
+    }
+}
+
+// CRUD functions
+async function deleteStory(id){
+    console.log(id);
+    const result=await fetch(`/sleepStoryDelete/${id}`, {
         method:"DELETE"
     })
     if(result.status === 200){

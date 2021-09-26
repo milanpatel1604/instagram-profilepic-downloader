@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const MoodChart = require("../models/MoodChartModal");
+const UserPreference= require("../models/UserPreferencesModel");
 
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
@@ -35,22 +36,45 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 
   res.status(200).json({
-    status: "success",
+    status: 200,
     data: {
       user: updatedUser,
     },
   });
 });
 
-// if user wants to delete his profile
-exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndDelete(req.user.id);
+// If User-wants to change his/her User preferences
+exports.updateUserPreference = catchAsync(async (req, res, next) => {
 
-  res.status(204).json({
-    status: "success",
-    data: null,
+  const filteredBody = filterObj(req.body, "default_app_language", "dark_mode", "notifications_active", "DND_active");
+  const updatedUserPreferences = await UserPreference.updateOne({user_id : req.user.id}, filteredBody, (err)=>{
+    if(err){
+      return res.json(400).json({status:400, message: err});
+    }
+  });
+
+  res.status(200).json({
+    status: 200,
+    data: {
+      user_preference: updatedUserPreferences,
+    },
   });
 });
+
+exports.getUserPreference = catchAsync(async (req, res, next)=>{
+  const getUserPreferences = await UserPreference.findOne({user_id : req.user.id}, (err)=>{
+    if(err){
+      return res.json(400).json({status:400, message: err});
+    }
+  });
+
+  res.status(200).json({
+    status: 200,
+    data: {
+      user_preference: getUserPreferences,
+    },
+  });
+})
 
 //adding user mood
 exports.addUserMood= catchAsync(async (req, res, next) => {
@@ -60,4 +84,18 @@ exports.addUserMood= catchAsync(async (req, res, next) => {
     mood: req.body.mood.toLowerCase()
   })
   res.status(200).json({status: 200})
+});
+
+// if user wants to delete his profile
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.deleteOne({_id : req.user.id}, (err)=>{
+    if(err){
+      return res.json(400).json({status:400, message: err});
+    }
+  });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
 });

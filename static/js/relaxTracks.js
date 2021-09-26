@@ -1,6 +1,6 @@
 const url='http://127.0.0.1:3000';
-const relaxBeginnersId='6117dda2e2468d2e402abbb8';
-const relaxSelfCalmId='6117ddb0e2468d2e402abbb9';
+const relaxBeginnersId='61449a1adfc3482e180580dd';
+const relaxSelfCalmId='61449a24dfc3482e180580de';
 
 // tracks functions:
 async function displayRelaxTracks(){
@@ -9,7 +9,7 @@ async function displayRelaxTracks(){
     if(relaxTracksData.status === 200){
         const unauthorizedWarning=document.getElementById('unauthorizedWarning');
         unauthorizedWarning.style.display='none';
-        if (relaxTracksData.results == null) {
+        if (relaxTracksData.results == null || relaxMelodySoundsData.results == null) {
             relaxTracksArr = [];
         }
         else {
@@ -71,7 +71,7 @@ async function displayRelaxTracks(){
             empty.style.display='block';
         }
         const tracksCount=document.getElementById('tracksCount');
-        tracksCount.innerText=`No.of results: ${relaxTracksData.results}`
+        tracksCount.innerText=`No.of results: ${relaxTracksData.results + relaxMelodySoundsData.results}`
         let search = document.getElementById("relaxTracksSearch");
         search.addEventListener("input", function () {
             let searchValue = search.value;

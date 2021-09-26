@@ -29,6 +29,8 @@ router.post("/checkLogin", authController.protect, authController.checkLogin);
 router.post("/updateMyPassword", authController.protect, authController.updatePassword);
 
 router.post("/updateMe", authController.protect, userController.updateMe);
+router.post("/updateUserPreferences", authController.protect, userController.updateUserPreference);
+router.get('/getUserPreferences', authController.protect, userController.getUserPreference)
 router.delete("/deleteMe", authController.protect, userController.deleteMe);
 
 router.post('/addUserMood', authController.protect, userController.addUserMood);

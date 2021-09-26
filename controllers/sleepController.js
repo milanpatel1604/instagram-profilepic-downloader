@@ -1,4 +1,5 @@
 const SleepTrack=require('../models/SleepTracksModel');
+const SleepStory=require('../models/SleepStoriesModel');
 const User=require('../models/userModel');
 const MusicCategory= require('../models/MusicCategoriesModal');
 const AppSection= require('../models/AppSectionsModel');
@@ -111,6 +112,40 @@ exports.getSleepTrack= async (req, res)=>{
         }
         return res.status(200).json({
             track_url: process.env.DOMAIN + `/static/tracks/sleepTracks/${docs._id}.${docs.track_extention}`,
+            description: docs.description
+        });
+    })
+}
+
+//sleep stories
+exports.allSleepStories= (req, res) => {
+    SleepStory.find({}, async (err, docs) => {
+        if (err) {
+            return res.status(400).json({ status: 400, error: err });
+        }
+        console.log(docs);
+        var result = [];
+        docs.forEach(async (element) => {
+            await result.push({
+                title: element.title,
+                artist: element.artist,
+                image_url: process.env.DOMAIN + `/static/tracks/sleepImages/${element._id}.${element.image_extention}`,
+                track_id: element._id,
+                isPremium: element.isPremium
+            })
+        })
+        return res.status(200).json({ status: 200, results: result });
+    })
+}
+
+exports.getSleepStory = async (req, res) => {
+    const track_id = req.params.track_id;
+    SleepStory.findOne({ _id: track_id }, async (err, docs) => {
+        if (err) {
+            return res.status(400).json({ status: 400, error: err });
+        }
+        return res.status(200).json({
+            track_url: process.env.DOMAIN + `/static/tracks/liveTracks/${docs._id}.${docs.track_extention}`,
             description: docs.description
         });
     })
