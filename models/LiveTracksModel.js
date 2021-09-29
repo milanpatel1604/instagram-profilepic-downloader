@@ -25,7 +25,8 @@ const LiveTracksSchema=new Schema({
         type: String
     },
     track_duration: {
-        type: String
+        type: String,
+        default: "00:30:00"
     },
     image_extention: {
         type: String

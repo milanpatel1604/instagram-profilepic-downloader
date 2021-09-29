@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="../static/images/logo.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Breathings App | TRACKS</title>
+    <title>Breathings App | Live Meditation</title>
 </head>
 
 <body>
@@ -30,43 +30,37 @@
                             <a class="nav-link p-3" href="/users">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/meditationTracks">Meditation Tracks</a>
+                            <a class="nav-link p-3" href="/tracks">tracks</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/sleepTracks">Sleep Tracks</a>
+                            <a class="nav-link p-3" href="/liveMeditation">Live Meditation</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/relaxTracks">Relax Tracks</a>
+                            <a class="nav-link p-3" href="/sleepStories">Sleep Stories</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/liveTracks">Live Tracks</a>
+                            <a class="nav-link p-3" href="/relaxMelodies">Relax Melodies</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link p-3" href="/notification">Notification</a>
                         </li>
                     </ul>
-                    <!-- <form class="d-flex">
-                        <button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login </a></button>
-                    </form>
-                    <form class="d-flex">
-                        <button class="btn btn-danger logBtn" id="logoutBtn"><a href="/">Logout Admin </a></button>
-                    </form> -->
                 </div>
             </div>
         </nav>
     </header>
     <section>
         <div class="tracksSection"> 
-            <h2>Breathing-App Live-Tracks details</h2>
-            <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                data-bs-whatever="@mdo" id="addLiveTrackBtn">Add Track</button>
+            <h2>Breathing-App Live-Meditation details</h2>
+            <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#liveModal"
+                data-bs-whatever="@mdo" id="addLiveTrackBtn">Add Live</button>
             <input class="form-control me-2 search" id="liveTracksSearch" type="search" placeholder="Filter by searching" aria-label="Search">
             <span id="tracksCount"></span>
             <div class="container">
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
+                            <th scope="col">Live_Id</th>
                             <th scope="col">Title</th>
                             <th scope="col">Artist</th>
                             <th scope="col">Description</th>
@@ -86,7 +80,7 @@
                   </div>
             </div>
         </div>
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="liveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -107,14 +101,6 @@
                                 <label for="description" class="form-label">Description</label>
                                 <input type="text" name="description" class="form-control" id="description" required>
                             </div>
-                            <div class="col-12">
-                                <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>
-                                <input type="file" name="audioFile" class="form-control" id="track" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="track" class="form-label">choose an image for track (image: png, jpg or jpeg)</label>
-                                <input type="file" name="imageFile" class="form-control" id="image" required>
-                            </div>
                             <div class="col-md-7">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" name="date" class="form-control" id="date" required>
@@ -127,6 +113,14 @@
                             <div class="col-md-3">
                                 <label for="to" class="form-label">To</label>
                                 <input type="time" name="endTime" class="form-control" id="timeTo" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>
+                                <input type="file" name="audioFile" class="form-control" id="track" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="track" class="form-label">choose an image for track (image: png, jpg or jpeg)</label>
+                                <input type="file" name="imageFile" class="form-control" id="image" required>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Upload Tracks</button>
@@ -158,6 +152,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
-<script src="../static/js/liveTracks.js"></script>
+<script src="../static/js/liveMeditation.js"></script>
 
 </html>

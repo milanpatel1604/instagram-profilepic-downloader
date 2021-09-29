@@ -1,7 +1,7 @@
 # breathingApp
 API's:
 
----- every api should have user specific token in header= --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token,  EXCEPT(signup, login, verify email, resend verify email otp, forgotpassword, resetpassword, login with goole, login with facebook
+---- every api should have user specific token in header= --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token,  EXCEPT(signup, login, verify email, resend verify email otp, forgotpassword, resetpassword, login with goole, login with facebook)
 
 authentication:(method: POST)
   1. signup: /api/users/signup --onSuccess(200), --onErrorSendingMail(500), onExistingUser(409) --body({name, email, password}) --after signup-onSuccess email with an otp is sent to user which is valid for 2 min
@@ -20,7 +20,7 @@ userspecific:
   3. get user_preferences: /api/users/getUserPreferences --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(get)
   4. update user_preferences: /api/users/updateUserPreferences --body({ default_app_language, dark_mode, notifications_active, DND_active}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
   5. get user_sessions: /api/users/getUserSessions --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(get)
-  6. update user_preferences: /api/users/updateUserSessions --body({ default_app_language, dark_mode, notifications_active, DND_active}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
+  6. update user_sessions: /api/users/updateUserSessions --body({ default_app_language, dark_mode, notifications_active, DND_active}), --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token. --onError(400), --onSuccess(200), method(post)
   7. moodchart: /api/users/addUserMood --onSuccess(200), method(post), requirements (mood: Amazing or Happy or Okay or Confused or Sad), --headers(authorization : Bearer /*JWTtoken*/)
 
 meditation:

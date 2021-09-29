@@ -9,7 +9,10 @@ const { title } = require('process');
 //GET  /api/relax/allRelaxTracks --fetching all tracks of relax
 relaxTrackRoute.get('/allRelaxTracks', authController.protect, relaxController.allRelaxTracks);
 
-//GET  /api/meditation/getRelaxTrack --fetching all tracks of meditation
+//GET  /api/relax/categorizedRelaxTracks --fetching categorized tracks of relax
+relaxTrackRoute.get('/categorizedRelaxTracks', authController.protect, relaxController.categorizedRelaxTracks)
+
+//GET  /api/relax/getRelaxTrack --fetching all tracks of relax
 relaxTrackRoute.get('/getRelaxTrack/:track_id', authController.protect, relaxController.getRelaxTrack)
 
 //Relax Melody--

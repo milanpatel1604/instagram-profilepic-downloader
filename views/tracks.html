@@ -30,47 +30,41 @@
                             <a class="nav-link p-3" href="/users">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/meditationTracks">Meditation Tracks</a>
+                            <a class="nav-link p-3" href="/tracks">Tracks</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/sleepTracks">Sleep Tracks</a>
+                            <a class="nav-link p-3" href="/liveMeditation">Live Meditation</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/relaxTracks">Relax Tracks</a>
+                            <a class="nav-link p-3" href="/sleepStories">Sleep Stories</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-3" href="/liveTracks">Live Tracks</a>
+                            <a class="nav-link p-3" href="/relaxMelodies">Relax Melodies</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link p-3" href="/notification">Notification</a>
                         </li>
                     </ul>
-                    <!-- <form class="d-flex">
-                        <button class="btn btn-secondary logBtn" type="submit" id="loginBtn"><a href="/login">Login
-                            </a></button>
-                    </form>
-                    <form class="d-flex">
-                        <button class="btn btn-danger logBtn" id="logoutBtn"><a href="/">Logout Admin </a></button>
-                    </form> -->
                 </div>
             </div>
         </nav>
     </header>
     <section>
         <div class="tracksSection">
-            <h2>Breathing-App Meditation-Tracks details</h2>
-            <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#exampleModal"
-            data-bs-whatever="@mdo" id="addMeditationTrackBtn">Add Track</button>
-            <input class="form-control me-2 search" id="meditationTracksSearch" type="search"
+            <h2>Breathing-App Tracks details</h2>
+            <button type="button" class="btn btn-success addTrackBtn" data-bs-toggle="modal" data-bs-target="#addTrackModal"
+            data-bs-whatever="@mdo" id="addTrackBtn">Add Track</button>
+            <input class="form-control me-2 search" id="tracksSearch" type="search"
             placeholder="Filter by searching" aria-label="Search">
             <span id="tracksCount"></span>
             <div class="container">
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Title</th>
+                            <th scope="col">track_id</th>
+                            <th scope="col">Section</th>
                             <th scope="col">Category</th>
+                            <th scope="col">Title</th>
                             <th scope="col">Artist</th>
                             <th scope="col">Description</th>
                             <th scope="col">Premium</th>
@@ -78,7 +72,7 @@
                             <th scope="col">Play Track</th>
                         </tr>
                     </thead>
-                    <tbody id="meditationTracksTable"></tbody>
+                    <tbody id="tracksTable"></tbody>
                 </table>
                 <div id="unauthorizedWarning">
                     <p>Unauthorized Access, Plz Login</p><button class="btn btn-secondary logBtn" type="submit"
@@ -89,29 +83,35 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addTrackModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Meditation Track</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Track Details</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="row g-3" id="uploadMeditationForm" action="/uploadMeditationTrack" method="POST" enctype="multipart/form-data">
+                        <form class="row g-3" id="uploadAddTrackForm" action="/uploadTrack" method="POST" enctype="multipart/form-data">
+                            <div class="col-md-4">
+                                <label for="section" class="form-label">Section</label>
+                                <select id="section" name="section" class="form-select" onchange="populate(this.id, 'category')" required>
+                                    <option value=""></option>
+                                    <option value="meditation">Meditation</option>
+                                    <option value="sleep">Sleep</option>
+                                    <option value="relax">Relax</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="category" class="form-label">Category</label>
+                                <select id="category" name="category" class="form-select" multiple required></select>
+                            </div>
                             <div class="col-md-7">
-                                <label for="title" class="form-label">Title</label>
+                                <label for="title" class="form-label">Track Title</label>
                                 <input type="text" name="title" class="form-control" id="title" required>
                             </div>
                             <div class="col-md-7">
                                 <label for="artist" class="form-label">Artist</label>
                                 <input type="text" name="artist" class="form-control" id="artist" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="category" class="form-label">Category</label>
-                                <select id="category" name="category" class="form-select" multiple required>
-                                    <option selected value="beginners">Beginners</option>
-                                    <option value="stress">Stress</option>
-                                </select>
                             </div>
                             <div class="col-12">
                                 <label for="description" class="form-label">Description</label>
@@ -162,6 +162,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
-<script src="../static/js/meditationTracks.js"></script>
+<script src="../static/js/tracks.js"></script>
 
 </html>

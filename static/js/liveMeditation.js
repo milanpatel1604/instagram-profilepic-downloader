@@ -71,7 +71,7 @@ async function deleteTrack(id){
     })
     if(result.status === 200){
         console.log('deleted');
-        document.location.href='/liveTracks';
+        document.location.href='/liveMeditation';
     }
     else if (result.status === 400){
         alert("Something went wrong! please try again");

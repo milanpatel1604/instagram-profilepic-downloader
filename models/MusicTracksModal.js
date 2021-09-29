@@ -2,12 +2,15 @@ const mongoose=require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId;
 
-const SleepStoriesSchema=new Schema({
+const MusicTracksSchema=new Schema({
     section_id: {
         type: ObjectId
     },
+    category_id: {
+        type: [ObjectId],
+    },
     title: {
-        type: String,
+        type: String
     },
     artist: {
         type: String
@@ -15,14 +18,9 @@ const SleepStoriesSchema=new Schema({
     description: {
         type: String
     },
-    language: {
-        type: String
-    },
-    lessons: {
-        type: String
-    },
     isPremium: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     track_duration: {
         type: String
@@ -33,8 +31,8 @@ const SleepStoriesSchema=new Schema({
     track_extention: {
         type: String
     }
-    
 });
 
-const SleepStory = mongoose.model("SleepStory", SleepStoriesSchema);
-module.exports = SleepStory;
+
+const MusicTrack = mongoose.model("MusicTrack", MusicTracksSchema);
+module.exports = MusicTrack;

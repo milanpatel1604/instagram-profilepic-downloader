@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const LiveTrack = require('../models/LiveTracksModel');
 const MusicCategory= require('../models/MusicCategoriesModal');
 const AppSection= require('../models/AppSectionsModel');
+const MusicTrack = require('../models/MusicTracksModal');
 
 const dotenv = require("dotenv").config();
 
@@ -46,16 +47,39 @@ async function getSectionNameOrId(section_id, section_name) {
     }
 }
 
+//GET /allMeditationTracks --admin tracks page (web)
+exports.allMeditationTracks = async (req, res, next) => {
+    const section_id=await getSectionNameOrId(null, 'meditation');
+    await MusicTrack.find({section_id: section_id}, async (err, docs) => {
+      if(err){
+        return res.status(400).send({status:400, message:"Error: "+err});
+      }
+      var result = [];
+      await Promise.all(docs.map(async (element) => {
+          await result.push({
+              title: element.title,
+              artist: element.artist,
+              image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
+              track_id: element._id,
+              isPremium: element.isPremium
+          })
+      }))
+      console.log(result);
+      return res.status(200).json({ status: 200, results: result });
+    })
+    
+};
 
-exports.allMeditationTracks = async (req, res) => {
+exports.categorizedMeditationTracks = async (req, res) => {
+    const section_id=await getSectionNameOrId(null, 'meditation');
 
-    MeditationTrack.find({}, async (err, docs) => {
+    const beginners_id=await getCategoryNameOrId( section_id, null, 'beginners');
+    const stress_id=await getCategoryNameOrId( section_id, null, 'stress');
+
+    await MusicTrack.find({section_id: section_id}, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
-        const section_id=await getSectionNameOrId(null, 'meditation');
-        const beginners_id=await getCategoryNameOrId( section_id, null, 'beginners');
-        const stress_id=await getCategoryNameOrId( section_id, null, 'stress');
 
         console.log("section_id: "+ section_id + " has "+beginners_id, stress_id+" categories.");
         
@@ -68,7 +92,7 @@ exports.allMeditationTracks = async (req, res) => {
                 await beginners.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/meditationImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -77,7 +101,7 @@ exports.allMeditationTracks = async (req, res) => {
                 await stress.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/meditationImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -94,12 +118,12 @@ exports.allMeditationTracks = async (req, res) => {
 
 exports.getMeditationTrack = async (req, res) => {
     const track_id = req.params.track_id;
-    MeditationTrack.findOne({ _id: track_id }, async (err, docs) => {
+    await MusicTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
         return res.status(200).json({
-            track_url: process.env.DOMAIN + `/static/tracks/meditationTracks/${docs._id}.${docs.track_extention}`,
+            track_url: process.env.DOMAIN + `/static/tracks/musicTracks/${docs._id}.${docs.track_extention}`,
             description: docs.description
         });
     })
@@ -133,7 +157,7 @@ exports.allLiveTracks = (req, res) => {
 
 exports.getLiveTrack = async (req, res) => {
     const track_id = req.params.track_id;
-    LiveTrack.findOne({ _id: track_id }, async (err, docs) => {
+    await LiveTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
@@ -164,7 +188,7 @@ exports.addMeditationFavorite = async (req, res) => {
 
 exports.getMeditationFavorite = async (req, res) => {
     const user_id = req.params.user_id;
-    User.findOne({ _id: user_id }, async (err, docs) => {
+    await User.findOne({ _id: user_id }, async (err, docs) => {
 
         if (err) {
             return res.status(400).json({ status: 400, error: err });
@@ -172,14 +196,14 @@ exports.getMeditationFavorite = async (req, res) => {
 
         var favTracks = [];
         for (let i = 0; i < docs.meditationFavorite_id.length; i++) {
-            await MeditationTrack.findOne({ _id: docs.meditationFavorite_id[i] }, async (err, element) => {
+            await MusicTrack.findOne({ _id: docs.meditationFavorite_id[i] }, async (err, element) => {
                 if (err) {
                     return res.status(400).json({ status: 400, error: err });
                 }
                 await favTracks.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/meditationImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
