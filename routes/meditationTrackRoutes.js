@@ -9,6 +9,9 @@ const { title } = require('process');
 //GET  /api/meditation/allMeditationTracks --fetching all tracks of meditation
 meditationTrackRoute.get('/allMeditationTracks', authController.protect, meditationController.allMeditationTracks)
 
+//GET  /api/meditation/categorizedMeditationTracks --fetching all tracks of meditation
+meditationTrackRoute.get('/categorizedMeditationTracks', authController.protect, meditationController.categorizedMeditationTracks)
+
 //GET  /api/meditation/getMeditationTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getMeditationTrack/:track_id', authController.protect, meditationController.getMeditationTrack)
 

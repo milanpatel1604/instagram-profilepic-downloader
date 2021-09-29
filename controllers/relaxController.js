@@ -3,6 +3,7 @@ const RelaxMelody=require('../models/relaxMelodiesModel');
 const User=require('../models/userModel');
 const MusicCategory= require('../models/MusicCategoriesModal');
 const AppSection= require('../models/AppSectionsModel');
+const MusicTrack = require('../models/MusicTracksModal');
 
 const dotenv = require("dotenv").config();
 
@@ -46,17 +47,41 @@ async function getSectionNameOrId(section_id, section_name) {
     }
 }
 
-
-exports.allRelaxTracks=(req, res)=>{
+//GET /allMeditationTracks --admin tracks page (web)
+exports.allRelaxTracks = async (req, res, next) => {
+    const section_id=await getSectionNameOrId(null, 'relax');
+    await MusicTrack.find({section_id: section_id}, async (err, docs) => {
+      if(err){
+        return res.status(400).send({status:400, message:"Error: "+err});
+      }
+      var result = [];
+      await Promise.all(docs.map(async (element) => {
+          await result.push({
+              title: element.title,
+              artist: element.artist,
+              image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
+              track_id: element._id,
+              isPremium: element.isPremium
+          })
+      }))
+      console.log(result);
+      return res.status(200).json({ status: 200, results: result });
+    })
     
-    RelaxTrack.find({}, async (err, docs)=>{
+};
+
+exports.categorizedRelaxTracks=async (req, res)=>{
+    
+    const section_id=await getSectionNameOrId(null, 'relax');
+
+    const beginners_id=await getCategoryNameOrId( section_id, null, 'beginners');
+    const self_calm_id=await getCategoryNameOrId( section_id, null, 'self-calm');
+
+    MusicTrack.find({section_id: section_id}, async (err, docs)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
         
-        const section_id=await getSectionNameOrId(null, 'relax');
-        const beginners_id=await getCategoryNameOrId( section_id, null, 'beginners');
-        const self_calm_id=await getCategoryNameOrId( section_id, null, 'self-calm');
 
         console.log("section_id: "+ section_id + " has "+beginners_id, self_calm_id+" categories.");
         console.log(docs);
@@ -68,7 +93,7 @@ exports.allRelaxTracks=(req, res)=>{
                 await beginners.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/relaxImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -77,7 +102,7 @@ exports.allRelaxTracks=(req, res)=>{
                 await self_calm.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/relaxImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -93,12 +118,12 @@ exports.allRelaxTracks=(req, res)=>{
 
 exports.getRelaxTrack= async (req, res)=>{
     const track_id=req.params.track_id;
-    RelaxTrack.findOne({_id: track_id}, async (err, docs)=>{
+    MusicTrack.findOne({_id: track_id}, async (err, docs)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
         return res.status(200).json({
-            track_url: process.env.DOMAIN + `/static/tracks/relaxTracks/${docs._id}.${docs.track_extention}`,
+            track_url: process.env.DOMAIN + `/static/tracks/musicTracks/${docs._id}.${docs.track_extention}`,
             description: docs.description
         });
     })
@@ -116,25 +141,25 @@ exports.allRelaxMelodySounds=async (req, res)=>{
         var Musical=[];
         var Other=[];
         docs.forEach(async (element)=>{
-            if(element.sound_category == 'Nature'){
+            if(element.sound_category == 'nature'){
                 await Nature.push({
                     title: element.sound_title,
                     track_id: element._id,
-                    track_url: process.env.DOMAIN + `/static/tracks/relaxTracks/${element._id}.${element.track_extention}`
+                    track_url: process.env.DOMAIN + `/static/tracks/relaxMelodySounds/${element._id}.${element.track_extention}`
                 })
             }
-            if(element.sound_category == 'Musical'){
+            if(element.sound_category == 'musical'){
                 await Musical.push({
                     title: element.sound_title,
                     track_id: element._id,
-                    track_url: process.env.DOMAIN + `/static/tracks/relaxTracks/${element._id}.${element.track_extention}`
+                    track_url: process.env.DOMAIN + `/static/tracks/relaxMelodySounds/${element._id}.${element.track_extention}`
                 })
             }
-            if(element.sound_category == 'Other'){
+            if(element.sound_category == 'other'){
                 await Other.push({
                     title: element.sound_title,
                     track_id: element._id,
-                    track_url: process.env.DOMAIN + `/static/tracks/relaxTracks/${element._id}.${element.track_extention}`
+                    track_url: process.env.DOMAIN + `/static/tracks/relaxMelodySounds/${element._id}.${element.track_extention}`
                 })
             }
         })

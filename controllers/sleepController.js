@@ -3,6 +3,7 @@ const SleepStory=require('../models/SleepStoriesModel');
 const User=require('../models/userModel');
 const MusicCategory= require('../models/MusicCategoriesModal');
 const AppSection= require('../models/AppSectionsModel');
+const MusicTrack = require('../models/MusicTracksModal');
 
 const dotenv = require("dotenv").config();
 
@@ -46,41 +47,53 @@ async function getSectionNameOrId(section_id, section_name) {
     }
 }
 
-
-exports.allSleepTracks=(req, res)=>{
+exports.allSleepTracks = async (req, res, next) => {
+    const section_id=await getSectionNameOrId(null, 'sleep');
+    await MusicTrack.find({section_id: section_id}, async (err, docs) => {
+      if(err){
+        return res.status(400).send({status:400, message:"Error: "+err});
+      }
+      var result = [];
+      await Promise.all(docs.map(async (element) => {
+          await result.push({
+              title: element.title,
+              artist: element.artist,
+              image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
+              track_id: element._id,
+              isPremium: element.isPremium
+          })
+      }))
+      console.log(result);
+      return res.status(200).json({ status: 200, results: result });
+    })
     
-    SleepTrack.find({}, async (err, docs)=>{
+};
+
+exports.categorizedSleepTracks=async (req, res)=>{
+    
+    const section_id=await getSectionNameOrId(null, 'sleep');
+
+    const music_id=await getCategoryNameOrId( section_id, null, 'music');
+    const mysterious_id=await getCategoryNameOrId( section_id, null, 'mysterious');
+
+    MusicTrack.find({section_id: section_id}, async (err, docs)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
         console.log(docs);
         var result=[];
         var music=[];
-        var stories=[];
         var mysterious=[];
 
-        const section_id=await getSectionNameOrId(null, 'sleep');
-        const music_id=await getCategoryNameOrId( section_id, null, 'music');
-        const stories_id=await getCategoryNameOrId( section_id, null, 'stories');
-        const mysterious_id=await getCategoryNameOrId( section_id, null, 'mysterious');
 
-        console.log("section_id: "+ section_id + " has "+music_id, stories_id, mysterious_id+" categories.");
+        console.log("section_id: "+ section_id + " has "+music_id, mysterious_id+" categories.");
 
         await Promise.all(docs.map(async (element)=>{
             if(element.category_id.includes(music_id)){
                 await music.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/sleepImages/${element._id}.${element.image_extention}`,
-                    track_id: element._id,
-                    isPremium: element.isPremium
-                })
-            }
-            if(element.category_id.includes(stories_id)){
-                await stories.push({
-                    title: element.title,
-                    artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/sleepImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -89,7 +102,7 @@ exports.allSleepTracks=(req, res)=>{
                 await mysterious.push({
                     title: element.title,
                     artist: element.artist,
-                    image_url: process.env.DOMAIN + `/static/tracks/sleepImages/${element._id}.${element.image_extention}`,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
                     track_id: element._id,
                     isPremium: element.isPremium
                 })
@@ -97,7 +110,6 @@ exports.allSleepTracks=(req, res)=>{
         }))
         await result.push({
             Music: music,
-            Stories: stories,
             Mysterious: mysterious
         })
         return res.status(200).json({status:200, results: result});
@@ -106,12 +118,12 @@ exports.allSleepTracks=(req, res)=>{
 
 exports.getSleepTrack= async (req, res)=>{
     const track_id=req.params.track_id;
-    SleepTrack.findOne({_id: track_id}, async (err, docs)=>{
+    MusicTrack.findOne({_id: track_id}, async (err, docs)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
         return res.status(200).json({
-            track_url: process.env.DOMAIN + `/static/tracks/sleepTracks/${docs._id}.${docs.track_extention}`,
+            track_url: process.env.DOMAIN + `/static/tracks/musicTracks/${docs._id}.${docs.track_extention}`,
             description: docs.description
         });
     })
@@ -129,7 +141,7 @@ exports.allSleepStories= (req, res) => {
             await result.push({
                 title: element.title,
                 artist: element.artist,
-                image_url: process.env.DOMAIN + `/static/tracks/sleepImages/${element._id}.${element.image_extention}`,
+                image_url: process.env.DOMAIN + `/static/tracks/sleepStoryImages/${element._id}.${element.image_extention}`,
                 track_id: element._id,
                 isPremium: element.isPremium
             })
@@ -145,8 +157,9 @@ exports.getSleepStory = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
         return res.status(200).json({
-            track_url: process.env.DOMAIN + `/static/tracks/liveTracks/${docs._id}.${docs.track_extention}`,
-            description: docs.description
+            track_url: process.env.DOMAIN + `/static/tracks/sleepStoryAudios/${docs._id}.${docs.track_extention}`,
+            description: docs.description,
+            lessons: docs.lessons
         });
     })
 }
