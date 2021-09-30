@@ -9,9 +9,6 @@ var viewsFilePath= path.join(__dirname, '../views');
 
 const User=require('../models/userModel');
 const MusicTrack = require("../models/MusicTracksModal");
-const MeditationTrack=require('../models/MeditationTracksModel');
-const RelaxTrack=require('../models/RelaxTracksModel');
-const SleepTrack=require('../models/SleepTracksModel');
 const LiveTrack=require('../models/LiveTracksModel');
 const Notification=require('../models/NotificationsModel');
 const MusicCategory=require('../models/MusicCategoriesModal');

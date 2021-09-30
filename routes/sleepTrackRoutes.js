@@ -23,8 +23,8 @@ sleepTrackRoute.get('/getSleepStory/:track_id', authController.protect, sleepCon
 
 
 // userspecific--
-sleepTrackRoute.post('/addSleepFavorite', authController.protect, sleepController.addSleepFavorite);
-sleepTrackRoute.get('/getSleepFavorite/:user_id', authController.protect, sleepController.getSleepFavorite)
-sleepTrackRoute.post('/removeSleepFavorite', authController.protect, sleepController.removeSleepFavorite)
+sleepTrackRoute.get('/addSleepFavorite/:track_id', authController.protect, sleepController.addSleepFavorite);
+sleepTrackRoute.get('/getSleepFavorite', authController.protect, sleepController.getSleepFavorite)
+sleepTrackRoute.get('/removeSleepFavorite/:track_id', authController.protect, sleepController.removeSleepFavorite)
 
 module.exports = sleepTrackRoute;
