@@ -21,8 +21,8 @@ relaxTrackRoute.get('/allRelaxMelodySounds', authController.protect, relaxContro
 
 
 // userspecific--
-relaxTrackRoute.post('/addRelaxFavorite', authController.protect, relaxController.addRelaxFavorite);
-relaxTrackRoute.get('/getRelaxFavorite/:user_id', authController.protect, relaxController.getRelaxFavorite)
-relaxTrackRoute.post('/removeRelaxFavorite', authController.protect, relaxController.removeRelaxFavorite)
+relaxTrackRoute.get('/addRelaxFavorite/:track_id', authController.protect, relaxController.addRelaxFavorite);
+relaxTrackRoute.get('/getRelaxFavorite', authController.protect, relaxController.getRelaxFavorite)
+relaxTrackRoute.get('/removeRelaxFavorite/:track_id', authController.protect, relaxController.removeRelaxFavorite)
 
 module.exports = relaxTrackRoute;
