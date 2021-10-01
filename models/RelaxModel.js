@@ -20,5 +20,5 @@ const RelaxTracksSchema=new Schema({
 });
 
 
-const RelaxTrack = mongoose.model("RelaxTrack", RelaxTracksSchema);
-module.exports = RelaxTrack;
+const Relax = mongoose.model("Relax", RelaxTracksSchema);
+module.exports = Relax;
