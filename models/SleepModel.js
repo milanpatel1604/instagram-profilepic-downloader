@@ -20,5 +20,5 @@ const SleepTracksSchema=new Schema({
 });
 
 
-const SleepTrack = mongoose.model("SleepTrack", SleepTracksSchema);
-module.exports = SleepTrack;
+const Sleep = mongoose.model("Sleep", SleepTracksSchema);
+module.exports = Sleep;

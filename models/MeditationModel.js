@@ -20,5 +20,5 @@ const MeditationTracksSchema=new Schema({
 });
 
 
-const MeditationTrack = mongoose.model("MeditationTrack", MeditationTracksSchema);
-module.exports = MeditationTrack;
+const Meditation = mongoose.model("Meditation", MeditationTracksSchema);
+module.exports = Meditation;
