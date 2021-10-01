@@ -127,19 +127,16 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     if(err){
       return res.json(400).json({status:400, message: err});
     }
-    console.log("user deleted")
   });
   await UserPreference.deleteOne({user_id : req.user.id}, (err)=>{
     if(err){
       return res.json(400).json({status:400, message: err});
     }
-    console.log("UserPreference deleted")
   });
   await UserSession.deleteOne({user_id : req.user.id}, (err)=>{
     if(err){
       return res.json(400).json({status:400, message: err});
     }
-    console.log("UserSession deleted")
   });
   res.status(204).json({
     status: "success",

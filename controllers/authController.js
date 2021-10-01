@@ -71,7 +71,6 @@ exports.signup = async (req, res, next) => {
       })
       res.status(200).json({ status: 200, message: "Mail sent successfully" })
     } catch (err) {
-      console.log(err);
       (user.verificationToken = undefined),
         (user.verificationTokenExpiresAt = undefined),
         await user.save({ validateBeforeSave: false });
@@ -104,7 +103,6 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
     })
     res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
-    console.log(err);
     (user.verificationToken = undefined),
       (user.verificationTokenExpiresAt = undefined),
       await user.save({ validateBeforeSave: false });
@@ -140,7 +138,6 @@ exports.varifyEmail = async (req, res, next) => {
       if (err) {
         return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
       }
-      console.log("user preference created:"+ docs)
     }
   );
   //default user session
@@ -163,7 +160,6 @@ exports.login = async (req, res, next) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
-  console.log(user);
 
   if (!user) {
     return next(new AppError("No user with this email, please signup", 404));
@@ -208,7 +204,6 @@ exports.loginWithGoogle = async (req, res, next) => {
           email_verified: payload.email_verified,
           login_using: "google"
         })
-        console.log('new user')
 
         // default user preferences
         const userPreferences = await UserPreference.create(
@@ -218,7 +213,6 @@ exports.loginWithGoogle = async (req, res, next) => {
             if (err) {
               return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
             }
-            console.log("user preference created:"+ docs)
           }
         );
         //default userSession
@@ -232,7 +226,6 @@ exports.loginWithGoogle = async (req, res, next) => {
         await createSendToken(user, 200, res);
       }
       if (doc) {
-        console.log('already a user')
         // updating last login in UserSessions
         const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
           last_login: presentDate
@@ -260,7 +253,6 @@ exports.loginWithFacebook = async (req, res, next) => {
         email_verified: true,
         login_using: "facebook"
       })
-      console.log('new user')
       // default user preferences
       const userPreferences = await UserPreference.create(
         {
@@ -269,7 +261,6 @@ exports.loginWithFacebook = async (req, res, next) => {
           if (err) {
             return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
           }
-          console.log("user preference created:"+ docs)
         }
       );
       const userSession = await UserSession.create(
@@ -282,7 +273,6 @@ exports.loginWithFacebook = async (req, res, next) => {
       await createSendToken(user, 200, res);
     }
     if (doc) {
-      console.log('already a user');
       // updating last login in UserSessions
       const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
         last_login: presentDate
@@ -308,7 +298,6 @@ exports.loginWithFacebook = async (req, res, next) => {
   //     },
   //     function (accessToken, refreshToken, profile, done) {
   //       // const { email, first_name, last_name } = profile._json;
-  //       console.log(profile)
   //       //   const user = await User.findOne({email: email},async (err, doc)=>{
   //       //     if(err){
   //       //       return next(new AppError(`error:${err}`, 400));
@@ -320,11 +309,9 @@ exports.loginWithFacebook = async (req, res, next) => {
   //       //         email_verified: payload.email_verified,
   //       //         login_using: "google"
   //       //       })
-  //       //       console.log('new user')
   //       //       await createSendToken( user, 200, res);
   //       //     }
   //       //     if(doc){
-  //       //       console.log('already a user')
   //       //       await createSendToken( doc, 200, res);
   //       //     }
   //       //   })
@@ -375,7 +362,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.checkLogin = async (req, res) => {
-  console.log(req.user)
   createSendToken(req.user, 200, res)
 }
 
@@ -412,7 +398,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     })
     res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
-    console.log(err);
     (user.verificationToken = undefined),
       (user.verificationTokenExpiresAt = undefined),
       await user.save({ validateBeforeSave: false });

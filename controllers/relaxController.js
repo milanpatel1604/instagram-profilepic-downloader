@@ -64,7 +64,6 @@ exports.allRelaxTracks = async (req, res, next) => {
               isPremium: element.isPremium
           })
       }))
-      console.log(result);
       return res.status(200).json({ status: 200, response: result });
     })
     
@@ -83,8 +82,6 @@ exports.categorizedRelaxTracks=async (req, res)=>{
         }
         
 
-        console.log("section_id: "+ section_id + " has "+beginners_id, self_calm_id+" categories.");
-        console.log(docs);
         var result=[];
         var beginners=[];
         var self_calm=[];
@@ -190,7 +187,6 @@ exports.removeRelaxFavorite= async (req, res)=>{
             res.status(202).json({ status: 202, message: "Removed Successfully" });
         }
     })
-    console.log(rmvFav);
 }
 
 exports.allRelaxMelodySounds=async (req, res)=>{
@@ -198,7 +194,6 @@ exports.allRelaxMelodySounds=async (req, res)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
-        console.log(docs);
         var result=[];
         var Nature=[];
         var Musical=[];

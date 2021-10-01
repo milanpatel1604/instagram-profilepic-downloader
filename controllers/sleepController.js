@@ -63,7 +63,6 @@ exports.allSleepTracks = async (req, res, next) => {
               isPremium: element.isPremium
           })
       }))
-      console.log(result);
       return res.status(200).json({ status: 200, response: result });
     })
     
@@ -80,13 +79,10 @@ exports.categorizedSleepTracks=async (req, res)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
-        console.log(docs);
         var result=[];
         var music=[];
         var mysterious=[];
 
-
-        console.log("section_id: "+ section_id + " has "+music_id, mysterious_id+" categories.");
 
         await Promise.all(docs.map(async (element)=>{
             if(element.category_id.includes(music_id)){
@@ -190,7 +186,6 @@ exports.removeSleepFavorite= async (req, res)=>{
             res.status(202).json({ status: 202, message: "Removed Successfully" });
         }
     })
-    console.log(rmvFav);
 }
 
 //sleep stories
@@ -199,7 +194,6 @@ exports.allSleepStories= (req, res) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
-        console.log(docs);
         var result = [];
         docs.forEach(async (element) => {
             await result.push({

@@ -1,5 +1,3 @@
-const url='http://127.0.0.1:3000';
-
 //change category according to section
 async function populate(sectionSelectId, categorySelectId) {
     const sectionSelectElement=document.getElementById(sectionSelectId);
@@ -19,7 +17,6 @@ async function populate(sectionSelectId, categorySelectId) {
 // tracks functions:
 async function displayMeditationTracks() {
     const tracksData = await fetch('/getAllTracks').then((res) => res.json())
-    console.log(tracksData)
     if (tracksData.status === 200) {
         const unauthorizedWarning = document.getElementById('unauthorizedWarning');
         unauthorizedWarning.style.display = 'none';
@@ -84,12 +81,10 @@ displayMeditationTracks();
 
 // CRUD functions
 async function deleteTrack(id){
-    console.log(id);
     const result=await fetch(`/trackDelete/${id}`, {
         method:"DELETE"
     })
     if(result.status === 200){
-        console.log('deleted');
         document.location.href='/tracks';
     }
     else if (result.status === 400){

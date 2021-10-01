@@ -22,7 +22,6 @@ loginForm.addEventListener("submit",async (e)=>{
 
     if(result.status === 200){
         password.value="";
-        console.log(result.message)
         document.location.href='/users';
     }
     else{

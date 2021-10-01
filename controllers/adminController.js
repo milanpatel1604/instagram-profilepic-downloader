@@ -148,7 +148,6 @@ exports.addMusicCategory=async (req, res)=>{
 exports.loginVerification=async (req, res)=>{
     const email=req.body.emailValue;
     const password=req.body.passwordValue;
-    console.log(email, password);
     const user =await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password)) || user.role !== "admin") {
@@ -280,7 +279,6 @@ exports.getRelaxMelodySounds = catchAsync(async (req, res, next) => {
 //GET /getLiveTracks --admin tracks page (web)
 exports.getLiveTracks = catchAsync(async (req, res, next) => {
     const tracks = await LiveTrack.find()
-    console.log(tracks);
     res.status(200).json({
       status: 200,
       results: tracks.length,
@@ -354,7 +352,6 @@ exports.uploadTrack = async (req, res, next) => {
         const categoryId=await getCategoryNameOrId(sectionId, null, category);
         category_id_arr.push(categoryId);
       }
-      console.log("array_db is this "+category_id_arr);
       const newTrack = await MusicTrack.create({
         section_id: sectionId,
         category_id: category_id_arr,
@@ -368,7 +365,6 @@ exports.uploadTrack = async (req, res, next) => {
         if(err){
           res.status(400).json({status:400, message: "details not saved"});
         }
-        console.log(docs._id);
         await img.mv(staticFilePath+"/tracks/musicImages/"+`${docs._id}.${imageExtention}`, (err)=>{
           if(err){
             res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
@@ -421,7 +417,6 @@ exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
         if(err){
           res.status(400).json({status:400, message: "details not saved"});
         }
-        console.log(docs._id);
         await img.mv(staticFilePath+"/tracks/liveImages/"+`${docs._id}.${imageExtention}`, (err)=>{
           if(err){
             res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
@@ -445,7 +440,6 @@ exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
 //POST /uploadRelaxMelodySound --admin tracks page (web)
 exports.uploadRelaxMelodySound = async (req, res, next) => {
   const {title, category} =await req.body;
-  console.log(title, category);
   if(req.files){
     //audio
     let audio=req.files.audioFile;
@@ -464,7 +458,6 @@ exports.uploadRelaxMelodySound = async (req, res, next) => {
         if(err){
           res.status(400).json({status:400, message: "details not saved"});
         }
-        console.log(docs._id);
         await audio.mv(staticFilePath+"/tracks/relaxMelodySounds/"+`${docs._id}.${audioExtention}`, (err)=>{
           if(err){
             return res.send({status: "Error", error: "failed to upload track, plese try again"});
@@ -512,7 +505,6 @@ exports.uploadSleepStory = async (req, res, next) => {
         if(err){
           res.status(400).json({status:400, message: "details not saved"});
         }
-        console.log(docs._id);
         await img.mv(staticFilePath+"/tracks/sleepStoryImages/"+`${docs._id}.${imageExtention}`, (err)=>{
           if(err){
             res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
@@ -588,8 +580,6 @@ exports.trackDelete = catchAsync(async (req, res, next) => {
       await res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
-  console.log(result);
-  console.log(_id +"deleted");
 });
 
 exports.liveTrackDelete = catchAsync(async (req, res, next) => {
@@ -627,8 +617,6 @@ exports.liveTrackDelete = catchAsync(async (req, res, next) => {
       await res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
-  console.log(result);
-  console.log(_id +"deleted");
 });
 
 exports.relaxMelodySoundDelete = catchAsync(async (req, res, next) => {
@@ -650,8 +638,6 @@ exports.relaxMelodySoundDelete = catchAsync(async (req, res, next) => {
       await res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
-  console.log(result);
-  console.log(_id +" deleted");
 });
 
 exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
@@ -689,13 +675,10 @@ exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
       await res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
-  console.log(result);
-  console.log(_id +"deleted");
 });
 
 exports.notificationDelete = catchAsync(async (req, res, next) => {
   const _id=await req.params.id;
-  console.log(_id);
   const notificationDelete = await Notification.deleteOne({_id:_id},async (err)=>{
     if(err){
       await res.status(400).json({status:400, message: "message not deleted"});
@@ -704,5 +687,4 @@ exports.notificationDelete = catchAsync(async (req, res, next) => {
       await res.status(200).json({status:200, message:"message deleted successfully"});
     }
   })
-  console.log(notificationDelete);
 });

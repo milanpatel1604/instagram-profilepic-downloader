@@ -65,12 +65,10 @@ displayLiveTracks();
 
 // CRUD functions
 async function deleteTrack(id){
-    console.log(id);
     const result=await fetch(`/liveTrackDelete/${id}`, {
         method:"DELETE"
     })
     if(result.status === 200){
-        console.log('deleted');
         document.location.href='/liveMeditation';
     }
     else if (result.status === 400){
@@ -84,8 +82,8 @@ const trackImage=document.getElementById('trackImage');
 const audioPlayer=document.getElementById('audioPlayer');
 async function playTrack(id, title, imgExt, trackExt){
     trackTitle.innerText=title;
-    trackImage.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveImages/${id}.${imgExt}`);
-    audioPlayer.setAttribute('src', `http://127.0.0.1:3000/static/tracks/liveTracks/${id}.${trackExt}`);
+    trackImage.setAttribute('src', `/static/tracks/liveImages/${id}.${imgExt}`);
+    audioPlayer.setAttribute('src', `/static/tracks/liveTracks/${id}.${trackExt}`);
 }
 
 window.addEventListener("load", function () {

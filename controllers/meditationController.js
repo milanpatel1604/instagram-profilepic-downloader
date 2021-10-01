@@ -64,7 +64,6 @@ exports.allMeditationTracks = async (req, res, next) => {
               isPremium: element.isPremium
           })
       }))
-      console.log(result);
       return res.status(200).json({ status: 200, response: result });
     })
     
@@ -81,7 +80,6 @@ exports.categorizedMeditationTracks = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
 
-        console.log("section_id: "+ section_id + " has "+beginners_id, stress_id+" categories.");
         
         var result = [];
         var beginners = [];
@@ -111,7 +109,6 @@ exports.categorizedMeditationTracks = async (req, res) => {
             Beginners: beginners,
             Stress: stress,
         })
-        console.log(result);
         return res.status(200).json({ status: 200, response: result });
     })
 }
@@ -190,7 +187,6 @@ exports.removeMeditationFavorite = async (req, res) => {
             res.status(202).json({ status: 202, message: "Removed Successfully" });
         }
     })
-    console.log(rmvFav);
 }
 
 // Daily live meditation
@@ -200,7 +196,6 @@ exports.allLiveTracks = (req, res) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
-        console.log(docs);
         var result = [];
         docs.forEach(async (element) => {
             await result.push({
@@ -229,12 +224,10 @@ exports.liveMeditation = async (req, res)=>{
 
     LiveTrack.find({date: fullPresentDate}, async (err, docs) =>{
         for(let i=0;i<docs.length;i++){
-            console.log(docs[i]);
             const startTime=docs[i].startTime.split(":");
             const endTime=docs[i].endTime.split(":");
             if(presentHour>=startTime[0] && presentHour<endTime[0]){
                 if(presentMinutes>=startTime[1] && presentMinutes<endTime[1]){
-                    console.log("hel")
                     res.status(200).json({
                         live_id: docs[i]._id,
                         title: docs[i].title,
@@ -242,7 +235,6 @@ exports.liveMeditation = async (req, res)=>{
                         image_url: process.env.DOMAIN + `/static/tracks/liveImages/${docs[i]._id}.${docs[i].image_extention}`,
                         current_status: pending___
                     })
-                    console.log("track is live now");
                 }
             }
         }

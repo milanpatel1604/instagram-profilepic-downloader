@@ -10,7 +10,6 @@ async function displaySleepStories(){
         else {
             sleepStoriesArr =await sleepStoriesData.data.tracks;
         }
-        console.log(sleepStoriesData.data.tracks);
         let sleepStoriesTable = document.getElementById("sleepStoriesTable");
         let html = "";
         await sleepStoriesArr.forEach(function(element, index){
@@ -76,12 +75,10 @@ displaySleepStories();
 
 // CRUD functions
 async function deleteStory(id){
-    console.log(id);
     const result=await fetch(`/sleepStoryDelete/${id}`, {
         method:"DELETE"
     })
     if(result.status === 200){
-        console.log('deleted');
         document.location.href='/sleepStories';
     }
     else if (result.status === 400){

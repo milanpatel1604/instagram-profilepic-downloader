@@ -56,12 +56,10 @@ displayNotifications();
 
 // CRUD functions
 async function deleteNotification(id){
-    console.log(id);
     const result=await fetch(`/notificationDelete/${id}`, {
         method:"DELETE"
     })
     if(result.status === 200){
-        console.log('deleted');
         document.location.href='/notification';
     }
     else if (result.status === 400){

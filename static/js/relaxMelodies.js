@@ -11,7 +11,6 @@ async function displayRelaxMelodies(){
         else {
             relaxMelodiesArr =await relaxMelodySoundsData.data.tracks;
         }
-        console.log(relaxMelodySoundsData.data.tracks);
         let relaxMelodiesTable = document.getElementById("relaxMelodiesTable");
         let html = "";
         await relaxMelodiesArr.forEach(function(element, index){
@@ -21,7 +20,7 @@ async function displayRelaxMelodies(){
                         <td>${element.sound_category}</td>
                         <td><button class="btn btn-danger" onclick="deleteSound('${element._id}');">Delete</button></td>
                         <td>
-                        <audio controls id="audioPlayer" src="http://127.0.0.1:3000/static/tracks/relaxMelodySounds/${element._id}.${element.track_extention}" type="audio/mpeg"></audio>
+                        <audio controls id="audioPlayer" src="/static/tracks/relaxMelodySounds/${element._id}.${element.track_extention}" type="audio/mpeg"></audio>
                         </td>
                     </tr>`;
         });
@@ -56,7 +55,6 @@ displayRelaxMelodies();
 
 //CRUD
 async function deleteSound(id){
-    console.log(id);
     const result=await fetch(`/relaxMelodySoundDelete/${id}`, {
         method:"DELETE"
     })
@@ -64,7 +62,6 @@ async function deleteSound(id){
         document.location.href='/relaxMelodies';
     }
     else if (result.status === 400){
-        console.log("Something went wrong! please try again");
     }
 }
 
