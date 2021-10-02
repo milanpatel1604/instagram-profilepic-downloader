@@ -40,5 +40,9 @@ router.get('/getUserSessions', authController.protect, userController.getUserSes
 router.post("/updateUserSessions", authController.protect, userController.updateUserSessions);
 
 router.post('/addUserMood', authController.protect, userController.addUserMood);
+router.get('/getUserMood', authController.protect, userController.getUserMood);
+
+router.get('/getSubscriptionInfo',  authController.protect, userController.getusersubinfo);
+router.post('/setSubscriptionInfo',  authController.protect, userController.setusersubinfo);
 
 module.exports = router;

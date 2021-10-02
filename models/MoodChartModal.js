@@ -9,6 +9,9 @@ const MoodChartSchema=new Schema({
     date: {
         type: String
     },
+    timestamp: {
+        type: Date
+    },
     mood: {
         type: String,
         enum: ['amazing', 'happy', 'confused', 'okay', 'sad']
