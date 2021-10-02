@@ -10,7 +10,6 @@ const UserPreferencesSchema=new Schema({
     },
     default_app_language: {
         type: String,
-        enum: ["english", "hindi", "telugu", "gujarati", "tamli"],
         default: 'english'
     },
     dark_mode: {

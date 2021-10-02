@@ -15,16 +15,13 @@ async function displaySleepStories(){
         await sleepStoriesArr.forEach(function(element, index){
             html +=`<tr class="tableRows">
                         <th id="itemID" scope="row">${element._id}</th>
-                        <td>${element.title}</td>
-                        <td>${element.artist}</td>
-                        <td>${element.description}</td>
-                        <td>${element.language}</td>
-                        <td>${element.isPremium? "premium" : "normal"}</td>
+                        <td>${element.story_name}</td>
+                        <td>${element.story_description}</td>
+                        <td>${element.lessons}</td>
                         <td><button class="btn btn-danger" onclick="deleteStory('${element._id}');">Delete</button></td>
                         <td>
-                            <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">
-                                Play
-                            </button>
+                            <button type="button" class="btn btn-success addAudioBtn" data-bs-toggle="modal" data-bs-target="#storyAudioModal"
+                            data-bs-whatever="@mdo" id="addStoryAudioBtn">Add Audio</button>
                         </td>
                     </tr>`;
         });
@@ -45,9 +42,6 @@ async function displaySleepStories(){
                 let cardTxt = element.getElementsByTagName("th")[0].innerText;
                 cardTxt += element.getElementsByTagName("td")[0].innerText;
                 cardTxt += element.getElementsByTagName("td")[1].innerText;
-                cardTxt += element.getElementsByTagName("td")[2].innerText;
-                cardTxt += element.getElementsByTagName("td")[3].innerText;
-                cardTxt += element.getElementsByTagName("td")[4].innerText;
                 if (cardTxt.toLowerCase().includes(searchValue.toLowerCase())) {
                     element.style.display = "";
                 }

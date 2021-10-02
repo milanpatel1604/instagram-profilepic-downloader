@@ -109,7 +109,7 @@ exports.categorizedMeditationTracks = async (req, res) => {
             Beginners: beginners,
             Stress: stress,
         })
-        return res.status(200).json({ status: 200, response: result });
+        return res.status(200).json({ status: 200, results: result });
     })
 }
 
@@ -172,7 +172,7 @@ exports.getMeditationFavorite = async (req, res) => {
                 isPremium: ress.isPremium
             })
         }))
-        return res.status(200).json({ status: 200, response: favTracks });
+        return res.status(200).json({ status: 200, results: favTracks });
     })
 }
 
@@ -209,31 +209,47 @@ exports.allLiveTracks = (req, res) => {
                 track_id: element._id,
             })
         })
-        return res.status(200).json({ status: 200, response: result });
+        return res.status(200).json({ status: 200, results: result });
     })
 }
 
 exports.liveMeditation = async (req, res)=>{
+
     let date_ob=new Date();
     const presentDate= ("0"+date_ob.getDate()).slice(-2);
     const presentMonth= ("0"+(date_ob.getMonth()+1)).slice(-2);
     const presentYear=date_ob.getFullYear();
+
     const fullPresentDate= presentYear+"-"+presentMonth+"-"+presentDate;
     const presentHour=date_ob.getHours();
     const presentMinutes=date_ob.getMinutes();
 
     LiveTrack.find({date: fullPresentDate}, async (err, docs) =>{
+
         for(let i=0;i<docs.length;i++){
+
             const startTime=docs[i].startTime.split(":");
             const endTime=docs[i].endTime.split(":");
+            
             if(presentHour>=startTime[0] && presentHour<endTime[0]){
                 if(presentMinutes>=startTime[1] && presentMinutes<endTime[1]){
+                    await Meditation.findOne({user_id: user_id, live_id: docs[i]._id},async (err2, element)=>{
+                        if (err2) {
+                            return res.status(403).json({status: 403, error: err2});
+                        }
+                        if (!element) {
+                            const newMeditationUser = await Meditation.create({
+                                user_id: user_id,
+                                live_id: docs[i]._id,
+                            })
+                        }
+                    })
                     res.status(200).json({
                         live_id: docs[i]._id,
                         title: docs[i].title,
                         artist: docs[i].artist,
                         image_url: process.env.DOMAIN + `/static/tracks/liveImages/${docs[i]._id}.${docs[i].image_extention}`,
-                        current_status: pending___
+                        current_status: development_pending___
                     })
                 }
             }

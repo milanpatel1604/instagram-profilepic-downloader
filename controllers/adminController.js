@@ -18,6 +18,7 @@ const RelaxMelody=require('../models/relaxMelodiesModel');
 
 
 const jwt = require("jsonwebtoken");
+const SleepStoryAudio = require("../models/SleepStoriesAudio");
 
 
 //functions
@@ -402,9 +403,7 @@ exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
     const imageExtention=imageArr[imageArr.length-1];
     let imageExtentionsArr=['png', 'jpg', 'jpeg'];
     if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
-      const sectionId=await getSectionNameOrId(null, 'relax');
       const newLiveTrack = await LiveTrack.create({
-        section_id: sectionId,
         title: title,
         artist: artist,
         description: description,
@@ -448,9 +447,7 @@ exports.uploadRelaxMelodySound = async (req, res, next) => {
     const audioExtention=audioArr[audioArr.length-1];
     let audioExtentionsArr=['mp3', 'wav'];
     if(audioExtentionsArr.includes(audioExtention)){
-      const sectionId=await getSectionNameOrId(null, 'relax');
       const newRelaxMelodySound = await RelaxMelody.create({
-        section_id: sectionId,
         sound_title: title,
         sound_category: category,
         track_extention: audioExtention
@@ -473,9 +470,45 @@ exports.uploadRelaxMelodySound = async (req, res, next) => {
   }
 };
 
-//POST /uploadSleepStory -- pending-----------------
+//POST /uploadSleepStory
 exports.uploadSleepStory = async (req, res, next) => {
-  const { title, artist, description, language, lessons, premium} =await req.body;
+  const { title, description, lessons} =await req.body;
+  if(req.files){
+    //image
+    let img=req.files.imageFile;
+    let imageFileName=img.name;
+    const imageArr=imageFileName.split(".");
+    const imageExtention=imageArr[imageArr.length-1];
+    let imageExtentionsArr=['png', 'jpg', 'jpeg'];
+    if(imageExtentionsArr.includes(imageExtention)){
+      const newSleepStory = await SleepStory.create({
+        story_name: title,
+        story_description: description,
+        lessons: lessons,
+        image_extention: imageExtention
+      },async (err, docs)=>{
+        if(err){
+          res.status(400).json({status:400, message: "Story details not saved"});
+        }
+        await img.mv(staticFilePath+"/tracks/sleepStoryImages/"+`${docs._id}.${imageExtention}`, (err)=>{
+          if(err){
+            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
+          }
+          else{
+            res.redirect('/sleepStories');
+          }
+        })
+      })
+    }
+    else{
+      return res.send({status: "error", error: "invalid file format", valid_image_format: "[ png, jpg, jpeg]"});
+    }
+  }
+};
+
+//POST /uploadStoryAudio
+exports.uploadStoryAudio = async (req, res, next) => {
+  const { story_id, title, language} =await req.body;
   if(req.files){
     //audio
     let audio=req.files.audioFile;
@@ -483,33 +516,16 @@ exports.uploadSleepStory = async (req, res, next) => {
     const audioArr=audioFileName.split(".");
     const audioExtention=audioArr[audioArr.length-1];
     let audioExtentionsArr=['mp3', 'wav'];
-    //image
-    let img=req.files.imageFile;
-    let imageFileName=img.name;
-    const imageArr=imageFileName.split(".");
-    const imageExtention=imageArr[imageArr.length-1];
-    let imageExtentionsArr=['png', 'jpg', 'jpeg'];
-    if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
-      const sectionId=await getSectionNameOrId(null, 'sleep');
-      const newSleepTrack = await SleepStory.create({
-        section_id: sectionId,
-        title: title,
-        artist: artist,
-        description: description,
-        language: language,
-        lessons: lessons,
-        isPremium: premium,
-        image_extention: imageExtention,
+    if(audioExtentionsArr.includes(audioExtention)){
+      const newStoryAudio = await SleepStoryAudio.create({
+        story_id: story_id,
+        audio_title: title,
+        audio_language: language.toLowerCase(),
         track_extention: audioExtention
       },async (err, docs)=>{
         if(err){
           res.status(400).json({status:400, message: "details not saved"});
         }
-        await img.mv(staticFilePath+"/tracks/sleepStoryImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-          if(err){
-            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
-          }
-        })
         await audio.mv(staticFilePath+"/tracks/sleepStoryAudios/"+`${docs._id}.${audioExtention}`, (err)=>{
           if(err){
             return res.send({status: "Error", error: "failed to upload track, plese try again"});
@@ -521,7 +537,7 @@ exports.uploadSleepStory = async (req, res, next) => {
       })
     }
     else{
-      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
+      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]"});
     }
   }
 };
@@ -549,35 +565,35 @@ exports.trackDelete = catchAsync(async (req, res, next) => {
   const _id=await req.params.id;
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/musicTracks/"+`${_id}.mp3`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }catch(err){
     await fs.unlinkSync(staticFilePath+"/tracks/musicTracks/"+`${_id}.wav`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }
 
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.jpg`,async (err)=>{
-      await res.status(400).json({status:400, message: "track image file not deleted"});
+      return res.status(400).json({status:400, message: "track image file not deleted"});
     })
   }catch(err){
     try {
       await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.png`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     } catch (err) {
       await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.jpeg`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     }
   }
   const result = await MusicTrack.deleteOne({_id:_id},async (err)=>{
     if(err){
-      await res.send({status:'Error', message: "track not deleted try again"});
+      return res.send({status:'Error', message: "track not deleted try again"});
     }
     else{
-      await res.status(200).json({status:200, message:"Track deleted successfully"});
+      return res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
 });
@@ -586,35 +602,35 @@ exports.liveTrackDelete = catchAsync(async (req, res, next) => {
   const _id=await req.params.id;
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/liveTracks/"+`${_id}.mp3`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }catch(err){
     await fs.unlinkSync(staticFilePath+"/tracks/liveTracks/"+`${_id}.wav`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }
 
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.jpg`,async (err)=>{
-      await res.status(400).json({status:400, message: "track image file not deleted"});
+      return res.status(400).json({status:400, message: "track image file not deleted"});
     })
   }catch(err){
     try {
       await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.png`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     } catch (err) {
       await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.jpeg`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     }
   }
   const result = await LiveTrack.deleteOne({_id:_id},async (err)=>{
     if(err){
-      await res.send({status:'Error', message: "track not deleted try again"});
+      return res.send({status:'Error', message: "track not deleted try again"});
     }
     else{
-      await res.status(200).json({status:200, message:"Track deleted successfully"});
+      return res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
 });
@@ -623,56 +639,69 @@ exports.relaxMelodySoundDelete = catchAsync(async (req, res, next) => {
   const _id=await req.params.id;
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/relaxMelodySounds/"+`${_id}.mp3`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }catch(err){
     await fs.unlinkSync(staticFilePath+"/tracks/relaxMelodySounds/"+`${_id}.wav`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
+      return res.status(400).json({status:400, message: "track audio file not deleted"});
     });
   }
   const result = await RelaxMelody.deleteOne({_id:_id},async (err)=>{
     if(err){
-      await res.send({status:'Error', message: "track not deleted try again"});
+      return res.send({status:'Error', message: "track not deleted try again"});
     }
     else{
-      await res.status(200).json({status:200, message:"Track deleted successfully"});
+      return res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
 });
 
 exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
   const _id=await req.params.id;
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${_id}.mp3`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
-    });
-  }catch(err){
-    await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${_id}.wav`,async (err)=>{
-      await res.status(400).json({status:400, message: "track audio file not deleted"});
-    });
-  }
-
+  
   try{
     await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.jpg`,async (err)=>{
-      await res.status(400).json({status:400, message: "track image file not deleted"});
+      return res.status(400).json({status:400, message: "track image file not deleted"});
     })
   }catch(err){
     try {
       await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.png`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     } catch (err) {
       await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.jpeg`,async (err)=>{
-        await res.status(400).json({status:400, message: "track image file not deleted"});
+        return res.status(400).json({status:400, message: "track image file not deleted"});
       })
     }
   }
+
+  const audios=await SleepStoryAudio.find({story_id: _id},async (err, docs)=>{
+    if(err){
+      return res.status(400).json({status:400, message: "track image file not deleted"+err});
+    }
+    await Promise.all(docs.map(async (item) => {
+      try{
+        await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${item._id}.mp3`,async (err)=>{
+          return res.status(400).json({status:400, message: "track audio file not deleted"});
+        });
+      }catch(err){
+        await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${item_id}.wav`,async (err)=>{
+          return res.status(400).json({status:400, message: "track audio file not deleted"});
+        });
+      }
+    }));
+  })
+  await SleepStoryAudio.deleteMany({story_id: _id}, (err)=>{
+    if(err){
+      return res.send({status: 400, message: "track not deleted try again"});
+    }
+  })
   const result = await SleepStory.deleteOne({_id:_id},async (err)=>{
     if(err){
-      await res.send({status:'Error', message: "track not deleted try again"});
+      return res.send({status:'Error', message: "track not deleted try again"});
     }
     else{
-      await res.status(200).json({status:200, message:"Track deleted successfully"});
+      return res.status(200).json({status:200, message:"Track deleted successfully"});
     }
   })
 });

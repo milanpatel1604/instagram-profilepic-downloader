@@ -49,6 +49,7 @@ adminRoute.get("/getNotifications", adminController.protect, adminController.get
 // tracks functionalities
 adminRoute.post('/uploadTrack', adminController.protect, adminController.uploadTrack)
 adminRoute.post('/uploadSleepStory', adminController.protect, adminController.uploadSleepStory)
+adminRoute.post('/uploadStoryAudio', adminController.protect, adminController.uploadStoryAudio)
 adminRoute.post('/uploadRelaxMelodySound', adminController.protect, adminController.uploadRelaxMelodySound)
 adminRoute.post('/uploadLiveTrack', adminController.protect, adminController.uploadLiveTrack)
 adminRoute.post('/uploadNotification', adminController.protect, adminController.uploadNotification)

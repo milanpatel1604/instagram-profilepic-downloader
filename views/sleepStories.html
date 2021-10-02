@@ -62,14 +62,12 @@
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Audio_Id</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Artist</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Language</th>
-                            <th scope="col">Premium</th>
+                            <th scope="col">Story_Id</th>
+                            <th scope="col">Story_Name</th>
+                            <th scope="col">Story_Description</th>
+                            <th scope="col">Lessons</th>
                             <th scope="col">Delete story</th>
-                            <th scope="col">Play story</th>
+                            <th scope="col">Add Audio</th>
                         </tr>
                     </thead>
                     <tbody id="sleepStoriesTable"></tbody>
@@ -90,21 +88,72 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="row g-3" id="uploadSleepStoryForm"  action="/uploadSleepStory" method="POST" enctype="multipart/form-data">
+                        <form class="row g-3" id="uploadSleepStoryForm" action="/uploadSleepStory" method="POST" enctype="multipart/form-data">
                             <div class="col-md-7">
-                                <label for="title" class="form-label">Title</label>
+                                <label for="title" class="form-label">Story_Name</label>
                                 <input type="text" name="title" class="form-control" required>
                             </div>
-                            <div class="col-md-7">
-                                <label for="artist" class="form-label">Artist</label>
-                                <input type="text" name="artist" class="form-control" required>
-                            </div>
                             <div class="col-12">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label">Story_Description</label>
                                 <input type="text" name="description" class="form-control" required>
                             </div>
+                            <div class="col-md-10">
+                                <label for="lessons" class="form-label">Lessons</label>
+                                <br>Format:
+                                <br>Lesson 1 - HH:MM:SS
+                                <br>Lesson 2 - HH:MM:SS
+                                <textarea name="lessons" cols="50" rows="8" placeholder="Lesson-HH:MM:SS"></textarea>
+                            </div>
+                            <!-- <div class="col-md-15">
+                                <label for="lessons" class="form-label">Lessons</label>
+                                <table id="lessonsTable" class="table table-light table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">lesson no.</th>
+                                            <th scope="col">Lesson</th>
+                                            <th scope="col">time-stamp</th>
+                                            <th scope="col">remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="storyLessonsTable">
+                                        <th scope="col"><input type="number" name="lessonNumber" class="form-control" required></th>
+                                        <th scope="col"><input type="text" name="lesson" class="form-control" required></th>
+                                        <th scope="col"><input type="time" name="timeStamp" class="form-control" id="timeFrom" required></th>
+                                        <th scope="col"><div id="addLesson" class="btn btn-primary">Add</div></th>
+                                    </tbody>
+                                </table>
+                            </div> -->
+                            <div class="col-12">
+                                <label for="track" class="form-label">choose an image for Story (image: png, jpg or jpeg)</label>
+                                <input type="file" name="imageFile" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Upload Story details</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="storyAudioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Stories Audio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="row g-3" id="uploadStoryAudioForm" action="/uploadStoryAudio" method="POST" enctype="multipart/form-data">
+                            <div class="col-md-7">
+                                <label for="story_id" class="form-label">story_id</label>
+                                <input type="text" name="story_id" class="form-control" required>
+                            </div>
+                            <div class="col-md-7">
+                                <label for="title" class="form-label">Audio_Title</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
                             <div class="col-md-4">
-                                <label for="language" class="form-label">Language</label>
+                                <label for="language" class="form-label">Audio Language</label>
                                 <select id="language" name="language" class="form-select" data-placeholder="Choose a Language...">
                                     <option value="Afrikaans">Afrikaans</option>
                                     <option value="Albanian">Albanian</option>
@@ -180,29 +229,12 @@
                                     <option value="Xhosa">Xhosa</option>
                                 </select>
                             </div>
-                            <div class="col-md-10">
-                                <label for="lessons" class="form-label">Lessons</label>
-                                <br>1.Lesson 1 - HH:MM:SS
-                                <br>2.Lesson 2 - HH:MM:SS
-                                <textarea name="lessons" cols="50" rows="8" placeholder="1.Lesson-HH:MM:SS"></textarea>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="premium" class="form-label">Premium</label>
-                                <select name="premium" class="form-select">
-                                    <option selected>true</option>
-                                    <option>false</option>
-                                </select>
-                            </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>
+                                <label for="track" class="form-label">choose Audio (audio file: mp3 or wav)</label>
                                 <input type="file" name="audioFile" class="form-control" required>
                             </div>
                             <div class="col-12">
-                                <label for="track" class="form-label">choose an image for track (image: png, jpg or jpeg)</label>
-                                <input type="file" name="imageFile" class="form-control" required>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Upload Tracks</button>
+                                <button type="submit" class="btn btn-primary">Upload Audio</button>
                             </div>
                         </form>
                     </div>

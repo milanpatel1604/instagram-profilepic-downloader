@@ -38,6 +38,12 @@ sleep:
   4. (user specific) add track to favorite: /api/sleep/addSleepFavorite/:track_id -- onSuccess(200) onError(400) -- (method: GET)
   5. (user specific) get all user favorite tracks: /api/sleep/getSleepFavorite/ -- onSuccess(200) onError(400) -- (method: GET)
   6. (user specific) remove a track from favorite: /api/sleep/removeSleepFavorite/:track_id -- onSuccess(202) onError(400)-- (method: GET)
+  --sleep stories:
+  7. all sleep stories /api/sleep/allSleepStories -- onSuccess(200), onError(400) --(method: GET)
+  8. get sleep story /api/sleep/getSleepStory/:story_id -- onSuccess(200), onError(400), onNoAudio(204) --(method: GET)
+  9. all story languages /api/sleep/allStoryLanguages/:story_id -- onSuccess(200), onError(400) --(method: GET)
+  10. add Sleep Story Favorite /api/sleep/addSleepStoryFavorite/:story_id -- onSuccess(201), onError(400) --(method: GET)
+  11. remove Sleep Story Favorite api/sleep/removeSleepStoryFavorite/:story_id -- onSuccess(202), onError(400) --(method: GET)
   
 relax:
   1. all tracks of relax: /api/relax/allRelaxTracks -- onSuccess(200), onError(400) --(method: GET) 

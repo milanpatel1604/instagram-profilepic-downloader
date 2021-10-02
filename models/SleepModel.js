@@ -10,7 +10,7 @@ const SleepTracksSchema=new Schema({
     track_id:{
         type: ObjectId
     },
-    audio_id:{
+    story_id:{
         type: ObjectId
     },
     is_favorite: {

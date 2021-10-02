@@ -114,7 +114,7 @@ exports.getUserSessions = catchAsync(async (req, res, next)=>{
 //adding user mood
 exports.addUserMood= catchAsync(async (req, res, next) => {
   await MoodChart.create({
-    user_id: req.body.user_id,
+    user_id: req.user.id,
     date: new Date(),
     mood: req.body.mood.toLowerCase()
   })

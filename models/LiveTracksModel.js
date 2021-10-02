@@ -3,9 +3,6 @@ const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId;
 
 const LiveTracksSchema=new Schema({
-    section_id: {
-        type: ObjectId
-    },
     title: {
         type: String
     },

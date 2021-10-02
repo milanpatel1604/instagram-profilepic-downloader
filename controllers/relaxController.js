@@ -109,7 +109,7 @@ exports.categorizedRelaxTracks=async (req, res)=>{
             Beginners: beginners,
             'Self-Calm': self_calm,
         })
-        return res.status(200).json({status:200, response: result});
+        return res.status(200).json({status:200, results: result});
     })
 }
 
@@ -172,7 +172,7 @@ exports.getRelaxFavorite=async (req, res)=>{
                 isPremium: ress.isPremium
             })
         }))
-        return res.status(200).json({ status: 200, response: favTracks });
+        return res.status(200).json({ status: 200, results: favTracks });
     })
 }
 
@@ -226,6 +226,6 @@ exports.allRelaxMelodySounds=async (req, res)=>{
             Musical: Musical,
             Other: Other
         })
-        return res.status(200).json({status:200, response: result});
+        return res.status(200).json({status:200, results: result});
     })
 }
