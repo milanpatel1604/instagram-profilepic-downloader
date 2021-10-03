@@ -7,7 +7,6 @@ const UserSession= require('../models/UserSessionsModel');
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
-const nodemailer = require('nodemailer');
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 
@@ -64,11 +63,11 @@ exports.signup = async (req, res, next) => {
     Expires in 2 minutes`;
 
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "your Email verification OTP (valid for 2 min)",
-        message: message,
-      })
+      await sendEmail.sendEmail(
+        user.email,
+        "your Email verification OTP (valid for 2 min)",
+        message,
+      )
       res.status(200).json({ status: 200, message: "Mail sent successfully" })
     } catch (err) {
       (user.verificationToken = undefined),
@@ -96,11 +95,7 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
   Expires in 2 minutes`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "your Email verification OTP (valid for 2 min)",
-      message: message,
-    })
+    await sendEmail.sendEmail(user.email, "your Email verification OTP (valid for 2 min)", message)
     res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
     (user.verificationToken = undefined),
@@ -391,11 +386,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? reset using OTP: ${resetToken}`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "your password reset OTP (valid for 5 min)",
-      message: message,
-    })
+    await sendEmail(
+      user.email,
+      "your password reset OTP (valid for 5 min)",
+      message,
+    )
     res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
     (user.verificationToken = undefined),

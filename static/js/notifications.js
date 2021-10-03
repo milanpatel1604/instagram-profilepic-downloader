@@ -18,7 +18,7 @@ async function displayNotifications(){
                         <th id="itemID" scope="row">${element._id}</th>
                         <td>${element.message}</td>
                         <td>${element.date}</td>
-                        <td>${element.isPremium? "to premium" : "to normal"}</td>
+                        <td>${element.shown?'sent':'pending'}</td>
                         <td><button class="btn btn-danger" onclick="deleteNotification('${element._id}');">Delete</button></td>
                     </tr>`;
            

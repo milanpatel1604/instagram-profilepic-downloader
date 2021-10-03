@@ -34,15 +34,6 @@ const userSchema = new Schema({
     minlength: 8,
     select: false,
   },
-  meditationFavorite_id:{
-    type: [ObjectId],
-  },
-  sleepFavorite_id: {
-    type: [ObjectId]
-  },
-  relaxFavorite_id: {
-    type: [ObjectId]
-  },
   passwordChangedAt: {
     type: Date,
   },

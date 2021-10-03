@@ -19,6 +19,7 @@ const RelaxMelody=require('../models/relaxMelodiesModel');
 
 const jwt = require("jsonwebtoken");
 const SleepStoryAudio = require("../models/SleepStoriesAudio");
+const UserNotification = require("../models/UserSpecificNotificationModel");
 
 
 //functions
@@ -544,19 +545,21 @@ exports.uploadStoryAudio = async (req, res, next) => {
 
 //POST /uploadNotification --admin tracks page (web)
 exports.uploadNotification = catchAsync(async (req, res, next) => {
-  const { message, date, premium} =await req.body;
+  const {message} =await req.body;
+  let date_ob=new Date();
+  const presentDate= ("0"+date_ob.getDate()).slice(-2)+"/"+("0"+(date_ob.getMonth()+1)).slice(-2)+"/"+date_ob.getFullYear();
   const newNotification = await Notification.create({
     message: message,
-    date: date,
-    isPremium: premium
+    date: presentDate,
+    shown: false
   }, (err)=>{
     if(err){
-      res.status(400).json({status:400, message: "details not saved"});
+      return res.status(400).send({status:400, message: "notification details not saved"});
     }
     else{
-      res.redirect("/notification");
+      return res.redirect("/notification");
     }
-  })
+  });
 });
 
 // delete functions:
