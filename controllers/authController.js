@@ -68,7 +68,7 @@ exports.signup = async (req, res, next) => {
         "your Email verification OTP (valid for 2 min)",
         message,
       )
-      res.status(200).json({ status: 200, message: "Mail sent successfully" })
+      return res.status(200).json({ status: 200, message: "Mail sent successfully" })
     } catch (err) {
       (user.verificationToken = undefined),
         (user.verificationTokenExpiresAt = undefined),
@@ -96,7 +96,7 @@ exports.resendVerifyEmailToken = async (req, res, next) => {
 
   try {
     await sendEmail.sendEmail(user.email, "your Email verification OTP (valid for 2 min)", message)
-    res.status(200).json({ status: 200, message: "Mail sent successfully" })
+    return res.status(200).json({ status: 200, message: "Mail sent successfully" })
   } catch (err) {
     (user.verificationToken = undefined),
       (user.verificationTokenExpiresAt = undefined),
@@ -118,7 +118,7 @@ exports.varifyEmail = async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(400).json({ status: 400, message: "invalid otp or otp is experied" })
+    return res.status(400).json({ status: 400, message: "invalid otp or otp is experied OR email changed" })
   }
 
   (user.email_verified = true),

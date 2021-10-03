@@ -54,6 +54,9 @@ exports.allMeditationTracks = async (req, res, next) => {
       if(err){
         return res.status(400).send({status:400, message:"Error: "+err});
       }
+      if(!docs){
+        return res.status(410).send({status:410, message: "No data to show"});
+      }
       var result = [];
       await Promise.all(docs.map(async (element) => {
           await result.push({
@@ -79,7 +82,9 @@ exports.categorizedMeditationTracks = async (req, res) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
-
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
+        }
         
         var result = [];
         var beginners = [];
@@ -120,6 +125,9 @@ exports.getMeditationTrack = async (req, res) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
+        }
         await Meditation.findOne({user_id: user_id, track_id: track_id},async (err2, element)=>{
             if (err2) {
                 return res.status(403).json({status: 403, error: err2});
@@ -142,9 +150,12 @@ exports.getMeditationTrack = async (req, res) => {
 exports.addMeditationFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
-    const favMeditation = await Meditation.updateOne({user_id: user_id, track_id: track_id}, {is_favorite: true}, (err)=>{
+    const favMeditation = await Meditation.updateOne({user_id: user_id, track_id: track_id}, {is_favorite: true}, (err, docs)=>{
         if(err){
           return res.json(400).json({status:400, message: err});
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data found"});
         }
     });
     return res.status(201).json({status:201, message: "Added Successfully"});
@@ -156,6 +167,9 @@ exports.getMeditationFavorite = async (req, res) => {
 
         if (err) {
             return res.status(400).json({ status: 400, error: err });
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "data not found"});
         }
         var favTracks = [];
         await Promise.all(docs.map(async (item) => {
@@ -179,12 +193,15 @@ exports.getMeditationFavorite = async (req, res) => {
 exports.removeMeditationFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
-    const rmvFav = await Meditation.updateOne({ user_id: user_id, track_id: track_id }, {is_favorite: false}, (err) => {
+    const rmvFav = await Meditation.updateOne({ user_id: user_id, track_id: track_id }, {is_favorite: false}, (err, docs) => {
         if (err) {
-            res.json(400).json({ status: 400, message: err });
+            return res.json(400).json({ status: 400, message: err });
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
         }
         else {
-            res.status(202).json({ status: 202, message: "Removed Successfully" });
+            return res.status(202).json({ status: 202, message: "Removed Successfully" });
         }
     })
 }
@@ -195,6 +212,9 @@ exports.allLiveTracks = (req, res) => {
     LiveTrack.find({}, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
         }
         var result = [];
         docs.forEach(async (element) => {
@@ -225,7 +245,12 @@ exports.liveMeditation = async (req, res)=>{
     const presentMinutes=date_ob.getMinutes();
 
     LiveTrack.find({date: fullPresentDate}, async (err, docs) =>{
-
+        if (err) {
+            return res.status(400).json({ status: 400, error: err });
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
+        }
         for(let i=0;i<docs.length;i++){
 
             const startTime=docs[i].startTime.split(":");
@@ -262,6 +287,9 @@ exports.getLiveTrack = async (req, res) => {
     await LiveTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
+        }
+        if(!docs){
+            return res.status(410).send({status:410, message: "No data to show"});
         }
         return res.status(200).json({
             track_url: process.env.DOMAIN + `/static/tracks/liveTracks/${docs._id}.${docs.track_extention}`,
