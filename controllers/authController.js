@@ -386,7 +386,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? reset using OTP: ${resetToken}`;
 
   try {
-    await sendEmail(
+    await sendEmail.sendEmail(
       user.email,
       "your password reset OTP (valid for 5 min)",
       message,
