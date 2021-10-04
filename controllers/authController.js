@@ -235,8 +235,8 @@ exports.loginWithGoogle = async (req, res, next) => {
 
 //login with facebook
 exports.loginWithFacebook = async (req, res, next) => {
-  const { access_token, user_id, email, name } = req.body;
-  const user = await User.findOne({ user_id: user_id }, async (err, doc) => {
+  const { access_token, user_id, email, name } =await req.body;
+  await User.findOne({ email: email }, async (err, doc) => {
     if (err) {
       return next(new AppError(`error:${err}`, 400));
     }
@@ -265,14 +265,14 @@ exports.loginWithFacebook = async (req, res, next) => {
           last_login: presentDate,
         }
       )
-      await createSendToken(user, 200, res);
+      createSendToken(user, 200, res);
     }
     if (doc) {
       // updating last login in UserSessions
-      const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+      const updatedUserSession = await UserSession.updateOne({user_id : doc._id}, {
         last_login: presentDate
       });
-      await createSendToken(doc, 200, res);
+      createSendToken(doc, 200, res);
     }
   })
   // // try {
