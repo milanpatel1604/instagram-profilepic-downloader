@@ -6,6 +6,9 @@ const NotificationsSchema=new Schema({
     message: {
         type: String
     },
+    related_to: {
+        type: String
+    },
     date: {
         type: String
     },

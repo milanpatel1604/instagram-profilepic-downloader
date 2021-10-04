@@ -21,8 +21,19 @@ const jwt = require("jsonwebtoken");
 const SleepStoryAudio = require("../models/SleepStoriesAudio");
 const UserNotification = require("../models/UserSpecificNotificationModel");
 
+const ObjectId= require('mongodb').ObjectID;
 
 //functions
+function checkId(object_id) {
+    if(ObjectId.isValid(object_id)){
+        if((String)(new ObjectId(object_id)) === object_id){
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
       expiresIn: '3d',
@@ -41,6 +52,9 @@ const createSendToken =async (user, statusCode, res) => {
 // For Admin-Specific:
 async function getCategoryNameOrId(section_id, category_id, category_name) {
   if(!category_name){
+    if(!checkId(section_id) && !checkId(category_id)){
+      return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
+    }
     const result=await MusicCategory.findById(category_id, (err)=>{
       if(err){
         res.json("Something went wrong: "+err);
@@ -60,6 +74,9 @@ async function getCategoryNameOrId(section_id, category_id, category_name) {
 
 async function getSectionNameOrId(section_id, section_name) {
   if(!section_name){
+    if(!checkId(section_id)){
+      return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
+    }
     const result=await AppSection.findById(section_id, (err)=>{
       if(err){
         res.json("Something went wrong: "+err);
@@ -123,6 +140,9 @@ exports.notificationPage=(req, res)=>{
 exports.addAppSection=async (req, res)=>{
   const sectionName=req.body.section_name;
   const sectionDescription=req.body.section_description;
+  if(!sectionName && !sectionDescription){
+    return res.status(444).send({status: 444, error:"please provide a section_name and section_description"});
+  }
   const newSection=await AppSection.create({
     section_name: sectionName,
     section_description: sectionDescription
@@ -135,6 +155,9 @@ exports.addAppSection=async (req, res)=>{
 exports.addMusicCategory=async (req, res)=>{
   const sectionName=req.body.section_name;
   const categoryName=req.body.category_name;
+  if(!sectionName && !categoryName){
+    return res.status(444).send({status: 444, error:"please provide a section_name and category_name in body"});
+  }
   const section_id=await getSectionNameOrId(null, sectionName);
   const newCategory=await MusicCategory.create({
     section_id: section_id,
@@ -510,6 +533,9 @@ exports.uploadSleepStory = async (req, res, next) => {
 //POST /uploadStoryAudio
 exports.uploadStoryAudio = async (req, res, next) => {
   const { story_id, title, language} =await req.body;
+  if(!checkId(story_id)){
+    return res.status(444).send({status: 444, error:"please provide a valid story_id to add audio"});
+  }
   if(req.files){
     //audio
     let audio=req.files.audioFile;
@@ -545,11 +571,12 @@ exports.uploadStoryAudio = async (req, res, next) => {
 
 //POST /uploadNotification --admin tracks page (web)
 exports.uploadNotification = catchAsync(async (req, res, next) => {
-  const {message} =await req.body;
+  const {message, relatedTo} =await req.body;
   let date_ob=new Date();
   const presentDate= ("0"+date_ob.getDate()).slice(-2)+"/"+("0"+(date_ob.getMonth()+1)).slice(-2)+"/"+date_ob.getFullYear();
   const newNotification = await Notification.create({
     message: message,
+    related_to: relatedTo,
     date: presentDate,
     shown: false
   }, (err)=>{

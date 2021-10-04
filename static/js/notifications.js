@@ -17,6 +17,7 @@ async function displayNotifications(){
             html += `<tr class="tableRows">
                         <th id="itemID" scope="row">${element._id}</th>
                         <td>${element.message}</td>
+                        <td>${element.related_to}</td>
                         <td>${element.date}</td>
                         <td>${element.shown?'sent':'pending'}</td>
                         <td><button class="btn btn-danger" onclick="deleteNotification('${element._id}');">Delete</button></td>
@@ -41,6 +42,7 @@ async function displayNotifications(){
                 cardTxt += element.getElementsByTagName("td")[0].innerText;
                 cardTxt += element.getElementsByTagName("td")[1].innerText;
                 cardTxt += element.getElementsByTagName("td")[2].innerText;
+                cardTxt += element.getElementsByTagName("td")[3].innerText;
                 if (cardTxt.toLowerCase().includes(searchValue.toLowerCase())) {
                     element.style.display = "";
                 }

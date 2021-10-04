@@ -68,6 +68,7 @@
                         <tr>
                             <th scope="col">Notification_Id</th>
                             <th scope="col">Message</th>
+                            <th scope="col">Related To</th>
                             <th scope="col">Date</th>
                             <th scope="col">status</th>
                             <th scope="col">Delete Notification</th>
@@ -95,6 +96,16 @@
                             <div class="col-md-10">
                                 <label for="message" class="form-label">Message</label>
                                 <input type="text" name="message" class="form-control" id="message" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="relatedTo" class="form-label">Related to:</label>
+                                <select name="relatedTo" class="form-select" required>
+                                    <option selected value="Med">Meditation / Daily Live</option>
+                                    <option value="Rel">Relax / melodies</option>
+                                    <option value="Sle">Sleep / stories</option>
+                                    <option value="Set">Settings / user</option>
+                                    <option value="Pre">premium related</option>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Send</button>

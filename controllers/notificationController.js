@@ -37,10 +37,12 @@ exports.allNotifications=async (req, res)=>{
         const fullYesterdayDate= yesterdayDate+"/"+presentMonth+"/"+presentYear;
         var results=[]
         await Promise.all(docs.map(async (element) => {
-            console.log(element.date, fullPresentDate, fullYesterdayDate);
-            if(element.date == fullPresentDate || element.date == fullYesterdayDate){
-                console.log("pushing")
-                results.push(element);
+            if(yesterdayDate>=1){
+                console.log(element.date, fullPresentDate, fullYesterdayDate);
+                if(element.date == fullPresentDate || element.date == fullYesterdayDate){
+                    console.log("pushing")
+                    results.push(element);
+                }
             }
         }))
         res.status(200).json({status:200, results: results});
@@ -53,7 +55,7 @@ exports.deleteNotifications=async (req, res)=>{
     const presentMonth= ("0"+(date_ob.getMonth()+1)).slice(-2);
     const presentYear=date_ob.getFullYear();
     const fulldayBeforeYesterdayDate= dayBeforeYesterdayDate+"/"+presentMonth+"/"+presentYear;
-    if(dayBeforeYesterdayDate>=01){
+    if(dayBeforeYesterdayDate>=0+1){
         Notification.deleteMany({date: fulldayBeforeYesterdayDate}, async (err)=>{
             if(err){
                 return res.status(400).json({status: 400, error: err});

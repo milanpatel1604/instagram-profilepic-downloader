@@ -7,10 +7,25 @@ const MusicTrack = require('../models/MusicTracksModal');
 
 const dotenv = require("dotenv").config();
 
+const ObjectId= require('mongodb').ObjectID;
+
+function checkId(object_id) {
+    if(ObjectId.isValid(object_id)){
+        if((String)(new ObjectId(object_id)) === object_id){
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 //functions
 // For Admin-Specific:
 async function getCategoryNameOrId(section_id, category_id, category_name) {
     if (!category_name) {
+        if(!checkId(section_id) && !checkId(category_id)){
+            return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
+        }
         const result = await MusicCategory.findById(category_id, (err) => {
             if (err) {
                 res.json("Something went wrong: " + err);
@@ -30,6 +45,9 @@ async function getCategoryNameOrId(section_id, category_id, category_name) {
 
 async function getSectionNameOrId(section_id, section_name) {
     if (!section_name) {
+        if(!checkId(section_id)){
+            return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
+        }
         const result = await AppSection.findById(section_id, (err) => {
             if (err) {
                 res.json("Something went wrong: " + err);
@@ -121,6 +139,9 @@ exports.categorizedMeditationTracks = async (req, res) => {
 exports.getMeditationTrack = async (req, res) => {
     const track_id = req.params.track_id;
     const user_id= req.user.id;
+    if(!checkId(track_id)){
+        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    }
     await MusicTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
@@ -150,6 +171,9 @@ exports.getMeditationTrack = async (req, res) => {
 exports.addMeditationFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
+    if(!checkId(track_id)){
+        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    }
     const favMeditation = await Meditation.updateOne({user_id: user_id, track_id: track_id}, {is_favorite: true}, (err, docs)=>{
         if(err){
           return res.json(400).json({status:400, message: err});
@@ -193,6 +217,9 @@ exports.getMeditationFavorite = async (req, res) => {
 exports.removeMeditationFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
+    if(!checkId(track_id)){
+        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    }
     const rmvFav = await Meditation.updateOne({ user_id: user_id, track_id: track_id }, {is_favorite: false}, (err, docs) => {
         if (err) {
             return res.json(400).json({ status: 400, message: err });
@@ -284,6 +311,9 @@ exports.liveMeditation = async (req, res)=>{
 
 exports.getLiveTrack = async (req, res) => {
     const track_id = req.params.track_id;
+    if(!checkId(track_id)){
+        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    }
     await LiveTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });

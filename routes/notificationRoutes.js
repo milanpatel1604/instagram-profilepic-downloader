@@ -7,12 +7,12 @@ const { title } = require('process');
 
 
 //GET  /api/notification/allNotifications --fetching all tracks of meditation
-notificationRoute.get('/notificationsToShow', authController.protect, notificationController.notificationsToShow)
+notificationRoute.get('/notificationsToShow', notificationController.notificationsToShow)
 
 //GET  /api/notification/allNotifications --fetching all tracks of meditation
-notificationRoute.get('/allNotifications', authController.protect, notificationController.allNotifications)
+notificationRoute.get('/allNotifications', notificationController.allNotifications)
 
 //GET  /api/notification/allNotifications --fetching all tracks of meditation
-notificationRoute.delete('/deleteNotifications', authController.protect, notificationController.deleteNotifications)
+notificationRoute.delete('/deleteNotifications', notificationController.deleteNotifications)
 
 module.exports = notificationRoute;
