@@ -50,11 +50,8 @@ const createSendToken =async (user, statusCode, res) => {
 };
 
 // For Admin-Specific:
-async function getCategoryNameOrId(section_id, category_id, category_name) {
+async function getCategoryNameOrId(section_id, category_id, category_name, res) {
   if(!category_name){
-    if(!checkId(section_id) && !checkId(category_id)){
-      return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
-    }
     const result=await MusicCategory.findById(category_id, (err)=>{
       if(err){
         res.json("Something went wrong: "+err);
@@ -72,11 +69,8 @@ async function getCategoryNameOrId(section_id, category_id, category_name) {
   }
 }
 
-async function getSectionNameOrId(section_id, section_name) {
+async function getSectionNameOrId(section_id, section_name, res) {
   if(!section_name){
-    if(!checkId(section_id)){
-      return res.status(444).json({status: 444, error:"please provide a valid _id in params"});
-    }
     const result=await AppSection.findById(section_id, (err)=>{
       if(err){
         res.json("Something went wrong: "+err);
