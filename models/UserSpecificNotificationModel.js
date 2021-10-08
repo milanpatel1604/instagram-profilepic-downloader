@@ -8,13 +8,19 @@ const UserSpecificNotificationsSchema=new Schema({
         required: [true, "Please provide user_id for user preference"],
     },
     notification_id: {
-        type: ObjectId
+        type: [ObjectId]
     },
     message: {
-        type: String
+        type: [String]
+    },
+    related_to:{
+        type: [String]
+    },
+    shown: {
+        type: [Boolean],
     },
     date: {
-        type: String
+        type: [String]
     },
 });
 

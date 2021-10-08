@@ -11,9 +11,6 @@ const NotificationsSchema=new Schema({
     },
     date: {
         type: String
-    },
-    shown: {
-        type: Boolean
     }
 });
 

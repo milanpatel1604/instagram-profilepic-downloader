@@ -15,15 +15,8 @@ const LiveTracksSchema=new Schema({
     date: {
         type: String
     },
-    startTime: {
+    time_slot: {
         type: String
-    },
-    endTime: {
-        type: String
-    },
-    track_duration: {
-        type: String,
-        default: "00:30:00"
     },
     image_extention: {
         type: String

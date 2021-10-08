@@ -105,7 +105,7 @@
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" name="date" class="form-control" id="date" required>
                             </div>
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-3">
                                 Time-Slot:
                                 <label for="from" class="form-label">From</label>
                                 <input type="time" name="startTime" class="form-control" id="timeFrom" required>
@@ -113,6 +113,28 @@
                             <div class="col-md-3">
                                 <label for="to" class="form-label">To</label>
                                 <input type="time" name="endTime" class="form-control" id="timeTo" required>
+                            </div> -->
+                            <div class="col-md-4">
+                                <label for="timeSlot" class="form-label">Time-Slot</label>
+                                <select id="timeSlot" name="timeSlot" class="form-select" required>
+                                    <option value=""></option>
+                                    <option value="06:00">06:00(AM)</option>
+                                    <option value="06:30">06:30(AM)</option>
+                                    <option value="07:00">07:00(AM)</option>
+                                    <option value="07:30">07:30(AM)</option>
+                                    <option value="08:00">08:00(AM)</option>
+                                    <option value="08:30">08:30(AM)</option>
+                                    <option value="09:00">09:00(AM)</option>
+
+                                    <option value="18:30">06:30(PM)</option>
+                                    <option value="19:00">07:00(PM)</option>
+                                    <option value="19:30">07:30(PM)</option>
+                                    <option value="20:00">08:00(PM)</option>
+                                    <option value="20:30">08:30(PM)</option>
+                                    <option value="21:00">09:00(PM)</option>
+                                    <option value="21:30">09:30(PM)</option>
+                                    <option value="22:00">10:00(PM)</option>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <label for="track" class="form-label">choose a track (audio file: mp3 or wav)</label>

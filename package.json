@@ -9,7 +9,7 @@
     "debug": "ndb server.js",
     "start": "node server.js"
   },
-  "author": "Vedant Shah",
+  "author": "Milan patel",
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^7.4.7",
@@ -39,5 +39,6 @@
   "bugs": {
     "url": "https://github.com/milanpatel1604/breathing-app-final-master/issues"
   },
-  "homepage": "https://github.com/milanpatel1604/breathing-app-final-master#readme"
+  "homepage": "https://github.com/milanpatel1604/breathing-app-final-master#readme",
+  "devDependencies": {}
 }

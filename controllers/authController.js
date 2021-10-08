@@ -3,7 +3,7 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const UserPreference = require('../models/UserPreferencesModel');
-const UserSession= require('../models/UserSessionsModel');
+const UserSession = require('../models/UserSessionsModel');
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
@@ -11,8 +11,8 @@ const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 
 //global variables
-let date_ob=new Date();
-const presentDate=("0"+date_ob.getDate()).slice(-2)+"/"+("0"+(date_ob.getMonth()+1)).slice(-2)+"/"+date_ob.getFullYear();
+let date_ob = new Date();
+const presentDate = ("0" + date_ob.getDate()).slice(-2) + "/" + ("0" + (date_ob.getMonth() + 1)).slice(-2) + "/" + date_ob.getFullYear();
 
 //google auth
 const { OAuth2Client } = require('google-auth-library');
@@ -80,7 +80,9 @@ exports.signup = async (req, res, next) => {
     if (error.code == 11000) {
       return res.status(409).json({ status: 409, message: "Email already exists" })
     }
-    return res.status(402).json({ status: 402, message: error });
+    else {
+      return res.status(402).json({ status: 402, message: error });
+    }
   }
 };
 
@@ -131,7 +133,7 @@ exports.varifyEmail = async (req, res, next) => {
       user_id: user._id
     }, (err, docs) => {
       if (err) {
-        return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
+        return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
       }
     }
   );
@@ -169,7 +171,7 @@ exports.login = async (req, res, next) => {
     return next(new AppError("please verify your email to login(check email)", 402));
   }
   // updating last login in UserSessions
-  const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+  const updatedUserSession = await UserSession.updateOne({ user_id: user._id }, {
     last_login: presentDate
   });
 
@@ -206,7 +208,7 @@ exports.loginWithGoogle = async (req, res, next) => {
             user_id: user._id
           }, (err, docs) => {
             if (err) {
-              return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
+              return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
             }
           }
         );
@@ -222,7 +224,7 @@ exports.loginWithGoogle = async (req, res, next) => {
       }
       if (doc) {
         // updating last login in UserSessions
-        const updatedUserSession = await UserSession.updateOne({user_id : user._id}, {
+        const updatedUserSession = await UserSession.updateOne({ user_id: user._id }, {
           last_login: presentDate
         });
         await createSendToken(doc, 200, res);
@@ -235,7 +237,7 @@ exports.loginWithGoogle = async (req, res, next) => {
 
 //login with facebook
 exports.loginWithFacebook = async (req, res, next) => {
-  const { access_token, user_id, email, name } =await req.body;
+  const { access_token, user_id, email, name } = await req.body;
   await User.findOne({ email: email }, async (err, doc) => {
     if (err) {
       return next(new AppError(`error:${err}`, 400));
@@ -254,7 +256,7 @@ exports.loginWithFacebook = async (req, res, next) => {
           user_id: user._id
         }, (err, docs) => {
           if (err) {
-            return res.json(400).json({ status: 400, message: "error while creating user_preference: "+err });
+            return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
           }
         }
       );
@@ -269,7 +271,7 @@ exports.loginWithFacebook = async (req, res, next) => {
     }
     if (doc) {
       // updating last login in UserSessions
-      const updatedUserSession = await UserSession.updateOne({user_id : doc._id}, {
+      const updatedUserSession = await UserSession.updateOne({ user_id: doc._id }, {
         last_login: presentDate
       });
       createSendToken(doc, 200, res);

@@ -20,7 +20,7 @@ async function displayLiveTracks(){
                         <td>${element.artist}</td>
                         <td>${element.description}</td>
                         <td>${element.date}</td>
-                        <td>${element.startTime} - ${element.endTime}</td>
+                        <td>${element.time_slot}</td>
                         <td><button class="btn btn-danger" onclick="deleteTrack('${element._id}');">Delete</button></td>
                         <td>
                             <button type="button" class="btn btn-success" onclick="playTrack('${element._id}', '${element.title}', '${element.image_extention}', '${element.track_extention}');" data-bs-toggle="modal" data-bs-target="#playModal">

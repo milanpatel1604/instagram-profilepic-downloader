@@ -19,8 +19,8 @@ meditationTrackRoute.get('/getMeditationTrack/:track_id', authController.protect
 //GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
 meditationTrackRoute.get('/liveMeditation', authController.protect, meditationController.liveMeditation)
 
-//GET  /api/meditation/allLiveTracks --fetching all tracks of meditation
-meditationTrackRoute.get('/allLiveTracks', authController.protect, meditationController.allLiveTracks)
+//GET  /api/meditation/nextLiveTime --fetching all tracks of meditation
+meditationTrackRoute.get('/nextLiveTime', authController.protect, meditationController.nextLiveTime)
 //GET  /api/meditation/getLiveTrack/:track_id --fetching all tracks of meditation
 meditationTrackRoute.get('/getLiveTrack/:track_id', authController.protect, meditationController.getLiveTrack)
 

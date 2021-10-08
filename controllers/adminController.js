@@ -406,7 +406,7 @@ exports.uploadTrack = async (req, res, next) => {
 
 //POST /uploadLiveTrack --admin tracks page (web)
 exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
-  const { title, artist, description, date, startTime, endTime} =await req.body;
+  const { title, artist, description, date, timeSlot} =await req.body;
   if(req.files){
     //audio
     let audio=req.files.audioFile;
@@ -426,8 +426,7 @@ exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
         artist: artist,
         description: description,
         date: date,
-        startTime: startTime,
-        endTime: endTime,
+        time_slot: timeSlot,
         image_extention: imageExtention,
         track_extention: audioExtention
       },async (err, docs)=>{
@@ -571,16 +570,63 @@ exports.uploadNotification = catchAsync(async (req, res, next) => {
   const newNotification = await Notification.create({
     message: message,
     related_to: relatedTo,
-    date: presentDate,
-    shown: false
-  }, (err)=>{
+    date: presentDate
+  },async (err, doc)=>{
     if(err){
       return res.status(400).send({status:400, message: "notification details not saved"});
     }
-    else{
-      return res.redirect("/notification");
+    if(!doc){
+      return res.status(403).json("please provide notification");
     }
+    const notification_id=await doc._id;
+    console.log(doc._id, notification_id);
+    const users= await User.find({}, async (err, docs)=>{
+      await Promise.all(docs.map(async (element) => {
+        await UserNotification.find({user_id:element._id}, async (err, userDoc)=>{
+          if (err) {
+            return next(new AppError(`error:${err}`, 400));
+          }
+          if (!userDoc) {
+            console.log("new user");
+            console.log(element._id);
+            const newUserNotification = await UserNotification.create({
+              user_id: element._id,
+              $push: {
+                notification_id: notification_id,
+                message: message,
+                related_to: relatedTo,
+                shown: false,
+                date: presentDate
+              }
+            }, async (err)=>{
+              if(err){
+                return res.send("something went wrong: "+err);
+              }
+            })
+          }
+          else if(userDoc){
+            console.log("existing user");
+            console.log(element._id);
+            const User_notifi = await UserNotification.updateOne({ user_id: element._id }, {
+              $push: {
+                notification_id: notification_id,
+                message: message,
+                related_to: relatedTo,
+                shown: false,
+                date: presentDate
+              }
+            }, async (err, docs)=>{
+              if(err){
+                return res.send("something went wrong: "+err);
+              }
+              console.log(docs);
+            });
+          }
+        })
+      }));
+    })
   });
+  return res.redirect("/notification");
 });
 
 // delete functions:
