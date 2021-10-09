@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId;
 
-const UserSpecificNotificationsSchema=new Schema({
+const CrudNotiSchema=new Schema({
     user_id: {
         type: ObjectId,
         required: [true, "Please provide user_id for user preference"],
@@ -25,5 +25,5 @@ const UserSpecificNotificationsSchema=new Schema({
 });
 
 
-const UserNotification = mongoose.model("UserNotification", UserSpecificNotificationsSchema);
-module.exports = UserNotification;
+const CrudNotify = mongoose.model("CrudNotify", CrudNotiSchema);
+module.exports = CrudNotify;

@@ -283,8 +283,6 @@ exports.liveMeditation = async (req, res) => {
     const presentHour = ("0" + date_ob.getHours()).slice(-2);
     const presentMinutes = ("0" + date_ob.getMinutes()).slice(-2);
 
-    const user_id = req.user.id;
-
     if (presentMinutes < 30) {
         const live1 = await LiveTrack.findOne({ date: fullPresentDate, time_slot: `${presentHour}:00` }, async (err) => {
             if (err) {
@@ -335,6 +333,7 @@ exports.liveMeditation = async (req, res) => {
 
 exports.getLiveTrack = async (req, res) => {
     const track_id = req.params.track_id;
+    const user_id= req.user.id;
     if (!checkId(track_id)) {
         return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }

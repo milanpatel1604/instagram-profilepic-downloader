@@ -2,67 +2,67 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { promisify } = require("util");
 require("dotenv").config();
-const path=require('path');
-const fs=require('fs');
-var staticFilePath=path.join(__dirname, '../static');
-var viewsFilePath= path.join(__dirname, '../views');
+const path = require('path');
+const fs = require('fs');
+var staticFilePath = path.join(__dirname, '../static');
+var viewsFilePath = path.join(__dirname, '../views');
 
-const User=require('../models/userModel');
+const User = require('../models/userModel');
 const MusicTrack = require("../models/MusicTracksModal");
-const LiveTrack=require('../models/LiveTracksModel');
-const Notification=require('../models/NotificationsModel');
-const MusicCategory=require('../models/MusicCategoriesModal');
-const AppSection=require('../models/AppSectionsModel');
-const SleepStory=require('../models/SleepStoriesModel');
-const RelaxMelody=require('../models/relaxMelodiesModel');
+const LiveTrack = require('../models/LiveTracksModel');
+const Notification = require('../models/NotificationsModel');
+const MusicCategory = require('../models/MusicCategoriesModal');
+const AppSection = require('../models/AppSectionsModel');
+const SleepStory = require('../models/SleepStoriesModel');
+const RelaxMelody = require('../models/relaxMelodiesModel');
+const SleepStoryAudio = require("../models/SleepStoriesAudio");
+const CrudNotify = require("../models/CrudNotificationModel");
 
 
 const jwt = require("jsonwebtoken");
-const SleepStoryAudio = require("../models/SleepStoriesAudio");
-const UserNotification = require("../models/UserSpecificNotificationModel");
 
-const ObjectId= require('mongodb').ObjectID;
+const ObjectId = require('mongodb').ObjectID;
 
 //functions
 function checkId(object_id) {
-    if(ObjectId.isValid(object_id)){
-        if((String)(new ObjectId(object_id)) === object_id){
-            return true;
-        }
-        return false;
+  if (ObjectId.isValid(object_id)) {
+    if ((String)(new ObjectId(object_id)) === object_id) {
+      return true;
     }
     return false;
+  }
+  return false;
 }
 
 const signToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: '3d',
-    });
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '3d',
+  });
 };
 var token;
-const createSendToken =async (user, statusCode, res) => {
-    token =await signToken(user._id);
-    return res.cookie('token', token,{
-      expires: new Date(Date.now() + '3d'),
-      secure: false,
-      httpOnly: true,
-    } ).json({status:statusCode, message:"login successful"})
+const createSendToken = async (user, statusCode, res) => {
+  token = await signToken(user._id);
+  return res.cookie('token', token, {
+    expires: new Date(Date.now() + '3d'),
+    secure: false,
+    httpOnly: true,
+  }).json({ status: statusCode, message: "login successful" })
 };
 
 // For Admin-Specific:
 async function getCategoryNameOrId(section_id, category_id, category_name, res) {
-  if(!category_name){
-    const result=await MusicCategory.findById(category_id, (err)=>{
-      if(err){
-        res.json("Something went wrong: "+err);
+  if (!category_name) {
+    const result = await MusicCategory.findById(category_id, (err) => {
+      if (err) {
+        res.json("Something went wrong: " + err);
       }
     });
     return result.category_name;
   }
-  else{
-    const result=await MusicCategory.findOne({section_id: section_id, category_name:category_name}, (err)=>{
-      if(err){
-        res.json("Something went wrong: "+err);
+  else {
+    const result = await MusicCategory.findOne({ section_id: section_id, category_name: category_name }, (err) => {
+      if (err) {
+        res.json("Something went wrong: " + err);
       }
     });
     return result._id;
@@ -70,18 +70,18 @@ async function getCategoryNameOrId(section_id, category_id, category_name, res) 
 }
 
 async function getSectionNameOrId(section_id, section_name, res) {
-  if(!section_name){
-    const result=await AppSection.findById(section_id, (err)=>{
-      if(err){
-        res.json("Something went wrong: "+err);
+  if (!section_name) {
+    const result = await AppSection.findById(section_id, (err) => {
+      if (err) {
+        res.json("Something went wrong: " + err);
       }
     });
     return result.section_name;
   }
-  else{
-    const result=await AppSection.findOne({section_name:section_name}, (err)=>{
-      if(err){
-        res.json("Something went wrong: "+err);
+  else {
+    const result = await AppSection.findOne({ section_name: section_name }, (err) => {
+      if (err) {
+        res.json("Something went wrong: " + err);
       }
     });
     return result._id;
@@ -90,100 +90,100 @@ async function getSectionNameOrId(section_id, section_name, res) {
 
 // rendering pages:-
 //GET / --admin home page (web)
-exports.homePage=(req, res)=>{
-  res.sendFile(viewsFilePath+'/index.html');
+exports.homePage = (req, res) => {
+  res.sendFile(viewsFilePath + '/index.html');
 }
 
 //GET /login --admin login page (web)
-exports.loginPage = (req, res)=>{
-    res.sendFile(viewsFilePath + "/adminLogin.html");
+exports.loginPage = (req, res) => {
+  res.sendFile(viewsFilePath + "/adminLogin.html");
 }
 
 //GET /users --admin users page (web)
-exports.usersPage=(req, res)=>{
-  res.sendFile(viewsFilePath+'/users.html');
+exports.usersPage = (req, res) => {
+  res.sendFile(viewsFilePath + '/users.html');
 }
 
 //GET /meditationTracks --admin tracks page (web)
-exports.tracksPage=(req, res)=>{
-  res.sendFile(viewsFilePath+'/tracks.html');
+exports.tracksPage = (req, res) => {
+  res.sendFile(viewsFilePath + '/tracks.html');
 }
 
 //GET /sleepTracks --admin tracks page (web)
-exports.sleepStories=(req, res)=>{
-  res.sendFile(viewsFilePath+'/sleepStories.html');
+exports.sleepStories = (req, res) => {
+  res.sendFile(viewsFilePath + '/sleepStories.html');
 }
 
 //GET /relaxTracks --admin tracks page (web)
-exports.relaxMelodies=(req, res)=>{
-  res.sendFile(viewsFilePath+'/relaxMelodies.html');
+exports.relaxMelodies = (req, res) => {
+  res.sendFile(viewsFilePath + '/relaxMelodies.html');
 }
 
 //GET /LiveTracks --admin tracks page (web)
-exports.liveMeditation=(req, res)=>{
-  res.sendFile(viewsFilePath+'/liveMeditation.html');
+exports.liveMeditation = (req, res) => {
+  res.sendFile(viewsFilePath + '/liveMeditation.html');
 }
 
 //GET /notification --admin tracks page (web)
-exports.notificationPage=(req, res)=>{
-  res.sendFile(viewsFilePath+'/notification.html');
+exports.notificationPage = (req, res) => {
+  res.sendFile(viewsFilePath + '/notification.html');
 }
 
 
 //api's
-exports.addAppSection=async (req, res)=>{
-  const sectionName=req.body.section_name;
-  const sectionDescription=req.body.section_description;
-  if(!sectionName && !sectionDescription){
-    return res.status(444).send({status: 444, error:"please provide a section_name and section_description"});
+exports.addAppSection = async (req, res) => {
+  const sectionName = req.body.section_name;
+  const sectionDescription = req.body.section_description;
+  if (!sectionName && !sectionDescription) {
+    return res.status(444).send({ status: 444, error: "please provide a section_name and section_description" });
   }
-  const newSection=await AppSection.create({
+  const newSection = await AppSection.create({
     section_name: sectionName,
     section_description: sectionDescription
-  }, (err)=>{
+  }, (err) => {
     return res.status(400).json(err);
   })
-  res.status(201).json({section_id: newSection._id, section_name: sectionName});
+  res.status(201).json({ section_id: newSection._id, section_name: sectionName });
 }
 
-exports.addMusicCategory=async (req, res)=>{
-  const sectionName=req.body.section_name;
-  const categoryName=req.body.category_name;
-  if(!sectionName && !categoryName){
-    return res.status(444).send({status: 444, error:"please provide a section_name and category_name in body"});
+exports.addMusicCategory = async (req, res) => {
+  const sectionName = req.body.section_name;
+  const categoryName = req.body.category_name;
+  if (!sectionName && !categoryName) {
+    return res.status(444).send({ status: 444, error: "please provide a section_name and category_name in body" });
   }
-  const section_id=await getSectionNameOrId(null, sectionName);
-  const newCategory=await MusicCategory.create({
+  const section_id = await getSectionNameOrId(null, sectionName);
+  const newCategory = await MusicCategory.create({
     section_id: section_id,
     category_name: categoryName
-  }, (err)=>{
+  }, (err) => {
     return res.status(400).json(err);
   })
-  res.status(201).json({category_id: newCategory._id, category_name: categoryName});
+  res.status(201).json({ category_id: newCategory._id, category_name: categoryName });
 }
 
 
 //POST /authenticate --admin home page (web)
-exports.loginVerification=async (req, res)=>{
-    const email=req.body.emailValue;
-    const password=req.body.passwordValue;
-    const user =await User.findOne({ email }).select("+password");
+exports.loginVerification = async (req, res) => {
+  const email = req.body.emailValue;
+  const password = req.body.passwordValue;
+  const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user.correctPassword(password, user.password)) || user.role !== "admin") {
-        return res.status(400).json({status:400, error:"invalid username or password"});
-    }
+  if (!user || !(await user.correctPassword(password, user.password)) || user.role !== "admin") {
+    return res.status(400).json({ status: 400, error: "invalid username or password" });
+  }
 
-    createSendToken(user, 200, res);
+  createSendToken(user, 200, res);
 }
 
 
 // Specific Middleware- Check If admin Login or not
 exports.protect = catchAsync(async (req, res, next) => {
 
-  const token=req.cookies.token || '';
+  const token = req.cookies.token || '';
 
   if (!token) {
-    res.status(401).json({status:401, message:"Unauthorized Access please login"})
+    res.status(401).json({ status: 401, message: "Unauthorized Access please login" })
     return next(new AppError("You are not logged in! Please login", 401));
   }
 
@@ -208,46 +208,46 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 //login check
-exports.check=async (req, res)=>{
-  res.status(200).json({status:200});
+exports.check = async (req, res) => {
+  res.status(200).json({ status: 200 });
 }
 
 //logout
-exports.logout=async (req, res)=>{
-  return res.cookie('token', token,{
+exports.logout = async (req, res) => {
+  return res.cookie('token', token, {
     expires: new Date(Date.now()),
     secure: false,
     httpOnly: true,
-  } ).json({status: 200, message:"logout successful"})
+  }).json({ status: 200, message: "logout successful" })
 }
 
 
 //GET /admin/getAllUsers --admin users page (web)
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
-    res.status(200).json({
-      status: 200,
-      results: users.length,
-      data: {
-        users,
-      },
-    });
+  const users = await User.find();
+  res.status(200).json({
+    status: 200,
+    results: users.length,
+    data: {
+      users,
+    },
+  });
 });
 
 //GET /getMeditationTracks --admin tracks page (web)
 exports.getAllTracks = catchAsync(async (req, res, next) => {
-  const tracks = await MusicTrack.find({}, (err)=>{
-    if(err){
-      return res.status(400).send({status:400, message:"Error: "+err});
+  const tracks = await MusicTrack.find({}, (err) => {
+    if (err) {
+      return res.status(400).send({ status: 400, message: "Error: " + err });
     }
   })
   var data = [];
-  
+
   await Promise.all(tracks.map(async (element) => {
-    const section=await getSectionNameOrId(element.section_id, null);
-    var categories_arr=[];
+    const section = await getSectionNameOrId(element.section_id, null);
+    var categories_arr = [];
     await Promise.all(element.category_id.map(async (item) => {
-      const category=await getCategoryNameOrId(null, item, null);
+      const category = await getCategoryNameOrId(null, item, null);
       await categories_arr.push(category);
     }));
     await data.push({
@@ -285,59 +285,59 @@ exports.getSleepStories = catchAsync(async (req, res, next) => {
 
 //GET /getRelaxMelodySounds --admin tracks page (web)
 exports.getRelaxMelodySounds = catchAsync(async (req, res, next) => {
-    const tracks = await RelaxMelody.find()
-    res.status(200).json({
-      status: 200,
-      results: tracks.length,
-      data: {
-        tracks,
-      },
-    });
+  const tracks = await RelaxMelody.find()
+  res.status(200).json({
+    status: 200,
+    results: tracks.length,
+    data: {
+      tracks,
+    },
+  });
 });
 
 //GET /getLiveTracks --admin tracks page (web)
 exports.getLiveTracks = catchAsync(async (req, res, next) => {
-    const tracks = await LiveTrack.find()
-    res.status(200).json({
-      status: 200,
-      results: tracks.length,
-      data: {
-        tracks,
-      },
-    });
+  const tracks = await LiveTrack.find()
+  res.status(200).json({
+    status: 200,
+    results: tracks.length,
+    data: {
+      tracks,
+    },
+  });
 });
 
 //GET /getNotifications --admin tracks page (web)
 exports.getNotifications = catchAsync(async (req, res, next) => {
-    const notifications = await Notification.find()
-    res.status(200).json({
-      status: 200,
-      results: notifications.length,
-      data: {
-        notifications,
-      },
-    });
+  const notifications = await Notification.find()
+  res.status(200).json({
+    status: 200,
+    results: notifications.length,
+    data: {
+      notifications,
+    },
+  });
 });
 
 //dynamic select categories on change in section
-exports.getSectionCategories= async (req, res)=>{
-  const section=req.params.section;
-  const sectionId=await getSectionNameOrId(null, section);
-  const categories=await MusicCategory.find({section_id: sectionId},async (err, docs)=>{
-    if(err){
-      return res.status(400).json({status:400, message: "Error: "+err});
+exports.getSectionCategories = async (req, res) => {
+  const section = req.params.section;
+  const sectionId = await getSectionNameOrId(null, section);
+  const categories = await MusicCategory.find({ section_id: sectionId }, async (err, docs) => {
+    if (err) {
+      return res.status(400).json({ status: 400, message: "Error: " + err });
     }
-    else{
-      var categories_arr=[];
-      if(docs.length<=1){
+    else {
+      var categories_arr = [];
+      if (docs.length <= 1) {
         await categories_arr.push(docs.category_name);
-        return res.status(200).json({status:200, data: categories_arr});
+        return res.status(200).json({ status: 200, data: categories_arr });
       }
-      else{
+      else {
         await Promise.all(docs.map(async (element) => {
           await categories_arr.push(element.category_name);
         }));
-        return res.status(200).json({status:200, data: categories_arr});
+        return res.status(200).json({ status: 200, data: categories_arr });
       }
     }
   })
@@ -345,30 +345,30 @@ exports.getSectionCategories= async (req, res)=>{
 
 //POST /uploadTrack --admin tracks page (web)
 exports.uploadTrack = async (req, res, next) => {
-  const { section, category, title, artist, description, premium} =await req.body;
-  if(req.files){
+  const { section, category, title, artist, description, premium } = await req.body;
+  if (req.files) {
     //audio
-    let audio=req.files.audioFile;
-    let audioFileName=audio.name;
-    const audioArr=audioFileName.split(".");
-    const audioExtention=audioArr[audioArr.length-1];
-    let audioExtentionsArr=['mp3', 'wav'];
+    let audio = req.files.audioFile;
+    let audioFileName = audio.name;
+    const audioArr = audioFileName.split(".");
+    const audioExtention = audioArr[audioArr.length - 1];
+    let audioExtentionsArr = ['mp3', 'wav'];
     //image
-    let img=req.files.imageFile;
-    let imageFileName=img.name;
-    const imageArr=imageFileName.split(".");
-    const imageExtention=imageArr[imageArr.length-1];
-    let imageExtentionsArr=['png', 'jpg', 'jpeg'];
-    if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
-      var category_id_arr=[];
-      const sectionId=await getSectionNameOrId(null, section);
-      if(Array.isArray(category)){
+    let img = req.files.imageFile;
+    let imageFileName = img.name;
+    const imageArr = imageFileName.split(".");
+    const imageExtention = imageArr[imageArr.length - 1];
+    let imageExtentionsArr = ['png', 'jpg', 'jpeg'];
+    if (audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)) {
+      var category_id_arr = [];
+      const sectionId = await getSectionNameOrId(null, section);
+      if (Array.isArray(category)) {
         await Promise.all(category.map(async (element) => {
-          const categoryId=await getCategoryNameOrId(sectionId, null, element);
+          const categoryId = await getCategoryNameOrId(sectionId, null, element);
           category_id_arr.push(categoryId);
         }));
-      }else{
-        const categoryId=await getCategoryNameOrId(sectionId, null, category);
+      } else {
+        const categoryId = await getCategoryNameOrId(sectionId, null, category);
         category_id_arr.push(categoryId);
       }
       const newTrack = await MusicTrack.create({
@@ -380,47 +380,47 @@ exports.uploadTrack = async (req, res, next) => {
         isPremium: premium,
         image_extention: imageExtention,
         track_extention: audioExtention
-      },async (err, docs)=>{
-        if(err){
-          res.status(400).json({status:400, message: "details not saved"});
+      }, async (err, docs) => {
+        if (err) {
+          res.status(400).json({ status: 400, message: "details not saved" });
         }
-        await img.mv(staticFilePath+"/tracks/musicImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-          if(err){
-            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
+        await img.mv(staticFilePath + "/tracks/musicImages/" + `${docs._id}.${imageExtention}`, (err) => {
+          if (err) {
+            res.status(400).json({ status: "Error", error: "failed to upload track, plese try again" });
           }
         })
-        await audio.mv(staticFilePath+"/tracks/musicTracks/"+`${docs._id}.${audioExtention}`, (err)=>{
-          if(err){
-            return res.send({status: "Error", error: "failed to upload track, plese try again"});
+        await audio.mv(staticFilePath + "/tracks/musicTracks/" + `${docs._id}.${audioExtention}`, (err) => {
+          if (err) {
+            return res.send({ status: "Error", error: "failed to upload track, plese try again" });
           }
-          else{
+          else {
             res.redirect('/tracks');
           }
         })
       })
-    }else{
-      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
+    } else {
+      return res.send({ status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]" });
     }
   }
 };
 
 //POST /uploadLiveTrack --admin tracks page (web)
 exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
-  const { title, artist, description, date, timeSlot} =await req.body;
-  if(req.files){
+  const { title, artist, description, date, timeSlot } = await req.body;
+  if (req.files) {
     //audio
-    let audio=req.files.audioFile;
-    let audioFileName=audio.name;
-    const audioArr=audioFileName.split(".");
-    const audioExtention=audioArr[audioArr.length-1];
-    let audioExtentionsArr=['mp3', 'wav'];
+    let audio = req.files.audioFile;
+    let audioFileName = audio.name;
+    const audioArr = audioFileName.split(".");
+    const audioExtention = audioArr[audioArr.length - 1];
+    let audioExtentionsArr = ['mp3', 'wav'];
     //image
-    let img=req.files.imageFile;
-    let imageFileName=img.name;
-    const imageArr=imageFileName.split(".");
-    const imageExtention=imageArr[imageArr.length-1];
-    let imageExtentionsArr=['png', 'jpg', 'jpeg'];
-    if(audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)){
+    let img = req.files.imageFile;
+    let imageFileName = img.name;
+    const imageArr = imageFileName.split(".");
+    const imageExtention = imageArr[imageArr.length - 1];
+    let imageExtentionsArr = ['png', 'jpg', 'jpeg'];
+    if (audioExtentionsArr.includes(audioExtention) && imageExtentionsArr.includes(imageExtention)) {
       const newLiveTrack = await LiveTrack.create({
         title: title,
         artist: artist,
@@ -429,361 +429,356 @@ exports.uploadLiveTrack = catchAsync(async (req, res, next) => {
         time_slot: timeSlot,
         image_extention: imageExtention,
         track_extention: audioExtention
-      },async (err, docs)=>{
-        if(err){
-          res.status(400).json({status:400, message: "details not saved"});
+      }, async (err, docs) => {
+        if (err) {
+          res.status(400).json({ status: 400, message: "details not saved" });
         }
-        await img.mv(staticFilePath+"/tracks/liveImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-          if(err){
-            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
+        await img.mv(staticFilePath + "/tracks/liveImages/" + `${docs._id}.${imageExtention}`, (err) => {
+          if (err) {
+            res.status(400).json({ status: "Error", error: "failed to upload track, plese try again" });
           }
         })
-        await audio.mv(staticFilePath+"/tracks/liveTracks/"+`${docs._id}.${audioExtention}`, (err)=>{
-          if(err){
-            return res.send({status: "Error", error: "failed to upload track, plese try again"});
+        await audio.mv(staticFilePath + "/tracks/liveTracks/" + `${docs._id}.${audioExtention}`, (err) => {
+          if (err) {
+            return res.send({ status: "Error", error: "failed to upload track, plese try again" });
           }
-          else{
+          else {
             res.redirect('/liveMeditation');
           }
         })
       })
-    }else{
-      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]"});
+    } else {
+      return res.send({ status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]", valid_image_format: "[ png, jpg, jpeg]" });
     }
   }
 });
 
 //POST /uploadRelaxMelodySound --admin tracks page (web)
 exports.uploadRelaxMelodySound = async (req, res, next) => {
-  const {title, category} =await req.body;
-  if(req.files){
+  const { title, category } = await req.body;
+  if (req.files) {
     //audio
-    let audio=req.files.audioFile;
-    let audioFileName=audio.name;
-    const audioArr=audioFileName.split(".");
-    const audioExtention=audioArr[audioArr.length-1];
-    let audioExtentionsArr=['mp3', 'wav'];
-    if(audioExtentionsArr.includes(audioExtention)){
+    let audio = req.files.audioFile;
+    let audioFileName = audio.name;
+    const audioArr = audioFileName.split(".");
+    const audioExtention = audioArr[audioArr.length - 1];
+    let audioExtentionsArr = ['mp3', 'wav'];
+    if (audioExtentionsArr.includes(audioExtention)) {
       const newRelaxMelodySound = await RelaxMelody.create({
         sound_title: title,
         sound_category: category,
         track_extention: audioExtention
-      }, async (err, docs)=>{
-        if(err){
-          res.status(400).json({status:400, message: "details not saved"});
+      }, async (err, docs) => {
+        if (err) {
+          res.status(400).json({ status: 400, message: "details not saved" });
         }
-        await audio.mv(staticFilePath+"/tracks/relaxMelodySounds/"+`${docs._id}.${audioExtention}`, (err)=>{
-          if(err){
-            return res.send({status: "Error", error: "failed to upload track, plese try again"});
+        await audio.mv(staticFilePath + "/tracks/relaxMelodySounds/" + `${docs._id}.${audioExtention}`, (err) => {
+          if (err) {
+            return res.send({ status: "Error", error: "failed to upload track, plese try again" });
           }
-          else{
+          else {
             res.redirect('/relaxMelodies');
           }
         })
       })
-    }else{
-      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]"});
+    } else {
+      return res.send({ status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]" });
     }
   }
 };
 
 //POST /uploadSleepStory
 exports.uploadSleepStory = async (req, res, next) => {
-  const { title, description, lessons} =await req.body;
-  if(req.files){
+  const { title, description, lessons } = await req.body;
+  if (req.files) {
     //image
-    let img=req.files.imageFile;
-    let imageFileName=img.name;
-    const imageArr=imageFileName.split(".");
-    const imageExtention=imageArr[imageArr.length-1];
-    let imageExtentionsArr=['png', 'jpg', 'jpeg'];
-    if(imageExtentionsArr.includes(imageExtention)){
+    let img = req.files.imageFile;
+    let imageFileName = img.name;
+    const imageArr = imageFileName.split(".");
+    const imageExtention = imageArr[imageArr.length - 1];
+    let imageExtentionsArr = ['png', 'jpg', 'jpeg'];
+    if (imageExtentionsArr.includes(imageExtention)) {
       const newSleepStory = await SleepStory.create({
         story_name: title,
         story_description: description,
         lessons: lessons,
         image_extention: imageExtention
-      },async (err, docs)=>{
-        if(err){
-          res.status(400).json({status:400, message: "Story details not saved"});
+      }, async (err, docs) => {
+        if (err) {
+          res.status(400).json({ status: 400, message: "Story details not saved" });
         }
-        await img.mv(staticFilePath+"/tracks/sleepStoryImages/"+`${docs._id}.${imageExtention}`, (err)=>{
-          if(err){
-            res.status(400).json({status: "Error", error: "failed to upload track, plese try again"});
+        await img.mv(staticFilePath + "/tracks/sleepStoryImages/" + `${docs._id}.${imageExtention}`, (err) => {
+          if (err) {
+            res.status(400).json({ status: "Error", error: "failed to upload track, plese try again" });
           }
-          else{
+          else {
             res.redirect('/sleepStories');
           }
         })
       })
     }
-    else{
-      return res.send({status: "error", error: "invalid file format", valid_image_format: "[ png, jpg, jpeg]"});
+    else {
+      return res.send({ status: "error", error: "invalid file format", valid_image_format: "[ png, jpg, jpeg]" });
     }
   }
 };
 
 //POST /uploadStoryAudio
 exports.uploadStoryAudio = async (req, res, next) => {
-  const { story_id, title, language} =await req.body;
-  if(!checkId(story_id)){
-    return res.status(444).send({status: 444, error:"please provide a valid story_id to add audio"});
+  const { story_id, title, language } = await req.body;
+  if (!checkId(story_id)) {
+    return res.status(444).send({ status: 444, error: "please provide a valid story_id to add audio" });
   }
-  if(req.files){
+  if (req.files) {
     //audio
-    let audio=req.files.audioFile;
-    let audioFileName=audio.name;
-    const audioArr=audioFileName.split(".");
-    const audioExtention=audioArr[audioArr.length-1];
-    let audioExtentionsArr=['mp3', 'wav'];
-    if(audioExtentionsArr.includes(audioExtention)){
+    let audio = req.files.audioFile;
+    let audioFileName = audio.name;
+    const audioArr = audioFileName.split(".");
+    const audioExtention = audioArr[audioArr.length - 1];
+    let audioExtentionsArr = ['mp3', 'wav'];
+    if (audioExtentionsArr.includes(audioExtention)) {
       const newStoryAudio = await SleepStoryAudio.create({
         story_id: story_id,
         audio_title: title,
         audio_language: language.toLowerCase(),
         track_extention: audioExtention
-      },async (err, docs)=>{
-        if(err){
-          res.status(400).json({status:400, message: "details not saved"});
+      }, async (err, docs) => {
+        if (err) {
+          res.status(400).json({ status: 400, message: "details not saved" });
         }
-        await audio.mv(staticFilePath+"/tracks/sleepStoryAudios/"+`${docs._id}.${audioExtention}`, (err)=>{
-          if(err){
-            return res.send({status: "Error", error: "failed to upload track, plese try again"});
+        await audio.mv(staticFilePath + "/tracks/sleepStoryAudios/" + `${docs._id}.${audioExtention}`, (err) => {
+          if (err) {
+            return res.send({ status: "Error", error: "failed to upload track, plese try again" });
           }
-          else{
+          else {
             res.redirect('/sleepStories');
           }
         })
       })
     }
-    else{
-      return res.send({status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]"});
+    else {
+      return res.send({ status: "error", error: "invalid file format", valid_audio_format: "[ mp3, wav]" });
     }
   }
 };
 
-//POST /uploadNotification --admin tracks page (web)
-exports.uploadNotification = catchAsync(async (req, res, next) => {
-  const {message, relatedTo} =await req.body;
-  let date_ob=new Date();
-  const presentDate= ("0"+date_ob.getDate()).slice(-2)+"/"+("0"+(date_ob.getMonth()+1)).slice(-2)+"/"+date_ob.getFullYear();
+//POST /uploadNotification --admin (web)
+exports.uploadNotification = async (req, res, next) => {
+  const { message, relatedTo } = await req.body;
+  let date_ob = new Date();
+  const presentDate = ("0" + date_ob.getDate()).slice(-2) + "/" + ("0" + (date_ob.getMonth() + 1)).slice(-2) + "/" + date_ob.getFullYear();
   const newNotification = await Notification.create({
     message: message,
     related_to: relatedTo,
     date: presentDate
-  },async (err, doc)=>{
-    if(err){
-      return res.status(400).send({status:400, message: "notification details not saved"});
+  }, async (err, doc) => {
+    if (err) {
+      return res.status(400).send({ status: 400, message: "notification details not saved" });
     }
-    if(!doc){
+    if (!doc) {
       return res.status(403).json("please provide notification");
     }
-    const notification_id=await doc._id;
-    console.log(doc._id, notification_id);
-    const users= await User.find({}, async (err, docs)=>{
-      await Promise.all(docs.map(async (element) => {
-        await UserNotification.find({user_id:element._id}, async (err, userDoc)=>{
-          if (err) {
-            return next(new AppError(`error:${err}`, 400));
-          }
-          if (!userDoc) {
-            console.log("new user");
-            console.log(element._id);
-            const newUserNotification = await UserNotification.create({
-              user_id: element._id,
-              $push: {
-                notification_id: notification_id,
-                message: message,
-                related_to: relatedTo,
-                shown: false,
-                date: presentDate
-              }
-            }, async (err)=>{
-              if(err){
-                return res.send("something went wrong: "+err);
-              }
-            })
-          }
-          else if(userDoc){
-            console.log("existing user");
-            console.log(element._id);
-            const User_notifi = await UserNotification.updateOne({ user_id: element._id }, {
-              $push: {
-                notification_id: notification_id,
-                message: message,
-                related_to: relatedTo,
-                shown: false,
-                date: presentDate
-              }
-            }, async (err, docs)=>{
-              if(err){
-                return res.send("something went wrong: "+err);
-              }
-              console.log(docs);
-            });
-          }
-        })
-      }));
+    const notification_id = await doc._id;
+    const users = await User.find({}, async (err) => {
+      if (err) {
+        return res.status(400).json({ status: 200, error: err });
+      }
     })
+    await Promise.all(users.map(async (element) => {
+      await CrudNotify.find({ user_id: element._id }, async (err, userDoc) => {
+        if (err) {
+          return next(new AppError(`error:${err}`, 400));
+        }
+        if (!userDoc) {
+          console.log("new user");
+          const newUserNotification = CrudNotify.create({
+            user_id: element._id,
+            notification_id: notification_id,
+            message: message,
+            related_to: relatedTo,
+            shown: false,
+            date: presentDate
+          }, async (err) => {
+            if (err) {
+              return res.send("something went wrong: " + err);
+            }
+          })
+        }
+        console.log("existing user");
+        const User_notifi = await CrudNotify.updateOne({ user_id: element._id }, {
+          $push: {
+            notification_id: notification_id,
+            message: message,
+            related_to: relatedTo,
+            shown: false,
+            date: presentDate
+          }
+        }, async (err, docs) => {
+          if (err) {
+            return res.send("something went wrong: " + err);
+          }
+        });
+      })
+    }));
   });
   return res.redirect("/notification");
-});
+};
 
 // delete functions:
 
 exports.trackDelete = catchAsync(async (req, res, next) => {
-  const _id=await req.params.id;
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/musicTracks/"+`${_id}.mp3`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  const _id = await req.params.id;
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/musicTracks/" + `${_id}.mp3`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
-  }catch(err){
-    await fs.unlinkSync(staticFilePath+"/tracks/musicTracks/"+`${_id}.wav`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  } catch (err) {
+    await fs.unlinkSync(staticFilePath + "/tracks/musicTracks/" + `${_id}.wav`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
   }
 
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.jpg`,async (err)=>{
-      return res.status(400).json({status:400, message: "track image file not deleted"});
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/musicImages/" + `${_id}.jpg`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track image file not deleted" });
     })
-  }catch(err){
+  } catch (err) {
     try {
-      await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.png`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/musicImages/" + `${_id}.png`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     } catch (err) {
-      await fs.unlinkSync(staticFilePath+"/tracks/musicImages/"+`${_id}.jpeg`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/musicImages/" + `${_id}.jpeg`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     }
   }
-  const result = await MusicTrack.deleteOne({_id:_id},async (err)=>{
-    if(err){
-      return res.send({status:'Error', message: "track not deleted try again"});
+  const result = await MusicTrack.deleteOne({ _id: _id }, async (err) => {
+    if (err) {
+      return res.send({ status: 'Error', message: "track not deleted try again" });
     }
-    else{
-      return res.status(200).json({status:200, message:"Track deleted successfully"});
+    else {
+      return res.status(200).json({ status: 200, message: "Track deleted successfully" });
     }
   })
 });
 
 exports.liveTrackDelete = catchAsync(async (req, res, next) => {
-  const _id=await req.params.id;
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/liveTracks/"+`${_id}.mp3`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  const _id = await req.params.id;
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/liveTracks/" + `${_id}.mp3`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
-  }catch(err){
-    await fs.unlinkSync(staticFilePath+"/tracks/liveTracks/"+`${_id}.wav`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  } catch (err) {
+    await fs.unlinkSync(staticFilePath + "/tracks/liveTracks/" + `${_id}.wav`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
   }
 
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.jpg`,async (err)=>{
-      return res.status(400).json({status:400, message: "track image file not deleted"});
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/liveImages/" + `${_id}.jpg`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track image file not deleted" });
     })
-  }catch(err){
+  } catch (err) {
     try {
-      await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.png`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/liveImages/" + `${_id}.png`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     } catch (err) {
-      await fs.unlinkSync(staticFilePath+"/tracks/liveImages/"+`${_id}.jpeg`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/liveImages/" + `${_id}.jpeg`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     }
   }
-  const result = await LiveTrack.deleteOne({_id:_id},async (err)=>{
-    if(err){
-      return res.send({status:'Error', message: "track not deleted try again"});
+  const result = await LiveTrack.deleteOne({ _id: _id }, async (err) => {
+    if (err) {
+      return res.send({ status: 'Error', message: "track not deleted try again" });
     }
-    else{
-      return res.status(200).json({status:200, message:"Track deleted successfully"});
+    else {
+      return res.status(200).json({ status: 200, message: "Track deleted successfully" });
     }
   })
 });
 
 exports.relaxMelodySoundDelete = catchAsync(async (req, res, next) => {
-  const _id=await req.params.id;
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/relaxMelodySounds/"+`${_id}.mp3`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  const _id = await req.params.id;
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/relaxMelodySounds/" + `${_id}.mp3`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
-  }catch(err){
-    await fs.unlinkSync(staticFilePath+"/tracks/relaxMelodySounds/"+`${_id}.wav`,async (err)=>{
-      return res.status(400).json({status:400, message: "track audio file not deleted"});
+  } catch (err) {
+    await fs.unlinkSync(staticFilePath + "/tracks/relaxMelodySounds/" + `${_id}.wav`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track audio file not deleted" });
     });
   }
-  const result = await RelaxMelody.deleteOne({_id:_id},async (err)=>{
-    if(err){
-      return res.send({status:'Error', message: "track not deleted try again"});
+  const result = await RelaxMelody.deleteOne({ _id: _id }, async (err) => {
+    if (err) {
+      return res.send({ status: 'Error', message: "track not deleted try again" });
     }
-    else{
-      return res.status(200).json({status:200, message:"Track deleted successfully"});
+    else {
+      return res.status(200).json({ status: 200, message: "Track deleted successfully" });
     }
   })
 });
 
 exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
-  const _id=await req.params.id;
-  
-  try{
-    await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.jpg`,async (err)=>{
-      return res.status(400).json({status:400, message: "track image file not deleted"});
+  const _id = await req.params.id;
+
+  try {
+    await fs.unlinkSync(staticFilePath + "/tracks/sleepStoryImages/" + `${_id}.jpg`, async (err) => {
+      return res.status(400).json({ status: 400, message: "track image file not deleted" });
     })
-  }catch(err){
+  } catch (err) {
     try {
-      await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.png`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/sleepStoryImages/" + `${_id}.png`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     } catch (err) {
-      await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryImages/"+`${_id}.jpeg`,async (err)=>{
-        return res.status(400).json({status:400, message: "track image file not deleted"});
+      await fs.unlinkSync(staticFilePath + "/tracks/sleepStoryImages/" + `${_id}.jpeg`, async (err) => {
+        return res.status(400).json({ status: 400, message: "track image file not deleted" });
       })
     }
   }
 
-  const audios=await SleepStoryAudio.find({story_id: _id},async (err, docs)=>{
-    if(err){
-      return res.status(400).json({status:400, message: "track image file not deleted"+err});
+  const audios = await SleepStoryAudio.find({ story_id: _id }, async (err, docs) => {
+    if (err) {
+      return res.status(400).json({ status: 400, message: "track image file not deleted" + err });
     }
     await Promise.all(docs.map(async (item) => {
-      try{
-        await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${item._id}.mp3`,async (err)=>{
-          return res.status(400).json({status:400, message: "track audio file not deleted"});
+      try {
+        await fs.unlinkSync(staticFilePath + "/tracks/sleepStoryAudios/" + `${item._id}.mp3`, async (err) => {
+          return res.status(400).json({ status: 400, message: "track audio file not deleted" });
         });
-      }catch(err){
-        await fs.unlinkSync(staticFilePath+"/tracks/sleepStoryAudios/"+`${item_id}.wav`,async (err)=>{
-          return res.status(400).json({status:400, message: "track audio file not deleted"});
+      } catch (err) {
+        await fs.unlinkSync(staticFilePath + "/tracks/sleepStoryAudios/" + `${item_id}.wav`, async (err) => {
+          return res.status(400).json({ status: 400, message: "track audio file not deleted" });
         });
       }
     }));
   })
-  await SleepStoryAudio.deleteMany({story_id: _id}, (err)=>{
-    if(err){
-      return res.send({status: 400, message: "track not deleted try again"});
+  await SleepStoryAudio.deleteMany({ story_id: _id }, (err) => {
+    if (err) {
+      return res.send({ status: 400, message: "track not deleted try again" });
     }
   })
-  const result = await SleepStory.deleteOne({_id:_id},async (err)=>{
-    if(err){
-      return res.send({status:'Error', message: "track not deleted try again"});
+  const result = await SleepStory.deleteOne({ _id: _id }, async (err) => {
+    if (err) {
+      return res.send({ status: 'Error', message: "track not deleted try again" });
     }
-    else{
-      return res.status(200).json({status:200, message:"Track deleted successfully"});
+    else {
+      return res.status(200).json({ status: 200, message: "Track deleted successfully" });
     }
   })
 });
 
 exports.notificationDelete = catchAsync(async (req, res, next) => {
-  const _id=await req.params.id;
-  const notificationDelete = await Notification.deleteOne({_id:_id},async (err)=>{
-    if(err){
-      await res.status(400).json({status:400, message: "message not deleted"});
+  const _id = await req.params.id;
+  const notificationDelete = await Notification.deleteOne({ _id: _id }, async (err) => {
+    if (err) {
+      await res.status(400).json({ status: 400, message: "message not deleted" });
     }
-    else{
-      await res.status(200).json({status:200, message:"message deleted successfully"});
+    else {
+      await res.status(200).json({ status: 200, message: "message deleted successfully" });
     }
   })
 });

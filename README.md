@@ -30,8 +30,9 @@ meditation:
   4. (user specific) add track to favorite: /api/meditation/addMeditationFavorite/:track_id -- onSuccess(201) -- (method: GET)
   5. (user specific) get all user favorite tracks: /api/meditation/getMeditationFavorite -- onSuccess(200) -- (method: GET)
   6. (user specific) remove a track from favorite: /api/meditation/removeMeditationFavorite/:track_id -- onSuccess(202) -- (method: GET)
-  7. live meditation -- /api/meditation/liveMeditation -- onLive(200)+trackDetails, --onNotLive(202), onDataBaseError or network Error(400)
-  8. Get Live track -- /api/meditation/getLiveTrack/:track_id onSuccess(200), --onTrackNotFound(410), --onDataBaseError or network Error(400)
+  7. live meditation -- /api/meditation/liveMeditation -- onLive(200)+trackDetails, --onNotLive(202), onDataBaseError or network Error(400)-- (method: GET)
+  8. Get Live track -- /api/meditation/getLiveTrack/:track_id onSuccess(200), --onTrackNotFound(410), --onDataBaseError or network Error(400)-- (method: GET)
+  9. next live time -- /api/meditation/nextLiveTime --onSuccess(200) --onDataBaseError or network Error(400) --onNolivetodayYet(205)-- (method: GET)
 
 sleep:
   1. all tracks of sleep: /api/sleep/allSleepTracks -- onSuccess(200), onError(400) --(method: GET)
