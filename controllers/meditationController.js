@@ -263,6 +263,9 @@ exports.nextLiveTime = async (req, res) => {
             min = element;
         }
     });
+    if(!min){
+        return res.status(402).json({status:200, message:"No Live scheduled yet, check later"});
+    }
     const nextLive=min/60;
     if(nextLive%1 === 0){
         return res.status(200).json({status:200, result:`${("0"+Number(nextLive)).slice(-2)}:00`});
