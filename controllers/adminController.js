@@ -579,47 +579,22 @@ exports.uploadNotification = async (req, res, next) => {
       return res.status(403).json("please provide notification");
     }
     const notification_id = await doc._id;
-    const users = await User.find({}, async (err) => {
-      if (err) {
-        return res.status(400).json({ status: 200, error: err });
+    const User_notifi = await CrudNotify.updateMany({}, {
+      $addToSet: {
+        notifications: 
+          {
+            notification_id: notification_id,
+            message: message,
+            related_to: relatedTo,
+            shown: false,
+            date: presentDate
+          }
       }
-    })
-    await Promise.all(users.map(async (element) => {
-      await CrudNotify.find({ user_id: element._id }, async (err, userDoc) => {
-        if (err) {
-          return next(new AppError(`error:${err}`, 400));
-        }
-        if (!userDoc) {
-          console.log("new user");
-          const newUserNotification = CrudNotify.create({
-            user_id: element._id,
-            notification_id: notification_id,
-            message: message,
-            related_to: relatedTo,
-            shown: false,
-            date: presentDate
-          }, async (err) => {
-            if (err) {
-              return res.send("something went wrong: " + err);
-            }
-          })
-        }
-        console.log("existing user");
-        const User_notifi = await CrudNotify.updateOne({ user_id: element._id }, {
-          $push: {
-            notification_id: notification_id,
-            message: message,
-            related_to: relatedTo,
-            shown: false,
-            date: presentDate
-          }
-        }, async (err, docs) => {
-          if (err) {
-            return res.send("something went wrong: " + err);
-          }
-        });
-      })
-    }));
+    }, async (err, docs) => {
+      if (err) {
+        return res.send("something went wrong: " + err);
+      }
+    });
   });
   return res.redirect("/notification");
 };

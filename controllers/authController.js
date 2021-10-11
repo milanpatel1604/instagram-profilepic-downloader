@@ -21,6 +21,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 //facebook auth
 const passport = require("passport");
 const facebookStrategy = require("passport-facebook").Strategy;
+const CrudNotify = require("../models/CrudNotificationModel");
 
 // functions
 const signToken = (id) => {
@@ -31,10 +32,10 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  if(user.user_banned){
-    return res.status(420).json({status:420, message:"user is banned by app admin"});
+  if (user.user_banned) {
+    return res.status(420).json({ status: 420, message: "user is banned by app admin" });
   }
-  else{
+  else {
     return res.status(statusCode).json({
       status: statusCode,
       token,
@@ -147,6 +148,18 @@ exports.varifyEmail = async (req, res, next) => {
       user_id: user._id,
       date_joined: presentDate,
       last_login: presentDate,
+    }
+  )
+  const newUserNotification = CrudNotify.create(
+    {
+      user_id: user._id,
+      notifications: {
+        notification_id: '61641a82c7133806c483dc3b',
+        message: "Welcome to Breathings App, Access to premium content",
+        related_to: "Pre",
+        shown: false,
+        date: presentDate
+      }
     }
   )
   createSendToken(user, 201, res);

@@ -7,21 +7,13 @@ const CrudNotiSchema=new Schema({
         type: ObjectId,
         required: [true, "Please provide user_id for user preference"],
     },
-    notification_id: {
-        type: [ObjectId]
-    },
-    message: {
-        type: [String]
-    },
-    related_to:{
-        type: [String]
-    },
-    shown: {
-        type: [Boolean],
-    },
-    date: {
-        type: [String]
-    },
+    notifications: [{
+        notification_id: ObjectId,
+        message: String,
+        related_to: String,
+        shown: Boolean,
+        date: String
+    }],
 });
 
 
