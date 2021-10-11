@@ -344,7 +344,7 @@ exports.getLiveTrack = async (req, res) => {
         if (!element) {
             const newMeditationUser = await Meditation.create({
                 user_id: user_id,
-                live_id: live2._id,
+                live_id: track_id._id,
             })
         }
     })
