@@ -59,7 +59,7 @@ adminRoute.delete('/trackDelete/:id', adminController.protect, adminController.t
 adminRoute.delete('/sleepStoryDelete/:id', adminController.protect, adminController.sleepStoryDelete)
 adminRoute.delete('/relaxMelodySoundDelete/:id', adminController.protect, adminController.relaxMelodySoundDelete)
 adminRoute.delete('/liveTrackDelete/:id', adminController.protect, adminController.liveTrackDelete)
-adminRoute.delete('/notificationDelete/:id', adminController.protect, adminController.notificationDelete)
+// adminRoute.delete('/notificationDelete/:id', adminController.protect, adminController.notificationDelete)
 
 //through postman
 adminRoute.post('/addAppSection', adminController.addAppSection)

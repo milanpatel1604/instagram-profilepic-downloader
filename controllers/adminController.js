@@ -746,17 +746,17 @@ exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
   })
 });
 
-exports.notificationDelete = catchAsync(async (req, res, next) => {
-  const _id = await req.params.id;
-  const notificationDelete = await Notification.deleteOne({ _id: _id }, async (err) => {
-    if (err) {
-      await res.status(400).json({ status: 400, message: "message not deleted" });
-    }
-    else {
-      await res.status(200).json({ status: 200, message: "message deleted successfully" });
-    }
-  })
-});
+// exports.notificationDelete = catchAsync(async (req, res, next) => {
+//   const _id = await req.params.id;
+//   const notificationDelete = await Notification.deleteOne({ _id: _id }, async (err) => {
+//     if (err) {
+//       await res.status(400).json({ status: 400, message: "message not deleted" });
+//     }
+//     else {
+//       await res.status(200).json({ status: 200, message: "message deleted successfully" });
+//     }
+//   })
+// });
 
 exports.banOrUnbanUser = catchAsync(async (req, res, next) => {
   const user_id = await req.params.user_id;

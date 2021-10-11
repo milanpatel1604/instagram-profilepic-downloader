@@ -69,7 +69,7 @@ exports.deleteNotifications = async (req, res) => {
     const presentYear = date_ob.getFullYear();
     const fulldayBeforeYesterdayDate = dayBeforeYesterdayDate + "/" + presentMonth + "/" + presentYear;
     if (dayBeforeYesterdayDate >= 0 + 1) {
-        await CrudNotify.updateOne({user_id: user_id, 'notifications.date': fulldayBeforeYesterdayDate }, { $pull: {'notifications':{ 'date': fulldayBeforeYesterdayDate}}}, async (err) => {
+        await CrudNotify.updateOne({user_id: user_id}, { $pull: {'notifications':{ 'date': fulldayBeforeYesterdayDate}}}, async (err) => {
             if (err) {
                 return res.status(400).json({ status: 400, error: err });
             }
