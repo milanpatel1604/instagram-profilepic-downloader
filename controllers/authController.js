@@ -31,19 +31,23 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-
-  return res.status(statusCode).json({
-    status: statusCode,
-    token,
-    data: {
-      _id: user._id,
-      name: user.name,
-      role: user.role,
-      email: user.email,
-      email_verified: user.email_verified,
-      login_using: user.login_using
-    }
-  });
+  if(user.user_banned){
+    return res.status(420).json({status:420, message:"user is banned by app admin"});
+  }
+  else{
+    return res.status(statusCode).json({
+      status: statusCode,
+      token,
+      data: {
+        _id: user._id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        email_verified: user.email_verified,
+        login_using: user.login_using
+      }
+    });
+  }
 };
 
 // for-Signup

@@ -59,6 +59,8 @@
     <div class="usersSection">
       <h2>Breathing-App user details</h2>
       <!-- <button class="btn btn-success" id="addUserBtn">Add User</button> -->
+      <input class="form-control me-2 search" id="usersSearch" type="search"
+      placeholder="Filter by searching" aria-label="Search">
       <span class="count" id="usersCount"></span>
       <div class="container">
         <table class="table table-dark table-striped">
@@ -68,8 +70,7 @@
               <th scope="col">Name</th>
               <th scope="col">Email</th>
               <th scope="col">Role</th>
-              <!-- <th scope="col">Delete User</th>
-              <th scope="col">Update User</th> -->
+              <th scope="col">Ban/Unban a User</th>
             </tr>
           </thead>
           <tbody id="usersTable"></tbody>

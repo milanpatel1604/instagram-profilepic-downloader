@@ -40,6 +40,7 @@ adminRoute.get('/notification', adminController.notificationPage);
 adminRoute.get('/getSectionCategories/:section', adminController.protect, adminController.getSectionCategories)
 // Admin Specific
 adminRoute.get("/getAllUsers", adminController.protect, adminController.getAllUsers);
+adminRoute.post("/banOrUnbanUser/:user_id", adminController.protect, adminController.banOrUnbanUser);
 adminRoute.get("/getAllTracks", adminController.protect, adminController.getAllTracks);
 adminRoute.get("/getSleepStories", adminController.protect, adminController.getSleepStories);
 adminRoute.get("/getRelaxMelodySounds", adminController.protect, adminController.getRelaxMelodySounds);
