@@ -5,7 +5,6 @@ const ObjectId=Schema.ObjectId;
 const CrudNotiSchema=new Schema({
     user_id: {
         type: ObjectId,
-        required: [true, "Please provide user_id for user preference"],
     },
     notifications: [{
         notification_id: ObjectId,

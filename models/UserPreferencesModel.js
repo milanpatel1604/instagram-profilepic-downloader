@@ -5,7 +5,6 @@ const ObjectId=Schema.ObjectId;
 const UserPreferencesSchema=new Schema({
     user_id: {
         type: ObjectId,
-        required: [true, "Please provide user_id for user preference"],
     },
     default_app_language: {
         type: String,

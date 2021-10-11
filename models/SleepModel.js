@@ -5,7 +5,6 @@ const ObjectId=Schema.ObjectId;
 const SleepTracksSchema=new Schema({
     user_id: {
         type: ObjectId,
-        required: [true, "Please provide user_id"],
     },
     track_id:{
         type: ObjectId

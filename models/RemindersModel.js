@@ -4,9 +4,7 @@ const ObjectId=Schema.ObjectId;
 
 const RemindersSchema=new Schema({
     user_id: {
-        type: ObjectId,
-        unique: [true, "user_id already exist in User_Preferences"],
-        required: [true, "Please provide user_id for user preference"],
+        type: String,
     },
     reminder_date: {
         type: String,
@@ -20,6 +18,9 @@ const RemindersSchema=new Schema({
     is_active: {
         type: Boolean,
         default: true
+    },
+    reminder_timestamp: {
+        type: Date
     }
 });
 
