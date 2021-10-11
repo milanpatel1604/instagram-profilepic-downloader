@@ -136,6 +136,9 @@ exports.getSleepTrack = async (req, res) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+        }
         await Sleep.findOne({ user_id: user_id, track_id: track_id }, async (err2, element) => {
             if (err2) {
                 return res.status(403).json({ status: 403, error: err2 });
@@ -161,9 +164,12 @@ exports.addSleepFavorite = async (req, res) => {
     if(!checkId(track_id)){
         return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
     }
-    const favSleep = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: true }, (err) => {
+    const favSleep = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: true }, (err, docs) => {
         if (err) {
             return res.json(400).json({ status: 400, message: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({ status: 201, message: "Added Successfully" });
@@ -214,9 +220,12 @@ exports.removeSleepFavorite = async (req, res) => {
     if(!checkId(track_id)){
         return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
     }
-    const rmvFav = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: false }, (err) => {
+    const rmvFav = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: false }, (err, docs) => {
         if (err) {
             res.json(400).json({ status: 400, message: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });
@@ -260,9 +269,12 @@ exports.getSleepStory = async (req, res) => {
         }
     })
 
-    const story_details = await SleepStory.findOne({ _id: story_id }, async (err) => {
+    const story_details = await SleepStory.findOne({ _id: story_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
     })
     const description = await story_details.story_description;
@@ -332,9 +344,12 @@ exports.addSleepStoryFavorite = async (req, res) => {
     if(!checkId(story_id)){
         return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
     }
-    const favSleep = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: true }, (err) => {
+    const favSleep = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: true }, (err, docs) => {
         if (err) {
             return res.json(400).json({ status: 400, message: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({ status: 201, message: "Added Successfully" });
@@ -346,9 +361,12 @@ exports.removeSleepStoryFavorite = async (req, res) => {
     if(!checkId(track_id)){
         return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
     }
-    const rmvFav = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: false }, (err) => {
+    const rmvFav = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: false }, (err, docs) => {
         if (err) {
             res.json(400).json({ status: 400, message: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });

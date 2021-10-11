@@ -136,10 +136,6 @@ exports.varifyEmail = async (req, res, next) => {
   const userPreferences = await UserPreference.create(
     {
       user_id: user._id
-    }, (err, docs) => {
-      if (err) {
-        return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
-      }
     }
   );
   //default user session
@@ -150,7 +146,7 @@ exports.varifyEmail = async (req, res, next) => {
       last_login: presentDate,
     }
   )
-  const newUserNotification = CrudNotify.create(
+  const newUserNotification =await CrudNotify.create(
     {
       user_id: user._id,
       notifications: {
@@ -223,10 +219,6 @@ exports.loginWithGoogle = async (req, res, next) => {
         const userPreferences = await UserPreference.create(
           {
             user_id: user._id
-          }, (err, docs) => {
-            if (err) {
-              return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
-            }
           }
         );
         //default userSession
@@ -237,6 +229,18 @@ exports.loginWithGoogle = async (req, res, next) => {
             last_login: presentDate,
           }
         )
+        const newUserNotification =await CrudNotify.create(
+          {
+            user_id: user._id,
+            notifications: {
+              notification_id: '61641a82c7133806c483dc3b',
+              message: "Welcome to Breathings App, Access to premium content",
+              related_to: "Pre",
+              shown: false,
+              date: presentDate
+            }
+          }
+        )
         await createSendToken(user, 200, res);
       }
       if (doc) {
@@ -244,7 +248,7 @@ exports.loginWithGoogle = async (req, res, next) => {
         const updatedUserSession = await UserSession.updateOne({ user_id: user._id }, {
           last_login: presentDate
         });
-        await createSendToken(doc, 200, res);
+        createSendToken(doc, 200, res);
       }
     })
   } catch (err) {
@@ -271,10 +275,6 @@ exports.loginWithFacebook = async (req, res, next) => {
       const userPreferences = await UserPreference.create(
         {
           user_id: user._id
-        }, (err, docs) => {
-          if (err) {
-            return res.json(400).json({ status: 400, message: "error while creating user_preference: " + err });
-          }
         }
       );
       const userSession = await UserSession.create(
@@ -282,6 +282,18 @@ exports.loginWithFacebook = async (req, res, next) => {
           user_id: user._id,
           date_joined: presentDate,
           last_login: presentDate,
+        }
+      )
+      const newUserNotification =await CrudNotify.create(
+        {
+          user_id: user._id,
+          notifications: {
+            notification_id: '61641a82c7133806c483dc3b',
+            message: "Welcome to Breathings App, Access to premium content",
+            related_to: "Pre",
+            shown: false,
+            date: presentDate
+          }
         }
       )
       createSendToken(user, 200, res);

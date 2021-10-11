@@ -135,6 +135,9 @@ exports.getRelaxTrack= async (req, res)=>{
         if(err){
             return res.status(400).json({status: 400, error: err});
         }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+        }
         await Relax.findOne({user_id: user_id, track_id: track_id},async (err2, element)=>{
             if (err2) {
                 return res.status(403).json({status: 403, error: err2});
@@ -163,6 +166,9 @@ exports.addRelaxFavorite= async (req, res)=>{
     const favRelax = await Relax.updateOne({user_id: user_id, track_id: track_id}, {is_favorite: true}, (err, docs)=>{
         if(err){
           return res.json(400).json({status:400, message: err});
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({status:201, message: "Added Successfully"});
@@ -200,9 +206,12 @@ exports.removeRelaxFavorite= async (req, res)=>{
     if(!checkId(track_id)){
         return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
     }
-    const rmvFav = await Relax.updateOne({ user_id: user_id, track_id: track_id }, {is_favorite: false}, (err) => {
+    const rmvFav = await Relax.updateOne({ user_id: user_id, track_id: track_id }, {is_favorite: false}, (err, docs) => {
         if (err) {
-            res.json(400).json({ status: 400, message: err });
+            return res.json(400).json({ status: 400, message: err });
+        }
+        if (!docs) {
+            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });

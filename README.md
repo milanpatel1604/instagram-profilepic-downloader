@@ -3,6 +3,9 @@ API's:
 
 ---- every api should have user specific token in header= --headers(authorization:Bearer /*JWTtoken*/)-invalid_or_expired_token_in_headers(401)-login again for new token,  EXCEPT(signup, login, verify email, resend verify email otp, forgotpassword, resetpassword, login with goole, login with facebook)
 
+***imp***
+Note: For any request in which you are sending id in params, you will get status(410)-if id is not found in database, status(444)-if id is invalid.
+
 authentication:(method: POST)
   1. signup: /api/users/signup --onSuccess(200), --onErrorSendingMail(500), onExistingUser(409) --body({name, email, password}) --after signup-onSuccess email with an otp is sent to user which is valid for 2 min
   2. resend verify email otp: /api/users/resendverifyEmailToken --body({email}) --onSuccess(200), --onErrorSendingMail(500), --after signup-onSuccess one more email with an otp is sent to user which is valid for 2 min
