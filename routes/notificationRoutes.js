@@ -13,6 +13,9 @@ notificationRoute.get('/notificationsToShow', authController.protect, notificati
 notificationRoute.get('/allNotifications', authController.protect, notificationController.allNotifications)
 
 //GET  /api/notification/allNotifications --fetching all tracks of meditation
-notificationRoute.delete('/deleteNotifications', authController.protect, notificationController.deleteNotifications)
+notificationRoute.delete('/deleteOlderNotifications', authController.protect, notificationController.deleteOlderNotifications)
+
+//GET  /api/notification/allNotifications --fetching all tracks of meditation
+notificationRoute.delete('/deleteNotification/:notification_id', authController.protect, notificationController.deleteNotification)
 
 module.exports = notificationRoute;

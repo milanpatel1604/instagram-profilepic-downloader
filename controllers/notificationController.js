@@ -61,7 +61,7 @@ exports.allNotifications = async (req, res) => {
     res.status(200).json({ status: 200, results: results });
 }
 
-exports.deleteNotifications = async (req, res) => {
+exports.deleteOlderNotifications = async (req, res) => {
     const user_id = await req.user.id;
     let date_ob = new Date();
     const dayBeforeYesterdayDate = ("0" + (date_ob.getDate() - 2)).slice(-2);
@@ -70,6 +70,24 @@ exports.deleteNotifications = async (req, res) => {
     const fulldayBeforeYesterdayDate = dayBeforeYesterdayDate + "/" + presentMonth + "/" + presentYear;
     if (dayBeforeYesterdayDate >= 0 + 1) {
         await CrudNotify.updateOne({user_id: user_id}, { $pull: {'notifications':{ 'date': fulldayBeforeYesterdayDate}}}, async (err) => {
+            if (err) {
+                return res.status(400).json({ status: 400, error: err });
+            }
+        })
+        return res.status(200).json({ status: 200, message: "notifications deleted" });
+    }
+}
+
+exports.deleteNotification = async (req, res) => {
+    const notification_id=await req.params.notification_id;
+    const user_id = await req.user.id;
+    let date_ob = new Date();
+    const dayBeforeYesterdayDate = ("0" + (date_ob.getDate() - 2)).slice(-2);
+    const presentMonth = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    const presentYear = date_ob.getFullYear();
+    const fulldayBeforeYesterdayDate = dayBeforeYesterdayDate + "/" + presentMonth + "/" + presentYear;
+    if (dayBeforeYesterdayDate >= 0 + 1) {
+        await CrudNotify.updateOne({user_id: user_id}, { $pull: {'notifications':{ 'notification_id': notification_id}}}, async (err) => {
             if (err) {
                 return res.status(400).json({ status: 400, error: err });
             }
