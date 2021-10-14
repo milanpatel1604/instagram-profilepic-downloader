@@ -64,7 +64,7 @@ exports.allRelaxTracks = async (req, res, next) => {
     const section_id=await getSectionNameOrId(null, 'relax');
     await MusicTrack.find({section_id: section_id}, async (err, docs) => {
       if(err){
-        return res.status(400).send({status:400, message:"Error: "+err});
+        return res.status(400).json({status:400, message:"Error: "+err});
       }
       var result = [];
       await Promise.all(docs.map(async (element) => {
@@ -136,7 +136,7 @@ exports.getRelaxTrack= async (req, res)=>{
             return res.status(400).json({status: 400, error: err});
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
         await Relax.findOne({user_id: user_id, track_id: track_id},async (err2, element)=>{
             if (err2) {
@@ -168,7 +168,7 @@ exports.addRelaxFavorite= async (req, res)=>{
           return res.json(400).json({status:400, message: err});
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({status:201, message: "Added Successfully"});
@@ -211,7 +211,7 @@ exports.removeRelaxFavorite= async (req, res)=>{
             return res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });

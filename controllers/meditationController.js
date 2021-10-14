@@ -64,22 +64,24 @@ exports.allMeditationTracks = async (req, res, next) => {
     const section_id = await getSectionNameOrId(null, 'meditation');
     await MusicTrack.find({ section_id: section_id }, async (err, docs) => {
         if (err) {
-            return res.status(400).send({ status: 400, message: "Error: " + err });
+            return res.status(400).json({ status: 400, message: "Error: " + err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data to show" });
+            return res.status(410).json({ status: 410, message: "No data to show" });
         }
-        var result = [];
-        await Promise.all(docs.map(async (element) => {
-            await result.push({
-                title: element.title,
-                artist: element.artist,
-                image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
-                track_id: element._id,
-                isPremium: element.isPremium
-            })
-        }))
-        return res.status(200).json({ status: 200, response: result });
+        else{
+            var result = [];
+            await Promise.all(docs.map(async (element) => {
+                await result.push({
+                    title: element.title,
+                    artist: element.artist,
+                    image_url: process.env.DOMAIN + `/static/tracks/musicImages/${element._id}.${element.image_extention}`,
+                    track_id: element._id,
+                    isPremium: element.isPremium
+                })
+            }))
+            return res.status(200).json({ status: 200, response: result });
+        }
     })
 
 };
@@ -95,7 +97,7 @@ exports.categorizedMeditationTracks = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data to show" });
+            return res.status(410).json({ status: 410, message: "No data to show" });
         }
 
         var result = [];
@@ -141,7 +143,7 @@ exports.getMeditationTrack = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data to show" });
+            return res.status(410).json({ status: 410, message: "No data to show" });
         }
         await Meditation.findOne({ user_id: user_id, track_id: track_id }, async (err2, element) => {
             if (err2) {
@@ -173,7 +175,7 @@ exports.addMeditationFavorite = async (req, res) => {
             return res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found" });
+            return res.status(410).json({ status: 410, message: "No data found" });
         }
     });
     return res.status(201).json({ status: 201, message: "Added Successfully" });
@@ -187,7 +189,7 @@ exports.getMeditationFavorite = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "data not found" });
+            return res.status(410).json({ status: 410, message: "data not found" });
         }
         var favTracks = [];
         await Promise.all(docs.map(async (item) => {
@@ -219,7 +221,7 @@ exports.removeMeditationFavorite = async (req, res) => {
             return res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data to show" });
+            return res.status(410).json({ status: 410, message: "No data to show" });
         }
         else {
             return res.status(202).json({ status: 202, message: "Removed Successfully" });
@@ -247,7 +249,7 @@ exports.nextLiveTime = async (req, res) => {
         }
     })
     if (todayLive.length == 0) {
-        return res.status(205).send({ status: 205, message: "No Live scheduled yet, check later" });
+        return res.status(205).json({ status: 205, message: "No Live scheduled yet, check later" });
     }
     var allLiveTimeSlots = [];
     await todayLive.forEach(element => {
@@ -293,7 +295,7 @@ exports.liveMeditation = async (req, res) => {
             }
         })
         if (!live1) {
-            return res.status(202).send({ status: 202, message: "Not Live" });
+            return res.status(202).json({ status: 202, message: "Not Live" });
         }
         console.log("hour unchanged");
         const timeSlot = await live1.time_slot.split(":");
@@ -316,7 +318,7 @@ exports.liveMeditation = async (req, res) => {
             }
         })
         if (!live2) {
-            return res.status(202).send({ status: 202, message: "Not Live" });
+            return res.status(202).json({ status: 202, message: "Not Live" });
         }
         console.log("hour changed");
         const timeSlot = await live2.time_slot.split(":");
@@ -356,7 +358,7 @@ exports.getLiveTrack = async (req, res) => {
             return res.status(400).json({ status: 400, error: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "track not available" });
+            return res.status(410).json({ status: 410, message: "track not available" });
         }
         return res.status(200).json({
             status: 200,

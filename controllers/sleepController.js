@@ -9,11 +9,11 @@ const UserPreference = require('../models/UserPreferencesModel');
 
 const dotenv = require("dotenv").config();
 
-const ObjectId= require('mongodb').ObjectID;
+const ObjectId = require('mongodb').ObjectID;
 
 function checkId(object_id) {
-    if(ObjectId.isValid(object_id)){
-        if((String)(new ObjectId(object_id)) === object_id){
+    if (ObjectId.isValid(object_id)) {
+        if ((String)(new ObjectId(object_id)) === object_id) {
             return true;
         }
         return false;
@@ -65,7 +65,7 @@ exports.allSleepTracks = async (req, res, next) => {
     const section_id = await getSectionNameOrId(null, 'sleep');
     await MusicTrack.find({ section_id: section_id }, async (err, docs) => {
         if (err) {
-            return res.status(400).send({ status: 400, message: "Error: " + err });
+            return res.status(400).json({ status: 400, message: "Error: " + err });
         }
         var result = [];
         await Promise.all(docs.map(async (element) => {
@@ -129,15 +129,15 @@ exports.categorizedSleepTracks = async (req, res) => {
 exports.getSleepTrack = async (req, res) => {
     const track_id = req.params.track_id;
     const user_id = req.user.id;
-    if(!checkId(track_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(track_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     MusicTrack.findOne({ _id: track_id }, async (err, docs) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
         await Sleep.findOne({ user_id: user_id, track_id: track_id }, async (err2, element) => {
             if (err2) {
@@ -161,15 +161,15 @@ exports.getSleepTrack = async (req, res) => {
 exports.addSleepFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
-    if(!checkId(track_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(track_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     const favSleep = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: true }, (err, docs) => {
         if (err) {
             return res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({ status: 201, message: "Added Successfully" });
@@ -217,15 +217,15 @@ exports.getSleepFavorite = async (req, res) => {
 exports.removeSleepFavorite = async (req, res) => {
     const user_id = req.user.id;
     const track_id = req.params.track_id;
-    if(!checkId(track_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(track_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     const rmvFav = await Sleep.updateOne({ user_id: user_id, track_id: track_id }, { is_favorite: false }, (err, docs) => {
         if (err) {
             res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });
@@ -254,8 +254,8 @@ exports.allSleepStories = (req, res) => {
 exports.getSleepStory = async (req, res) => {
     const story_id = req.params.story_id;
     const user_id = req.user.id;
-    if(!checkId(story_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(story_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     await Sleep.findOne({ user_id: user_id, story_id: story_id }, async (err, element) => {
         if (err) {
@@ -269,58 +269,71 @@ exports.getSleepStory = async (req, res) => {
         }
     })
 
-    const story_details = await SleepStory.findOne({ _id: story_id }, async (err, docs) => {
+    const story_details = await SleepStory.findOne({ _id: story_id }, async (err) => {
         if (err) {
             return res.status(400).json({ status: 400, error: err });
         }
-        if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
-        }
     })
-    const description = await story_details.story_description;
-    const lessons = await story_details.lessons.split('\n');
-    const lessons_arr = [];
-    for (let i = 0; i < lessons.length; i++) {
-        lessons_arr.push(lessons[i]);
+    if (!story_details) {
+        console.log("1")
+        return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
     }
-    const user_language = await UserPreference.findOne({ user_id: user_id }, async (err) => {
-        if (err) {
-            return res.status(400).json({ status: 400, error: err });
+    else if(story_details) {
+        console.log("2")
+        const description = await story_details.story_description;
+        const lessons = await story_details.lessons.split('\n');
+        const lessons_arr = [];
+        for (let i = 0; i < lessons.length; i++) {
+            lessons_arr.push(lessons[i]);
         }
-    })
-    const defaultUserLanguage = await user_language.default_app_language;
+        const user_language = await UserPreference.findOne({ user_id: user_id }, async (err) => {
+            if (err) {
+                return res.status(400).json({ status: 400, error: err });
+            }
+        })
+        if (!user_language) {
+            console.log("3")
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
+        }
+        else if (user_language) {
+            console.log("4")
+            const defaultUserLanguage = await user_language.default_app_language;
 
-    await SleepStoryAudio.find({ story_id: story_id }, (err, docs) => {
-        if (err) {
-            return res.status(400).json({ status: 400, error: err });
-        }
-        if (docs.length == 0) {
-            return res.status(204).json({ status: 204, error: "No data to show" });
-        }
-        for (let i = 0; i < docs.length; i++) {
-            if (defaultUserLanguage == docs[i].audio_language) {
+            await SleepStoryAudio.find({ story_id: story_id }, (err, docs) => {
+                if (err) {
+                    return res.status(400).json({ status: 400, error: err });
+                }
+                if (docs.length == 0) {
+                    return res.status(204).json({ status: 204, error: "No data to show" });
+                }
+                for (let i = 0; i < docs.length; i++) {
+                    if (defaultUserLanguage == docs[i].audio_language) {
+                        return res.status(200).json({
+                            track_url: process.env.DOMAIN + `/static/tracks/sleepStoryAudios/${docs[i]._id}.${docs[i].track_extention}`,
+                            language: docs[i].audio_language,
+                            description: description,
+                            lessons: lessons_arr,
+
+                        });
+                    }
+                }
                 return res.status(200).json({
-                    track_url: process.env.DOMAIN + `/static/tracks/sleepStoryAudios/${docs[i]._id}.${docs[i].track_extention}`,
-                    language: docs[i].audio_language,
+                    track_url: process.env.DOMAIN + `/static/tracks/sleepStoryAudios/${docs[0]._id}.${docs[0].track_extention}`,
+                    language: docs[0].audio_language,
                     description: description,
                     lessons: lessons_arr,
-
                 });
-            }
+            })
+
         }
-        return res.status(200).json({
-            track_url: process.env.DOMAIN + `/static/tracks/sleepStoryAudios/${docs[0]._id}.${docs[0].track_extention}`,
-            language: docs[0].audio_language,
-            description: description,
-            lessons: lessons_arr,
-        });
-    })
+
+    }
 }
 
 exports.allStoryLanguages = async (req, res) => {
     const story_id = req.params.story_id;
-    if(!checkId(story_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(story_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     var allLanguageTracks = [];
     await SleepStoryAudio.find({ story_id: story_id }, (err, docs) => {
@@ -341,15 +354,15 @@ exports.allStoryLanguages = async (req, res) => {
 exports.addSleepStoryFavorite = async (req, res) => {
     const user_id = req.user.id;
     const story_id = req.params.story_id;
-    if(!checkId(story_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(story_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     const favSleep = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: true }, (err, docs) => {
         if (err) {
             return res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
     });
     return res.status(201).json({ status: 201, message: "Added Successfully" });
@@ -358,15 +371,15 @@ exports.addSleepStoryFavorite = async (req, res) => {
 exports.removeSleepStoryFavorite = async (req, res) => {
     const user_id = req.user.id;
     const story_id = req.params.story_id;
-    if(!checkId(track_id)){
-        return res.status(444).json({status: 444, error:"please provide a valid track_id in params"});
+    if (!checkId(track_id)) {
+        return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     const rmvFav = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: false }, (err, docs) => {
         if (err) {
             res.json(400).json({ status: 400, message: err });
         }
         if (!docs) {
-            return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+            return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
         }
         else {
             res.status(202).json({ status: 202, message: "Removed Successfully" });

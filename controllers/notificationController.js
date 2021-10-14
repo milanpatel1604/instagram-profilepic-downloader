@@ -106,7 +106,7 @@ exports.deleteNotification = async (req, res) => {
                 return res.status(400).json({ status: 400, error: err });
             }
             if (!docs) {
-                return res.status(410).send({ status: 410, message: "No data found with given ID, please check ID" });
+                return res.status(410).json({ status: 410, message: "No data found with given ID, please check ID" });
             }
         })
         return res.status(200).json({ status: 200, message: "notifications deleted" });
