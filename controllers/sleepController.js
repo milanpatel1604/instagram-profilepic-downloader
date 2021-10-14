@@ -371,7 +371,7 @@ exports.addSleepStoryFavorite = async (req, res) => {
 exports.removeSleepStoryFavorite = async (req, res) => {
     const user_id = req.user.id;
     const story_id = req.params.story_id;
-    if (!checkId(track_id)) {
+    if (!checkId(story_id)) {
         return res.status(444).json({ status: 444, error: "please provide a valid track_id in params" });
     }
     const rmvFav = await Sleep.updateOne({ user_id: user_id, story_id: story_id }, { is_favorite: false }, (err, docs) => {
