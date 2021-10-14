@@ -760,7 +760,6 @@ exports.sleepStoryDelete = catchAsync(async (req, res, next) => {
 
 exports.banOrUnbanUser = catchAsync(async (req, res, next) => {
   const user_id = await req.params.user_id;
-  console.log(req.body);
   const banOrUnban = await User.updateOne({ _id: user_id }, req.body, async (err) => {
     if (err) {
       await res.status(400).json({ status: 400, message: "user not banned" });

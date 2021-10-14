@@ -343,7 +343,7 @@ exports.allStoryLanguages = async (req, res) => {
         console.log("got request");
         docs.forEach(async (element) => {
             await allLanguageTracks.push({
-                track_url: process.env.DOMAIN + `/static/tracks/sleepStoryImages/${element._id}.${element.image_extention}`,
+                track_url: process.env.DOMAIN + `/static/tracks/sleepStoryImages/${element._id}.${element.track_extention}`,
                 language: element.audio_language
             })
         })
